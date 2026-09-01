@@ -3,113 +3,460 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>The Response Game</title>
+
+  <meta
+    name="description"
+    content="The Response Game — what you do changes what comes next."
+  >
+
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111820;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
+    * {
+      box-sizing: border-box;
     }
 
-    .container {
-      max-width: 800px;
-      padding: 50px 25px;
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 50% 35%, #1b2733 0%, #111820 45%, #0c1117 100%);
+      color: #ffffff;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero {
+      flex: 1;
+      width: 100%;
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 80px 28px 50px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #7f8b97;
+      margin-bottom: 20px;
     }
 
     h1 {
-      font-size: 56px;
-      margin-bottom: 10px;
-      letter-spacing: 2px;
+      margin: 0;
+      font-size: clamp(44px, 8vw, 82px);
+      line-height: 0.95;
+      letter-spacing: 5px;
+      font-weight: 800;
     }
 
-    h2 {
-      font-weight: normal;
-      color: #d6dce2;
-      margin-bottom: 40px;
+    .tagline {
+      margin-top: 26px;
+      font-size: clamp(21px, 3vw, 31px);
+      line-height: 1.35;
+      color: #dce2e8;
     }
 
-    p {
-      font-size: 19px;
-      line-height: 1.6;
-      color: #c5ccd3;
+    .bigidea {
+      margin: 65px 0 45px;
+      font-size: clamp(28px, 4.4vw, 48px);
+      line-height: 1.18;
+      font-weight: 700;
     }
 
-    .highlight {
-      font-size: 26px;
-      font-weight: bold;
+    .faded {
+      color: #7c8792;
+    }
+
+    /* THE LOOP */
+
+    .loop-wrap {
+      position: relative;
+      width: min(680px, 92vw);
+      height: 250px;
+      margin: 15px auto 45px;
+    }
+
+    .loop-ring {
+      position: absolute;
+      inset: 25px 75px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      animation: breathe 5s ease-in-out infinite;
+    }
+
+    .loop-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .loop-center span {
+      font-size: clamp(18px, 2vw, 25px);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .node {
+      position: absolute;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      padding: 10px 15px;
+      background: rgba(17, 24, 32, 0.94);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+    }
+
+    .node.one {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .node.two {
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .node.three {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .node.four {
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .orbit-dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      margin: -4px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 0 18px rgba(255,255,255,0.55);
+      animation: orbit 9s linear infinite;
+    }
+
+    @keyframes orbit {
+      from {
+        transform: rotate(0deg) translateX(265px) rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg) translateX(265px) rotate(-360deg);
+      }
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        opacity: 0.4;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.9;
+        transform: scale(1.025);
+      }
+    }
+
+    .descriptor {
+      font-size: clamp(16px, 2vw, 20px);
+      color: #abb5bf;
+      line-height: 1.7;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .descriptor strong {
       color: white;
-      margin: 40px 0;
+      font-weight: 600;
     }
 
-    .contact {
-      margin-top: 50px;
-      padding-top: 30px;
-      border-top: 1px solid #39434d;
+    .thought {
+      margin: 48px 0 0;
+      font-size: clamp(20px, 2.4vw, 28px);
+      font-style: italic;
+      color: #e7ebef;
+    }
+
+    .divider {
+      width: 100%;
+      max-width: 760px;
+      height: 1px;
+      background: rgba(255,255,255,0.12);
+      margin: 60px auto 42px;
+    }
+
+    .opportunity {
+      max-width: 700px;
+    }
+
+    .opportunity h2 {
+      margin: 0 0 12px;
+      font-size: clamp(24px, 3vw, 34px);
+    }
+
+    .opportunity p {
+      margin: 0 auto;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #9ca7b2;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 32px;
+    }
+
+    .button {
+      display: inline-block;
+      min-width: 185px;
+      padding: 14px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      transition: transform 0.2s ease,
+                  background 0.2s ease,
+                  border-color 0.2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .primary {
+      background: white;
+      color: #10171f;
+      border: 1px solid white;
+    }
+
+    .primary:hover {
+      background: #dde3e8;
+    }
+
+    .secondary {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.28);
+    }
+
+    .secondary:hover {
+      border-color: white;
+      background: rgba(255,255,255,0.05);
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 28px 20px 32px;
+      color: #59636d;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+    }
+
+    @media (max-width: 700px) {
+      .hero {
+        padding-top: 55px;
+      }
+
+      h1 {
+        letter-spacing: 2px;
+      }
+
+      .bigidea {
+        margin-top: 50px;
+      }
+
+      .loop-wrap {
+        height: 300px;
+        width: 100%;
+      }
+
+      .loop-ring {
+        inset: 45px 45px;
+      }
+
+      .node.one {
+        top: 20px;
+      }
+
+      .node.three {
+        bottom: 20px;
+      }
+
+      .orbit-dot {
+        display: none;
+      }
+
+      .buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .button {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .orbit-dot,
+      .loop-ring {
+        animation: none;
+      }
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
 
-<h1>THE RESPONSE GAME</h1>
+  <div class="page">
 
-<h2>What happens next depends on how you respond.</h2>
+    <main class="hero">
 
-<p>
-  The Response Game began with a simple idea:
-</p>
+      <div class="eyebrow">
+        An idea in play
+      </div>
 
-<div class="highlight">
-  What if the experience didn't follow a predetermined path?
-</div>
+      <h1>
+        THE RESPONSE GAME
+      </h1>
 
-<p>
-  You respond to what's in front of you.
-</p>
+      <div class="tagline">
+        What you do changes what comes next.
+      </div>
 
-<div class="highlight">
-  Your response changes what comes next.<br>
-  And then you respond again.
-</div>
+      <div class="bigidea">
+        No script.<br>
+        <span class="faded">No fixed path.</span><br>
+        Just the next move.
+      </div>
 
-<p>
-  A dynamic experience built around realistic communication, uncertainty,
-  decision-making, coordination, competing priorities, consequences,
-  and an environment that evolves based on the choices people make.
-</p>
 
-<p>
-  <strong>No two paths have to be exactly the same.</strong>
-</p>
+      <!-- VISUAL LOOP -->
 
-<div class="contact">
-  <p>
-    TheResponseGame.com is available for development,
-    partnership, or acquisition.
-  </p>
-</div>
-    </div>
+      <div class="loop-wrap">
 
-    <p>
-      A dynamic training concept built around realistic communications,
-      uncertainty, decision-making, coordination, consequences, and an
-      evolving incident environment.
-    </p>
+        <div class="loop-ring"></div>
 
-    <div class="contact">
-      <p>
-        TheResponseGame.com is available for development,
-        partnership, or acquisition.
-      </p>
-    </div>
+        <div class="orbit-dot"></div>
+
+        <div class="node one">
+          SOMETHING HAPPENS
+        </div>
+
+        <div class="node two">
+          YOU CHOOSE
+        </div>
+
+        <div class="node three">
+          THINGS CHANGE
+        </div>
+
+        <div class="node four">
+          NOW WHAT?
+        </div>
+
+        <div class="loop-center">
+          <span>↻</span>
+        </div>
+
+      </div>
+
+
+      <div class="descriptor">
+        <strong>Communication.</strong>
+        Uncertainty.
+        Choices.
+        Coordination.
+        Consequences.
+        Adaptation.
+      </div>
+
+      <div class="thought">
+        Then the game changes.
+      </div>
+
+
+      <div class="divider"></div>
+
+
+      <!-- OPPORTUNITY -->
+
+      <section class="opportunity">
+
+        <h2>
+          Maybe you know what this becomes.
+        </h2>
+
+        <p>
+          The concept and TheResponseGame.com are open to
+          development, partnership, or acquisition.
+        </p>
+
+
+        <div class="buttons">
+
+          <a
+            class="button primary"
+            href="mailto:the.dude.actual69@gmail.com?subject=The%20Response%20Game%20-%20Let's%20Build%20It"
+          >
+            BUILD THE IDEA
+          </a>
+
+          <a
+            class="button secondary"
+            href="mailto:YOUR_EMAIL_HERE?subject=TheResponseGame.com%20Acquisition%20Inquiry"
+          >
+            ACQUIRE THE DOMAIN
+          </a>
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <footer>
+      THE RESPONSE GAME &nbsp; • &nbsp; CONCEPT &nbsp; • &nbsp; DOMAIN &nbsp; • &nbsp; OPPORTUNITY
+    </footer>
 
   </div>
+
 </body>
 </html>

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 
 globalThis.window=globalThis;
 globalThis.location={href:'https://theresponsegame.com/'};
-globalThis.navigator={sendBeacon:()=>true};
+Object.defineProperty(globalThis,'navigator',{value:{sendBeacon:()=>true},configurable:true});
 const memory=new Map();
 globalThis.localStorage={getItem:k=>memory.has(k)?memory.get(k):null,setItem:(k,v)=>memory.set(k,String(v)),removeItem:k=>memory.delete(k)};
 for(const file of ['trg-v12-data.js','trg-v12-services.js','trg-v12-engine.js','trg-v13-experience.js'])vm.runInThisContext(fs.readFileSync(file,'utf8'),{filename:file});

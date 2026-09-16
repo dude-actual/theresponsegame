@@ -9,114 +9,247 @@
 <link rel="canonical" href="https://theresponsegame.com/"/>
 <meta property="og:type" content="website"/>
 <meta property="og:title" content="Resource Run — The Response Game"/>
-<meta property="og:description" content="Can you route an ICS 213-RR from request to field assignment without losing the resource in the system?"/>
+<meta property="og:description" content="Route the request. Move the resource. Keep accountability. An interactive ICS 213-RR process challenge."/>
 <meta property="og:url" content="https://theresponsegame.com/"/>
-<meta property="og:image" content="https://theresponsegame.com/resource-run-share-v2.png"/>
-<meta property="og:image:type" content="image/png"/>
-<meta property="og:image:width" content="600"/>
-<meta property="og:image:height" content="315"/>
-<meta property="og:image:alt" content="Resource Run — The Response Game interactive ICS 213-RR challenge"/>
+<meta property="og:image" content="https://image.thum.io/get/ogImage/https://theresponsegame.com/"/>
+<meta property="og:image:type" content="image/jpeg"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:alt" content="Resource Run — The Response Game"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="Resource Run — The Response Game"/>
-<meta name="twitter:description" content="Interactive ICS 213-RR resource request process challenge."/>
-<meta name="twitter:image" content="https://theresponsegame.com/resource-run-share-v2.png"/>
-<link rel="stylesheet" href="resource-run.css?v=2"/>
-<link rel="stylesheet" href="resource-run-mobile-v4.css?v=4"/>
+<meta name="twitter:description" content="Route the request. Move the resource. Keep accountability."/>
+<meta name="twitter:image" content="https://image.thum.io/get/ogImage/https://theresponsegame.com/"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2307111f'/%3E%3Crect x='10' y='10' width='44' height='44' rx='10' fill='%23256eff'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='Arial' font-size='24' font-weight='700' fill='white'%3ERR%3C/text%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="rr-v7-1.css?v=7"/>
+<link rel="stylesheet" href="rr-v7-2.css?v=7"/>
+<link rel="stylesheet" href="rr-v7-3.css?v=7"/>
+<link rel="stylesheet" href="rr-v7-4.css?v=7"/>
 </head>
 <body>
 <section id="title" class="screen active">
- <div class="bg"><div class="gridlines"></div></div>
- <div style="position:relative;z-index:2;text-align:center">
-  <div class="logoMark"></div>
-  <div class="kicker">THE RESPONSE GAME · ICS PROCESS CHALLENGE</div>
-  <h1>RESOURCE<br>RUN</h1>
-  <div class="titleSub">Every assignment changes. The process still has to work.</div>
-  <button class="cta" onclick="startIntro()">RECEIVE ASSIGNMENT</button>
-  <div class="smallNote">ICS 213-RR · INTERACTIVE TRAINING GAME</div>
- </div>
+  <div class="bgGlow"></div>
+  <div class="heroWrap">
+    <div class="heroCard">
+      <div class="heroVisual">
+        <div class="glow"></div><div class="hm1"></div><div class="hm2"></div><div class="hm3"></div><div class="forest"></div>
+        <div class="heroMiniScene"><div class="heroBuilding supplier"></div><div class="heroBuilding icp"></div><div class="heroBuilding staging"></div><div class="heroBuilding field"></div><div class="heroTruck"><span class="w w1"></span><span class="w w2"></span></div></div>
+        <div class="heroRoad"></div>
+      </div>
+      <div class="heroTitleBlock">
+        <div class="heroRR">RR</div>
+        <div class="heroBrandLine">The Response Game · ICS 213-RR Process Challenge</div>
+        <div class="heroMainTitle">Resource Run</div>
+        <div class="heroTagline">Route the request. Move the resource. Keep accountability.</div>
+        <div class="heroProcess"><span>Request</span><span>Review</span><span>Source</span><span>Staging</span><span>Field</span></div>
+      </div>
+      <div class="heroActions">
+        <div class="heroCaption">
+          <div class="tiny">Mission Brief</div>
+          <div class="sub">Every assignment changes. The process still has to work.</div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="ghostBtn" onclick="openHowItWorks()">How it Works</button>
+          <button class="cta" onclick="startIntro()">Receive Assignment</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section id="intro" class="screen">
- <div class="bg"><div class="gridlines"></div></div>
- <div class="introShell">
-  <div class="introCard active"><div class="stepNum">01 / 03</div><div class="introIcon">📨</div><h2>A new request just hit the ICP.</h2><p>Every assignment may be different. Route it correctly.</p></div>
-  <div class="introCard"><div class="stepNum">02 / 03</div><div class="introIcon">🗺️</div><h2>Watch the incident world.</h2><p>The resource moves as your decisions move the process.</p></div>
-  <div class="introCard"><div class="stepNum">03 / 03</div><div class="introIcon">📘</div><h2>Use the IMH.</h2><p>This is a job-aid challenge. Use the Incident Management Handbook.</p></div>
-  <div class="introNav"><button class="navBtn" onclick="introPrev()">← Back</button><div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div><button id="introNext" class="navBtn primary" onclick="introNext()">Next →</button></div>
- </div>
+  <div class="bgGlow"></div>
+  <div class="wrap">
+    <div class="introShell">
+      <div class="introCard active">
+        <div class="stepKicker">Step 01 / 03</div>
+        <div class="introTitle">A new request hits the ICP.</div>
+        <div class="introText">Each assignment is different, but the process still matters. You are routing the request through the ICS 213-RR resource request flow.</div>
+      </div>
+      <div class="introCard">
+        <div class="stepKicker">Step 02 / 03</div>
+        <div class="introTitle">Watch the incident world.</div>
+        <div class="introText">The truck, location markers, and status line show what your decisions are doing to the request as it moves from need to assignment.</div>
+      </div>
+      <div class="introCard">
+        <div class="stepKicker">Step 03 / 03</div>
+        <div class="introTitle">Use the IMH.</div>
+        <div class="introText">This is a job-aid challenge, not a memory stunt. Open the Incident Management Handbook anytime and use the guidance to make the next move.</div>
+      </div>
+      <div class="introNav">
+        <button class="navBtn" onclick="introPrev()">← Back</button>
+        <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div>
+        <button id="introNext" class="navBtn primary" onclick="introNext()">Next →</button>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section id="game" class="screen">
- <div class="hud">
-  <button class="iconBtn" onclick="openICPConfirm()" aria-label="Back to Incident Command Post"><svg class="icsIcon" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3"/><path d="M4 36 L36 4 L36 36 Z" fill="currentColor"/></svg><span class="backLabel">BACK TO ICP</span></button>
-  <div class="gameBrand">RESOURCE RUN</div>
-  <div class="hudTools">
-   <div class="hudChip"><div class="lab">Score</div><div class="val" id="score">0</div></div>
-   <div class="hudChip"><div class="lab">Streak</div><div class="val" id="streak">0x</div></div>
-   <div class="hudChip"><div class="lab">Lives</div><div class="val hearts" id="lives">♥♥♥</div></div>
-   <button class="iconBtn mobileOnly" id="imhHudBtn" onclick="openIMHModal()" aria-label="Open Incident Management Handbook"><span aria-hidden="true">📘</span><span>IMH</span></button>
-   <button class="iconBtn" id="soundBtn" onclick="toggleSound()" aria-label="Toggle sound">🔊</button>
-  </div>
- </div>
- <div class="gameBody">
-  <div class="leftCol">
-   <div class="world">
-    <div class="worldSky"></div><div class="worldGrid"></div>
-    <div class="worldStatus"><div class="assignment" id="assignmentLabel"></div><div class="state" id="worldState"></div></div>
-    <div class="zone vendor" id="zVendor"><div class="zt">SUPPLIER</div><div class="zs">External source</div></div>
-    <div class="zone icp" id="zICP"><div class="zt">ICP</div><div class="zs">Command + coordination</div></div>
-    <div class="zone staging" id="zStaging"><div class="zt">STAGING</div><div class="zs">Receive + check in</div></div>
-    <div class="zone field" id="zField"><div class="zt" id="fieldTitle">FIELD</div><div class="zs">Final operational assignment</div></div>
-    <div class="vehicle" id="vehicle"><div class="resourceBadge" id="resourceBadge">RESOURCE</div><div class="tank"></div><div class="cab"></div><div class="wheel w1"></div><div class="wheel w2"></div></div>
-    <div class="phonePulse" id="phonePulse">☎️</div><div class="clipPulse" id="clipPulse">📋</div><div class="radioPulse" id="radioPulse">📻</div>
-    <div class="road"></div>
-   </div>
-   <div class="quiz">
-    <div class="promptLabel">Choose the next move</div>
-    <div class="prompt" id="prompt"></div>
-    <div class="choiceGrid" id="choices"></div>
-   </div>
-  </div>
-  <aside class="side">
-   <div class="panel reqPanel">
-    <div class="reqTitle">ICS 213-RR <span class="typePill" id="routePill"></span></div>
-    <div class="reqRows">
-     <div class="reqRow"><span>Requested Resource</span><b id="reqResource"></b></div><div class="reqRow"><span>Quantity</span><b id="reqQty"></b></div>
-     <div class="reqRow"><span>Needed At</span><b id="reqDest"></b></div><div class="reqRow"><span>Required By</span><b id="reqTime"></b></div>
-     <div class="reqRow"><span>Priority</span><b id="reqPriority"></b></div><div class="reqRow"><span>Status</span><b id="reqStatus"></b></div>
+  <div class="app">
+    <div class="topBar">
+      <button class="topBtn" onclick="openICPConfirm()">
+        <svg viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" stroke="currentColor" stroke-width="3"/><path d="M4 36L36 4V36H4Z" fill="currentColor"/></svg>
+        <span>Back to ICP</span>
+      </button>
+      <div class="brandBlock">
+        <div class="eyebrow">The Response Game · ICS Process Challenge</div>
+        <div class="gameName">Resource Run</div>
+      </div>
+      <div class="topMeta">
+        <div class="infoChip"><div class="lab">Score</div><div class="val" id="scoreTop">0</div></div>
+        <div class="infoChip"><div class="lab">Streak</div><div class="val" id="streakTop">0x</div></div>
+      </div>
     </div>
-   </div>
-   <div class="panel"><button class="imhBtn" onclick="toggleIMH()">OPEN INCIDENT MANAGEMENT HANDBOOK (IMH)</button><div class="imh" id="imh"></div></div>
-   <div class="panel"><div class="statGrid"><div><div class="bigStat" id="sideScore">0</div><div class="statLab">Points</div></div><div><div class="bigStat" id="sideStreak">0x</div><div class="statLab">Streak</div></div><div><div class="bigStat" id="sideStep">1/7</div><div class="statLab">Step</div></div></div><div class="progressTrack" id="progressTrack"></div></div>
-  </aside>
- </div>
+
+    <div class="stage">
+      <div class="primaryCol">
+        <section class="panel worldPanel">
+          <div class="worldMeta">
+            <div>
+              <div class="assignment" id="assignmentLabel">Assignment</div>
+              <div class="assignmentSub" id="assignmentSub">Qty · Destination · Priority · Required by</div>
+            </div>
+            <div class="state" id="worldState">Request created</div>
+          </div>
+          <div class="scene">
+            <div class="m1"></div><div class="m2"></div><div class="m3"></div>
+            <div class="treeline1"></div><div class="treeline2"></div>
+            <div class="markerRow">
+              <div class="marker" id="mRequest"><div class="dot"></div><div>Request</div></div>
+              <div class="marker" id="mReview"><div class="dot"></div><div>Review</div></div>
+              <div class="marker" id="mSource"><div class="dot"></div><div>Source</div></div>
+              <div class="marker" id="mStaging"><div class="dot"></div><div>Staging</div></div>
+              <div class="marker" id="mField"><div class="dot"></div><div>Field</div></div>
+            </div>
+            <div class="structure warehouse"><div class="roof"></div><div class="body"></div><div class="door"></div><div class="light l1"></div><div class="light l2"></div></div>
+            <div class="structure icpTent"><div class="pole"></div><div class="flag"></div><div class="roof"></div><div class="body"></div><div class="door"></div></div>
+            <div class="structure stagingBay"><div class="shell"></div><div class="opening"></div><div class="crate c1"></div><div class="crate c2"></div><div class="crate c3"></div><div class="crate c4"></div></div>
+            <div class="structure fieldOps"><div class="tent"></div><div class="tower"></div><div class="mast"></div><div class="wave w1"></div><div class="wave w2"></div><div class="wave w3"></div></div>
+            <div class="vehicle" id="vehicle">
+              <div class="resourceBadge" id="resourceBadge">RESOURCE</div>
+              <div class="headlight"></div><div class="vshadow"></div><div class="vbody"></div><div class="vcab"></div><div class="vwind"></div><div class="wheel wh1"></div><div class="wheel wh2"></div>
+            </div>
+            <div class="phonePulse" id="phonePulse">☎️</div>
+            <div class="clipPulse" id="clipPulse">📋</div>
+            <div class="radioPulse" id="radioPulse">📻</div>
+            <div class="road"></div>
+          </div>
+        </section>
+
+        <section class="panel questionPanel">
+          <div class="questionLabel">Choose the next move</div>
+          <div class="prompt" id="prompt"></div>
+          <div class="assignmentLine" id="routeLine"></div>
+          <div class="choices" id="choices"></div>
+        </section>
+      </div>
+
+      <aside class="sideCol">
+        <section class="panel detailPanel">
+          <div class="detailTitle"><h3>Assignment Sheet</h3><div class="routeType" id="routePill">Route</div></div>
+          <div class="factGrid">
+            <div class="fact"><div class="lab">Requested Resource</div><div class="val" id="reqResource"></div></div>
+            <div class="fact"><div class="lab">Quantity</div><div class="val" id="reqQty"></div></div>
+            <div class="fact"><div class="lab">Needed At</div><div class="val" id="reqDest"></div></div>
+            <div class="fact"><div class="lab">Required By</div><div class="val" id="reqTime"></div></div>
+            <div class="fact"><div class="lab">Priority</div><div class="val" id="reqPriority"></div></div>
+            <div class="fact"><div class="lab">Status</div><div class="val" id="reqStatus"></div></div>
+          </div>
+        </section>
+        <section class="panel imhPanel">
+          <h3>Incident Management Handbook</h3>
+          <div class="imhText" id="imhInline"></div>
+          <div class="imhHint">Use the IMH to verify the next move.</div>
+        </section>
+        <section class="panel progressPanel">
+          <div class="progressHeader"><h3>Route Progress</h3><span id="sideStep">1 / 7</span></div>
+          <div class="progressTrack" id="progressTrack"></div>
+        </section>
+      </aside>
+    </div>
+
+    <div class="dock">
+      <div class="dockItem"><div class="lab">Score</div><div class="val" id="scoreDock">0</div></div>
+      <div class="dockItem"><div class="lab">Streak</div><div class="val" id="streakDock">0x</div></div>
+      <div class="dockItem"><div class="lab">Lives</div><div class="val hearts" id="livesDock">♥♥♥</div></div>
+      <button class="dockBtn" onclick="openIMH()"><div class="icon">📘</div><div class="lab">Open IMH</div></button>
+      <button class="dockBtn" id="soundBtn" onclick="toggleSound()"><div class="icon" id="soundIcon">🔊</div><div class="lab">Sound</div></button>
+    </div>
+  </div>
 </section>
 
 <section id="win" class="screen">
- <div class="bg"><div class="gridlines"></div></div>
- <div class="winBox"><div class="badge">RR</div><h2>Assignment Complete</h2><div class="finalScore" id="finalScore"></div><p id="winText"></p><div class="winActions"><button class="cta" onclick="newAssignment()">START NEW ASSIGNMENT</button><button class="secondary" onclick="showBonus()">BONUS: DRAW A COMPLICATION CARD</button><button class="secondary" onclick="goICP()">BACK TO ICP</button></div></div>
+  <div class="bgGlow"></div>
+  <div class="heroWrap">
+    <div class="winCard">
+      <div class="heroVisual" style="filter:brightness(.72)">
+        <div class="glow"></div><div class="hm1"></div><div class="hm2"></div><div class="hm3"></div><div class="forest"></div>
+        <div class="heroMiniScene"><div class="heroBuilding supplier"></div><div class="heroBuilding icp"></div><div class="heroBuilding staging"></div><div class="heroBuilding field"></div><div class="heroTruck"><span class="w w1"></span><span class="w w2"></span></div></div>
+        <div class="heroRoad"></div>
+      </div>
+      <div class="winInner">
+        <div class="eyebrow">The Response Game</div>
+        <h2>Assignment Complete</h2>
+        <div class="finalScore" id="finalScore"></div>
+        <div class="winText" id="winText"></div>
+        <div class="winActions">
+          <button class="cta" onclick="newAssignment()">Start New Assignment</button>
+          <button class="secondaryBtn" onclick="showBonus()">Bonus: Draw a Complication Card</button>
+          <button class="secondaryBtn" onclick="goICP()">Back to ICP</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<div id="toast" class="feedbackToast"></div>
+<div id="toast" class="toast"></div>
 
-<div id="imhModal" class="modalOverlay">
- <div class="modalBox imhModalBox">
-  <div class="modalIcon">📘</div>
-  <div class="imhModalEyebrow" id="imhModalStep">CURRENT STEP</div>
-  <h3>Incident Management Handbook</h3>
-  <p class="imhModalHint">Use the IMH as a job aid. This guide shows the process guidance for the decision you are working right now.</p>
-  <div class="imhModalText" id="imhModalText"></div>
-  <div class="modalActions"><button class="cta" onclick="closeIMHModal()">RETURN TO ASSIGNMENT</button></div>
- </div>
+<div id="howModal" class="overlay">
+  <div class="modal">
+    <div class="badgeIcon">🎮</div>
+    <h3>How It Works</h3>
+    <p>Take the assignment, follow the request through the correct route, and use the Incident Management Handbook whenever you need a job aid. The truck and world markers show what your decisions are doing.</p>
+    <div class="modalActions"><button class="cta" onclick="closeHowItWorks()">Got It</button></div>
+  </div>
 </div>
 
-<div id="gameOverModal" class="modalOverlay"><div class="modalBox gameOverBox"><div class="modalIcon">💥</div><h3>Request Lost in the System</h3><p id="gameOverText"></p><div class="modalActions"><button class="cta" onclick="retryQuestion()">REWORK REQUEST</button><button class="secondary" onclick="goICP()">BACK TO ICP</button></div></div></div>
+<div id="imhModal" class="overlay">
+  <div class="modal">
+    <div class="badgeIcon">📘</div>
+    <h3>Incident Management Handbook</h3>
+    <p id="imhModalText"></p>
+    <div class="modalActions"><button class="cta" onclick="closeIMH()">Return to Assignment</button></div>
+  </div>
+</div>
 
-<div id="bonusModal" class="modalOverlay"><div class="modalBox bonusBox"><div class="modalIcon">⚡</div><h3>Bonus Complication Card</h3><p style="margin-bottom:12px;color:#91a8bb;font-size:14px;font-weight:700">One extra problem to solve before you clear the assignment.</p><p id="bonusText"></p><div class="modalActions"><button class="cta" onclick="closeBonus()">RETURN TO RESULTS</button><button class="secondary" onclick="newAssignmentFromModal()">START NEW ASSIGNMENT</button></div></div></div>
+<div id="gameOverModal" class="overlay">
+  <div class="modal gameOver">
+    <div class="badgeIcon">💥</div>
+    <h3>Request Lost in the System</h3>
+    <p id="gameOverText"></p>
+    <div class="modalActions"><button class="cta" onclick="retryQuestion()">Rework Request</button><button class="secondaryBtn" onclick="goICP()">Back to ICP</button></div>
+  </div>
+</div>
 
-<div id="icpModal" class="modalOverlay"><div class="modalBox icpBox"><div class="modalIcon"><svg class="icsIcon" style="width:62px;height:62px;margin:0" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3"/><path d="M4 36 L36 4 L36 36 Z" fill="currentColor"/></svg></div><h3>Return to the ICP?</h3><p>Your current assignment progress will reset.</p><div class="modalActions"><button class="cta" onclick="goICP()">CONFIRM — BACK TO ICP</button><button class="secondary" onclick="closeICPConfirm()">RETURN TO ASSIGNMENT</button></div></div></div>
+<div id="bonusModal" class="overlay">
+  <div class="modal bonus">
+    <div class="badgeIcon">⚡</div>
+    <h3>Bonus Complication Card</h3>
+    <p id="bonusText"></p>
+    <div class="modalActions"><button class="cta" onclick="closeBonus()">Return to Results</button><button class="secondaryBtn" onclick="newAssignmentFromModal()">Start New Assignment</button></div>
+  </div>
+</div>
 
-<script src="resource-run.js?v=2"></script>
-<script src="resource-run-mobile-v4.js?v=4"></script>
+<div id="icpModal" class="overlay">
+  <div class="modal icp">
+    <div class="icsBadge"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" stroke="currentColor" stroke-width="3"/><path d="M4 36L36 4V36H4Z" fill="currentColor"/></svg></div>
+    <h3>Return to the ICP?</h3>
+    <p>Your current assignment progress will reset.</p>
+    <div class="modalActions"><button class="cta" onclick="goICP()">Confirm — Back to ICP</button><button class="secondaryBtn" onclick="closeICPConfirm()">Return to Assignment</button></div>
+  </div>
+</div>
+
+<script src="resource-run-premium-v7.js?v=7"></script>
 </body>
 </html>

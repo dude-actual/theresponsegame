@@ -1,118 +1,155 @@
-# The Response Game — Resource Run
+# Resource Run — The Response Game
 
-Resource Run is a responsive ICS 213-RR operational simulation designed to feel like a modern command-and-control product rather than a training webpage.
+Resource Run is an evolving incident resource-management simulation built around the ICS 213-RR resource-request process.
 
-## Production architecture
+The design goal is **a game that delivers training**, not a training page with game decoration.
 
-- `index.html` — semantic application shell, SVG icon sprite, landing, briefing, game, results, and accessible dialogs.
-- `resource-run-v10.css` — consolidated mobile-first design system and all responsive UI behavior.
-- `resource-run-v10.js` — scenario data, game state, scoring, randomized choices, IMH guidance, movement/feedback logic, sound, dialogs, accessibility, and keyboard controls.
-- `CNAME` — custom domain configuration for `theresponsegame.com`.
+## Gameplay architecture
 
-Older files remain in Git history; the v10 production page references only the v10 CSS and JavaScript.
+A session is one incident played across four operational periods.
 
-## Design strategy
+- Operational Period 1: establish the process and initial priorities.
+- Operational Period 2: resource availability begins to tighten and complications increase.
+- Operational Period 3: request volume and conflicts increase.
+- Operational Period 4: the player manages the accumulated consequences of earlier decisions.
 
-### Product character
+Requests compete for attention. Resource inventory persists across operational periods. Bad decisions can create deadline misses, resource conflicts, accountability failures, documentation gaps, and visible operational impacts.
 
-- Dark incident-operations-center aesthetic.
-- High-information but low-clutter visual hierarchy.
-- Operational map and resource routing as the primary visual metaphor.
-- Frosted-glass surfaces used for hierarchy, not decoration.
-- Purposeful movement only: route progression, success/failure signaling, briefing transitions, and dialog transitions.
+## Educational objectives preserved
 
-### Typography
+The simulation still teaches the organization-specific resource request flow:
 
-- Inter throughout the product.
-- Large, readable headings with restrained line lengths.
-- Uppercase operational labels only for small metadata and status text.
-- Body copy optimized for fast scanning on phone and desktop.
+1. identify the need and document the ICS 213-RR;
+2. distinguish Tactical vs Support routing;
+3. review the request for clarity;
+4. check internal availability;
+5. source/order resources when needed;
+6. preserve pricing/UOM/ETA/vendor traceability when applicable;
+7. check resources in and maintain accountability;
+8. assign resources and keep status current.
 
-### Spacing
+The Incident Management Handbook remains an in-game job aid rather than a memorization penalty.
 
-- 8px base spacing system.
-- Mobile-first density with generous separation between interactive regions.
-- Larger desktop gutters and dedicated intelligence rail.
+## Consequence engine
 
-### Color system
+Errors affect the incident picture rather than only deducting points. Examples include:
 
-- Deep navy and near-black foundations.
-- Muted blue operational lines and map detail.
-- Cyan for information/navigation emphasis.
-- Green for successful progression.
-- Yellow for current route/attention.
-- Red for route failure and operational impact.
+- delayed spill containment or recovery;
+- delayed evacuation transportation;
+- shelter support shortages;
+- degraded responder support;
+- communications delays;
+- missed required-by times;
+- road closure and vendor-delay effects;
+- accountability and documentation degradation.
 
-## Component inventory
+Operational consequences persist in the incident score and period reviews.
 
-1. Landing / mission launcher
-2. Three-step mission briefing
-3. Simulation top bar
-4. Incident operations map
-5. Route progression nodes
-6. Animated resource mover
-7. Decision panel
-8. Answer choice cards
-9. Assignment intelligence card
-10. IMH job-aid card and focused dialog
-11. Route progress card
-12. Mobile command bar
-13. Success / results screen
-14. ICP confirmation dialog
-15. Scenario-specific game-over dialog
-16. Scenario-specific complication dialog
-17. Accessible live announcer / feedback line
+## Incident Effectiveness Rating
 
-## Responsive behavior
+The final IER combines six dimensions:
 
-### Mobile
+- Accuracy
+- Speed
+- Accountability
+- Documentation
+- Operational Impact
+- Mission Success
 
-- One-column simulation layout.
-- Compact operations map above the decision area.
-- Score, streak, lives, IMH, and sound in the bottom command bar.
-- All answer choices remain in the visible game region on typical phone viewports.
-- Large touch targets and no horizontal scrolling.
+The current weighting is:
 
-### Desktop / laptop
+- Accuracy: 24%
+- Speed: 12%
+- Accountability: 17%
+- Documentation: 17%
+- Operational Impact: 20%
+- Mission Success: 10%
 
-- Two-column simulation layout.
-- Main operations and decision workspace on the left.
-- Persistent Assignment / IMH / Progress intelligence rail on the right.
-- Score, streak, and lives move into the top bar.
-- Answer choices display as a three-column decision set.
+## Career progression
 
-## Game functionality preserved
+Persistent local career progression is stored in browser `localStorage`.
 
-- Randomized assignments.
-- Randomized answer order.
-- Tactical vs. Support routing.
-- Internal availability vs. external sourcing paths.
-- Score and streak system.
-- Three-life failure model.
-- IMH guidance at every step.
-- Resource movement and route progression.
-- Assignment completion.
-- Scenario-specific failure messaging.
-- Scenario-specific complication injects.
-- Sound toggle and feedback tones.
-- Return-to-ICP flow.
+1. Resources Unit Trainee
+2. Resources Unit Leader
+3. Situation Unit Leader
+4. Logistics Section Chief
+5. Planning Section Chief
+6. Operations Section Chief
+7. Incident Commander
+
+Career XP unlocks higher difficulty tiers and additional responsibility.
+
+## Difficulty framework
+
+- Recruit — guided routing and lower request pressure
+- Qualified — faster tempo
+- Advanced — stronger resource constraints and conflicts
+- Section Chief — cross-function pressure and more complications
+- Command Staff — highest request density and operational complexity
+
+Higher tiers unlock through career progression.
+
+## Learning system
+
+The game tracks recurring mistakes in:
+
+- prioritization;
+- routing;
+- sourcing;
+- documentation;
+- accountability.
+
+Post-incident coaching identifies the strongest recurring weak areas. The player profile also stores recent IER history, mastery percentages, best performance, streaks, achievements, and in-game certifications.
+
+> In-game certifications are Resource Run progression rewards and are not external professional credentials.
+
+## Achievements
+
+Current achievements include:
+
+- Clean Route
+- Accountability First
+- Documentation Discipline
+- Zero Preventable Impact
+- Four for Four
+- Fast Track
+- Process Mastery
+
+## Front-end architecture
+
+Production files:
+
+- `index.html` — application shell and semantic structure
+- `rr-v11-data.js` — incidents, resources, ranks, difficulties, achievements, progression data
+- `rr-v11-engine.js` — simulation state, request generation, resource constraints, scoring, consequences, progression
+- `rr-v11-ui.js` — rendering, interaction, dialogs, mobile controls, coaching/results
+- `rr-v11-core.css` — design tokens, landing experience, shared components
+- `rr-v11-sim.css` — operations map, decision workspace, request queue, inventory, metrics
+- `rr-v11-responsive.css` — period review, results, dialogs, breakpoints, accessibility
 
 ## Accessibility
 
-- Keyboard-accessible native buttons.
-- A/B/C and 1/2/3 answer shortcuts.
-- Visible focus states.
-- Screen-reader live announcements.
-- Focus-managed dialogs.
-- Escape-to-close behavior where appropriate.
-- Reduced-motion support using `prefers-reduced-motion`.
-- High-contrast status colors plus text/state cues so color is not the only signal.
+The interface includes:
 
-## QA routes
+- high-contrast dark-mode UI;
+- native keyboard navigation;
+- A/B/C and 1/2/3 answer shortcuts;
+- visible focus states;
+- live feedback regions;
+- semantic controls and labels;
+- reduced-motion support;
+- responsive mobile layouts without intentional horizontal scrolling.
 
-For visual regression checks:
+## Mobile design
 
-- `/?qa=game` opens directly into a randomized assignment.
-- `/?qa=results` opens a populated results state.
+Mobile is treated as a first-class game layout:
 
-These query parameters are for QA only and do not change normal gameplay.
+- condensed incident picture;
+- stacked touch-friendly decisions;
+- persistent bottom command bar;
+- queue, resource inventory, effectiveness, and IMH views available as focused dialogs;
+- no dependence on the desktop command rail.
+
+## Current production URL
+
+https://theresponsegame.com/

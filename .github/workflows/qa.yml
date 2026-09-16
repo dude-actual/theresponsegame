@@ -1,0 +1,29 @@
+name: Resource Run QA
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Syntax checks
+        run: |
+          node --check trg-v12-data.js
+          node --check trg-v12-services.js
+          node --check trg-v12-engine.js
+          node --check trg-v13-experience.js
+          node --check trg-v13-audio.js
+          node --check trg-v13-ui.js
+          node --check trg-sw.js
+      - name: Engine smoke tests
+        run: node tests/smoke.mjs
+      - name: Accessibility guardrails
+        run: |
+          grep -q 'min-height:44px' trg-v13.css
+          grep -q 'prefers-reduced-motion' trg-v13.css
+          grep -q ':focus-visible' trg-v13.css

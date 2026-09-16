@@ -1,0 +1,14 @@
+{
+  "name": "The Response Game — Resource Run",
+  "short_name": "Resource Run",
+  "description": "An ICS-aligned operational incident simulation.",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#050b12",
+  "theme_color": "#071522",
+  "orientation": "any",
+  "icons": [
+    {"src":"/trg-mark.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

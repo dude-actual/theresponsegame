@@ -19,15 +19,20 @@ jobs:
           node --check trg-v13-experience.js
           node --check trg-v13-audio.js
           node --check trg-v14-ui.js
+          node --check trg-v15-impact.js
           node --check trg-sw.js
       - name: Production asset guard
         run: |
           grep -q 'trg-v14.css?v=14.0.0-rc1' index.html
+          grep -q 'trg-v15.css?v=15.0.0-rc1' index.html
           grep -q 'trg-v14-ui.js?v=14.0.0-rc1' index.html
+          grep -q 'trg-v15-impact.js?v=15.0.0-rc1' index.html
           ! grep -q 'trg-v13-ui-fixed.js' index.html
           ! grep -q 'trg-v13.css' index.html
       - name: DOM contract
         run: node tests/dom-contract.mjs
+      - name: Incident impact contract
+        run: node tests/impact-contract.mjs
       - name: Engine smoke tests
         run: node tests/smoke.mjs
       - name: Accessibility guardrails
@@ -36,6 +41,7 @@ jobs:
           grep -q 'prefers-reduced-motion' trg-v14.css
           grep -q ':focus-visible' trg-v14.css
           grep -q 'aria-label="Persistent command status"' index.html
+          grep -q 'aria-live="polite"' trg-v15-impact.js
       - name: Scenario theme guard
         run: |
           for id in hurricane wildfire oil-spill chemical refinery pipeline maritime public-event severe-weather transportation; do grep -q "data-incident=\\\"$id\\\"" /dev/null 2>/dev/null || grep -q "html\[data-incident=\\\"$id\\\"\]" trg-v14.css; done

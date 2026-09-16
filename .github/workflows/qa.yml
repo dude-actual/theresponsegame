@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Syntax checks
         run: |
           node --check trg-v12-data.js
@@ -18,8 +18,13 @@ jobs:
           node --check trg-v12-engine.js
           node --check trg-v13-experience.js
           node --check trg-v13-audio.js
-          node --check trg-v13-ui.js
+          node --check trg-v13-ui-fixed.js
           node --check trg-sw.js
+      - name: Production asset guard
+        run: |
+          grep -q 'trg-v13.css?v=13.0.0-rc1' index.html
+          grep -q 'trg-v13-ui-fixed.js?v=13.0.0-rc1.1' index.html
+          ! grep -q 'trg-v12-ui.js' index.html
       - name: Engine smoke tests
         run: node tests/smoke.mjs
       - name: Accessibility guardrails

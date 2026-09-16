@@ -1,155 +1,110 @@
-# Resource Run — The Response Game
+# The Response Game — Resource Run Platform v12
 
-Resource Run is an evolving incident resource-management simulation built around the ICS 213-RR resource-request process.
+Resource Run is a browser-based serious-game platform for practicing incident-management decisions across evolving incidents. The game is designed to feel like an operational simulation while preserving real-world ICS concepts and organization-specific resource-request procedures.
 
-The design goal is **a game that delivers training**, not a training page with game decoration.
+## Current production scope
 
-## Gameplay architecture
+Ten incident packs are included:
 
-A session is one incident played across four operational periods.
+- Hurricane
+- Oil Spill
+- Wildfire
+- Pipeline Incident
+- Refinery Incident
+- Chemical Release
+- Transportation Accident
+- Severe Weather
+- Public Event
+- Maritime Incident
 
-- Operational Period 1: establish the process and initial priorities.
-- Operational Period 2: resource availability begins to tighten and complications increase.
-- Operational Period 3: request volume and conflicts increase.
-- Operational Period 4: the player manages the accumulated consequences of earlier decisions.
+Every incident contains priorities, objectives, constraints, four operational periods, changing conditions, resource pressure, and complications with mechanical effects.
 
-Requests compete for attention. Resource inventory persists across operational periods. Bad decisions can create deadline misses, resource conflicts, accountability failures, documentation gaps, and visible operational impacts.
+## Role progression
 
-## Educational objectives preserved
+The platform unlocks increasingly broad views of the incident:
 
-The simulation still teaches the organization-specific resource request flow:
+1. Resources Unit
+2. Situation Unit
+3. Logistics Section
+4. Planning Section
+5. Operations Section
+6. Command Staff Coordination
+7. Incident Command
 
-1. identify the need and document the ICS 213-RR;
-2. distinguish Tactical vs Support routing;
-3. review the request for clarity;
-4. check internal availability;
-5. source/order resources when needed;
-6. preserve pricing/UOM/ETA/vendor traceability when applicable;
-7. check resources in and maintain accountability;
-8. assign resources and keep status current.
+**ICS note:** Resources and Situation are Planning Section units. Planning, Logistics, and Operations are General Staff sections. “Command Staff Coordination” is a gameplay view coordinating Safety, Public Information, and Liaison concerns; Command Staff is not treated as a single real-world ICS position. Incident Command remains a separate capstone role.
 
-The Incident Management Handbook remains an in-game job aid rather than a memorization penalty.
+## Platform gameplay
 
-## Consequence engine
+- four accumulating operational periods
+- pending requests carry forward
+- scarce resource inventory persists
+- resource commitments reduce later availability
+- simulated costs accumulate
+- objectives can become at-risk
+- conditions and constraints change
+- decisions affect responder effectiveness, stabilization, tempo, situational awareness, cost, and operational impact
+- role-specific tasks change gameplay as the player advances
 
-Errors affect the incident picture rather than only deducting points. Examples include:
+The ICS 213RR resource-request workflow remains a core Resources Unit / Logistics learning thread. The IMH remains an in-game job aid.
 
-- delayed spill containment or recovery;
-- delayed evacuation transportation;
-- shelter support shortages;
-- degraded responder support;
-- communications delays;
-- missed required-by times;
-- road closure and vendor-delay effects;
-- accountability and documentation degradation.
+## Live dashboards
 
-Operational consequences persist in the incident score and period reviews.
+The simulation exposes assigned resources, available resources, pending work, unmet needs, operational impacts, priority pressure, responder effectiveness, incident stabilization, operational tempo, simulated cost, and objectives / constraints / current conditions.
 
 ## Incident Effectiveness Rating
 
-The final IER combines six dimensions:
+The IER combines Accuracy, Speed, Accountability, Documentation, Operational Impact, Mission Success, and Cost Control.
 
-- Accuracy
-- Speed
-- Accountability
-- Documentation
-- Operational Impact
-- Mission Success
+## Analytics
 
-The current weighting is:
+Event-level analytics are stored locally and can optionally be forwarded to an organizational endpoint. Events include session starts, period starts, requests, work selection, decisions, condition changes, consequences, IMH use, period endings, and session endings.
 
-- Accuracy: 24%
-- Speed: 12%
-- Accountability: 17%
-- Documentation: 17%
-- Operational Impact: 20%
-- Mission Success: 10%
+Tracked learning domains include prioritization, routing, sourcing, documentation, accountability, situational awareness, planning, logistics, operations, and command.
 
-## Career progression
+## Leaderboards
 
-Persistent local career progression is stored in browser `localStorage`.
+The client supports local session rankings, certification rankings, mastery rankings, and an organizational leaderboard adapter.
 
-1. Resources Unit Trainee
-2. Resources Unit Leader
-3. Situation Unit Leader
-4. Logistics Section Chief
-5. Planning Section Chief
-6. Operations Section Chief
-7. Incident Commander
+Shared organizational rankings require a configured backend. The static GitHub Pages client does not fabricate multi-user rankings.
 
-Career XP unlocks higher difficulty tiers and additional responsibility.
+## Session reports / AAR
 
-## Difficulty framework
+Completed sessions produce a persistent report with objectives and status, IER and sub-scores, operational impacts, simulated cost, strengths, improvement areas, recommended retraining, competency state, and analytics summary.
 
-- Recruit — guided routing and lower request pressure
-- Qualified — faster tempo
-- Advanced — stronger resource constraints and conflicts
-- Section Chief — cross-function pressure and more complications
-- Command Staff — highest request density and operational complexity
+AARs can be downloaded as HTML and session data can be downloaded as JSON.
 
-Higher tiers unlock through career progression.
-
-## Learning system
-
-The game tracks recurring mistakes in:
-
-- prioritization;
-- routing;
-- sourcing;
-- documentation;
-- accountability.
-
-Post-incident coaching identifies the strongest recurring weak areas. The player profile also stores recent IER history, mastery percentages, best performance, streaks, achievements, and in-game certifications.
-
-> In-game certifications are Resource Run progression rewards and are not external professional credentials.
-
-## Achievements
-
-Current achievements include:
-
-- Clean Route
-- Accountability First
-- Documentation Discipline
-- Zero Preventable Impact
-- Four for Four
-- Fast Track
-- Process Mastery
-
-## Front-end architecture
+## Expansion architecture
 
 Production files:
 
-- `index.html` — application shell and semantic structure
-- `rr-v11-data.js` — incidents, resources, ranks, difficulties, achievements, progression data
-- `rr-v11-engine.js` — simulation state, request generation, resource constraints, scoring, consequences, progression
-- `rr-v11-ui.js` — rendering, interaction, dialogs, mobile controls, coaching/results
-- `rr-v11-core.css` — design tokens, landing experience, shared components
-- `rr-v11-sim.css` — operations map, decision workspace, request queue, inventory, metrics
-- `rr-v11-responsive.css` — period review, results, dialogs, breakpoints, accessibility
+- `index.html` — application shell
+- `trg-v12-data.js` — incident packs, role definitions, resources, complications, registry
+- `trg-v12-services.js` — profiles, analytics, reports, leaderboards, AAR export
+- `trg-v12-engine.js` — hazard-agnostic simulation engine
+- `trg-v12-ui.js` — UI controller
+- `trg-v12.css` — responsive visual system
+- `docs/PLATFORM_ARCHITECTURE.md` — platform architecture and organizational scaling
+- `docs/SCENARIO_AUTHORING.md` — authoring contract for future incident packs
 
-## Accessibility
+Future games can register additional incident packs, roles, resources, or game modes through `TRG.REGISTRY` without replacing the simulation core.
 
-The interface includes:
+## Optional organizational services
 
-- high-contrast dark-mode UI;
-- native keyboard navigation;
-- A/B/C and 1/2/3 answer shortcuts;
-- visible focus states;
-- live feedback regions;
-- semantic controls and labels;
-- reduced-motion support;
-- responsive mobile layouts without intentional horizontal scrolling.
+Configure remote services before the application loads:
 
-## Mobile design
+```js
+window.TRG_CONFIG = {
+  analyticsEndpoint: "https://example.org/trg/events",
+  leaderboardEndpoint: "https://example.org/trg/leaderboard"
+};
+```
 
-Mobile is treated as a first-class game layout:
+A production enterprise deployment can add SSO, organization IDs, signed session reports, and centralized training dashboards while leaving the game engine unchanged.
 
-- condensed incident picture;
-- stacked touch-friendly decisions;
-- persistent bottom command bar;
-- queue, resource inventory, effectiveness, and IMH views available as focused dialogs;
-- no dependence on the desktop command rail.
+## Standards alignment
 
-## Current production URL
+The platform is designed around ICS organizational concepts and uses standard ICS form concepts such as ICS 213RR resource requests, ICS 211 check-in, and ICS 210 resource status change. Organization-specific procedures remain authoritative for local routing, procurement, and documentation detail.
+
+## Production URL
 
 https://theresponsegame.com/

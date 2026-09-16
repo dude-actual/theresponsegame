@@ -18,19 +18,24 @@ jobs:
           node --check trg-v12-engine.js
           node --check trg-v13-experience.js
           node --check trg-v13-audio.js
-          node --check trg-v13-ui-fixed.js
+          node --check trg-v14-ui.js
           node --check trg-sw.js
       - name: Production asset guard
         run: |
-          grep -q 'trg-v13.css?v=13.0.0-rc1' index.html
-          grep -q 'trg-v13-ui-fixed.js?v=13.0.0-rc1.1' index.html
-          ! grep -q 'trg-v12-ui.js' index.html
+          grep -q 'trg-v14.css?v=14.0.0-rc1' index.html
+          grep -q 'trg-v14-ui.js?v=14.0.0-rc1' index.html
+          ! grep -q 'trg-v13-ui-fixed.js' index.html
+          ! grep -q 'trg-v13.css' index.html
       - name: DOM contract
         run: node tests/dom-contract.mjs
       - name: Engine smoke tests
         run: node tests/smoke.mjs
       - name: Accessibility guardrails
         run: |
-          grep -q 'min-height:44px' trg-v13.css
-          grep -q 'prefers-reduced-motion' trg-v13.css
-          grep -q ':focus-visible' trg-v13.css
+          grep -q 'min-height:44px' trg-v14.css
+          grep -q 'prefers-reduced-motion' trg-v14.css
+          grep -q ':focus-visible' trg-v14.css
+          grep -q 'aria-label="Persistent command status"' index.html
+      - name: Scenario theme guard
+        run: |
+          for id in hurricane wildfire oil-spill chemical refinery pipeline maritime public-event severe-weather transportation; do grep -q "data-incident=\\\"$id\\\"" /dev/null 2>/dev/null || grep -q "html\[data-incident=\\\"$id\\\"\]" trg-v14.css; done

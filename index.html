@@ -1,460 +1,492 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Response Game</title>
-
-  <meta name="description" content="The Response Game — What you do changes what comes next.">
-  <meta name="theme-color" content="#111820">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://theresponsegame.com/">
-
-  <!-- Favicon -->
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111820'/%3E%3Ccircle cx='32' cy='32' r='18' fill='none' stroke='%23ffffff' stroke-width='3.2' stroke-linecap='round' stroke-dasharray='90 28' transform='rotate(-35 32 32)'/%3E%3Cpath d='M42 16l8 2-4 7' fill='none' stroke='%23ffffff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
-  >
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="The Response Game">
-  <meta property="og:description" content="What you do changes what comes next.">
-  <meta property="og:url" content="https://theresponsegame.com/">
-  <meta property="og:site_name" content="The Response Game">
-  <meta property="og:image" content="https://theresponsegame.com/share-preview.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="The Response Game — What you do changes what comes next.">
-
-  <!-- Twitter / X -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="The Response Game">
-  <meta name="twitter:description" content="What you do changes what comes next.">
-  <meta name="twitter:image" content="https://theresponsegame.com/share-preview.png">
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at 50% 35%, #1b2733 0%, #111820 45%, #0c1117 100%);
-      color: #ffffff;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .page {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .hero {
-      flex: 1;
-      width: 100%;
-      max-width: 1050px;
-      margin: 0 auto;
-      padding: 80px 28px 50px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .eyebrow {
-      font-size: 12px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: #7f8b97;
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(44px, 8vw, 82px);
-      line-height: 0.95;
-      letter-spacing: 5px;
-      font-weight: 800;
-    }
-
-    .tagline {
-      margin-top: 26px;
-      font-size: clamp(21px, 3vw, 31px);
-      line-height: 1.35;
-      color: #dce2e8;
-    }
-
-    .bigidea {
-      margin: 65px 0 45px;
-      font-size: clamp(28px, 4.4vw, 48px);
-      line-height: 1.18;
-      font-weight: 700;
-    }
-
-    .faded {
-      color: #7c8792;
-    }
-
-    .loop-wrap {
-      position: relative;
-      width: min(680px, 92vw);
-      height: 250px;
-      margin: 15px auto 45px;
-    }
-
-    .loop-ring {
-      position: absolute;
-      inset: 25px 75px;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 50%;
-      animation: breathe 5s ease-in-out infinite;
-    }
-
-    .loop-center {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-
-    .loop-center span {
-      font-size: clamp(18px, 2vw, 25px);
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-
-    .node {
-      position: absolute;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1.6px;
-      padding: 10px 15px;
-      background: rgba(17, 24, 32, 0.94);
-      border: 1px solid rgba(255,255,255,0.13);
-      border-radius: 999px;
-      backdrop-filter: blur(4px);
-    }
-
-    .node.one {
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .node.two {
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-
-    .node.three {
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .node.four {
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-
-    .orbit-dot {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 8px;
-      height: 8px;
-      margin: -4px;
-      border-radius: 50%;
-      background: white;
-      box-shadow: 0 0 18px rgba(255,255,255,0.55);
-      animation: orbit 9s linear infinite;
-    }
-
-    @keyframes orbit {
-      from {
-        transform: rotate(0deg) translateX(265px) rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg) translateX(265px) rotate(-360deg);
-      }
-    }
-
-    @keyframes breathe {
-      0%, 100% {
-        opacity: 0.4;
-        transform: scale(1);
-      }
-
-      50% {
-        opacity: 0.9;
-        transform: scale(1.025);
-      }
-    }
-
-    .descriptor {
-      font-size: clamp(16px, 2vw, 20px);
-      color: #abb5bf;
-      line-height: 1.7;
-      max-width: 820px;
-      margin: 0 auto;
-    }
-
-    .descriptor strong {
-      color: white;
-      font-weight: 600;
-    }
-
-    .thought {
-      margin: 48px 0 0;
-      font-size: clamp(20px, 2.4vw, 28px);
-      font-style: italic;
-      color: #e7ebef;
-    }
-
-    .divider {
-      width: 100%;
-      max-width: 760px;
-      height: 1px;
-      background: rgba(255,255,255,0.12);
-      margin: 60px auto 42px;
-    }
-
-    .opportunity {
-      max-width: 700px;
-    }
-
-    .opportunity h2 {
-      margin: 0 0 12px;
-      font-size: clamp(24px, 3vw, 34px);
-    }
-
-    .opportunity p {
-      margin: 0 auto;
-      font-size: 16px;
-      line-height: 1.7;
-      color: #9ca7b2;
-    }
-
-    .buttons {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-top: 32px;
-    }
-
-    .button {
-      display: inline-block;
-      min-width: 185px;
-      padding: 14px 22px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      transition: transform 0.2s ease,
-                  background 0.2s ease,
-                  border-color 0.2s ease;
-    }
-
-    .button:hover {
-      transform: translateY(-2px);
-    }
-
-    .primary {
-      background: white;
-      color: #10171f;
-      border: 1px solid white;
-    }
-
-    .primary:hover {
-      background: #dde3e8;
-    }
-
-    .secondary {
-      background: transparent;
-      color: white;
-      border: 1px solid rgba(255,255,255,0.28);
-    }
-
-    .secondary:hover {
-      border-color: white;
-      background: rgba(255,255,255,0.05);
-    }
-
-    footer {
-      width: 100%;
-      text-align: center;
-      padding: 28px 20px 32px;
-      color: #59636d;
-      font-size: 12px;
-      letter-spacing: 1.5px;
-    }
-
-    @media (max-width: 700px) {
-      .hero {
-        padding-top: 55px;
-      }
-
-      h1 {
-        letter-spacing: 2px;
-      }
-
-      .bigidea {
-        margin-top: 50px;
-      }
-
-      .loop-wrap {
-        height: 300px;
-        width: 100%;
-      }
-
-      .loop-ring {
-        inset: 45px 45px;
-      }
-
-      .node.one {
-        top: 20px;
-      }
-
-      .node.three {
-        bottom: 20px;
-      }
-
-      .orbit-dot {
-        display: none;
-      }
-
-      .buttons {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .button {
-        width: 100%;
-        max-width: 300px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .orbit-dot,
-      .loop-ring {
-        animation: none;
-      }
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Resource Run — The Response Game</title>
+<meta name="description" content="Resource Run is an interactive ICS 213-RR resource request process game from The Response Game."/>
+<meta name="theme-color" content="#07111f"/>
+<link rel="canonical" href="https://theresponsegame.com/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Resource Run — The Response Game"/>
+<meta property="og:description" content="Can you route an ICS 213-RR from request to field assignment without losing the resource in the system?"/>
+<meta property="og:url" content="https://theresponsegame.com/"/>
+<meta property="og:image" content="https://theresponsegame.com/share-preview.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Resource Run — The Response Game"/>
+<meta name="twitter:description" content="Interactive ICS 213-RR resource request process challenge."/>
+<meta name="twitter:image" content="https://theresponsegame.com/share-preview.png"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Crect x='10' y='10' width='44' height='44' rx='10' fill='%232167ff'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='Arial' font-size='24' font-weight='700' fill='white'%3ERR%3C/text%3E%3C/svg%3E"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@500;600;700;800&display=swap');
+:root{
+  --bg:#07111f;--navy:#0b1f36;--panel:#0e2743;--panel2:#102f50;--line:#244b6d;
+  --cyan:#2bd9ff;--blue:#347dff;--green:#3be593;--yellow:#ffda4b;--orange:#ff9142;--red:#ff5969;
+  --white:#f8fbff;--muted:#95abc0;--ink:#05101b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:#fff;font-family:Inter,Arial,sans-serif;overflow:hidden}
+button{font:inherit}
+.screen{position:absolute;inset:0;display:none}
+.screen.active{display:flex}
+.bg{
+ position:absolute;inset:0;
+ background:
+ radial-gradient(circle at 18% 18%,rgba(43,217,255,.18),transparent 28%),
+ radial-gradient(circle at 84% 12%,rgba(255,218,75,.12),transparent 25%),
+ radial-gradient(circle at 55% 88%,rgba(59,229,147,.10),transparent 30%),
+ linear-gradient(145deg,#06111e,#0a1d31 55%,#06111e);
+}
+.gridlines{position:absolute;inset:0;opacity:.16;background-image:
+ linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+ background-size:42px 42px;transform:perspective(720px) rotateX(62deg) translateY(48%);transform-origin:center bottom}
+.logoMark{width:116px;height:116px;margin:0 auto 20px;border-radius:28px;background:linear-gradient(145deg,#22d7ff,#2167ff);
+ box-shadow:0 0 0 7px rgba(255,255,255,.06),0 22px 60px rgba(0,174,255,.28);
+ display:grid;place-items:center;font-family:"Barlow Condensed";font-size:44px;font-weight:900;transform:rotate(-4deg)}
+.logoMark:after{content:"RR";transform:rotate(4deg)}
+.kicker{font-family:"Barlow Condensed";font-size:18px;font-weight:800;letter-spacing:.2em;color:var(--yellow)}
+h1{font-family:"Barlow Condensed";font-size:clamp(68px,10vw,124px);line-height:.82;margin:12px 0 14px;letter-spacing:-.03em;text-transform:uppercase}
+.titleSub{font-size:clamp(16px,2vw,22px);color:#cbd9e6;font-weight:600;margin-bottom:32px}
+.cta{border:0;border-radius:18px;padding:18px 34px;background:linear-gradient(180deg,#ffe674,#ffca27);color:#171100;font-weight:900;font-size:20px;cursor:pointer;box-shadow:0 11px 0 #a97700,0 22px 42px rgba(255,204,0,.2);text-transform:uppercase;letter-spacing:.04em}
+.cta:active{transform:translateY(6px);box-shadow:0 5px 0 #a97700}
+.smallNote{margin-top:24px;color:#8299ad;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.icsIcon{width:24px;height:24px;display:inline-block;vertical-align:middle;margin-right:8px;color:currentColor}
+#title{align-items:center;justify-content:center;text-align:center;padding:28px}
+#intro{align-items:center;justify-content:center;padding:26px}
+.introShell{width:min(840px,94vw);height:min(640px,88vh);position:relative}
+.introCard{position:absolute;inset:0;border-radius:34px;padding:40px 44px;background:linear-gradient(155deg,#12314f,#08192c);border:1px solid rgba(255,255,255,.09);box-shadow:0 28px 90px rgba(0,0,0,.38);display:none;flex-direction:column;justify-content:center;text-align:center}
+.introCard.active{display:flex;animation:slideIn .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes slideIn{from{opacity:0;transform:translateX(60px) scale(.98)}to{opacity:1;transform:none}}
+.stepNum{font-family:"Barlow Condensed";font-size:22px;font-weight:900;color:var(--cyan);letter-spacing:.15em}
+.introIcon{font-size:90px;line-height:1;margin:18px 0}
+.introCard h2{font-family:"Barlow Condensed";font-size:clamp(44px,6vw,68px);line-height:.95;margin:0 0 20px;text-transform:uppercase}
+.introCard p{font-size:clamp(18px,2.2vw,26px);line-height:1.35;margin:0 auto;max-width:650px;color:#d8e5ef;font-weight:650}
+.introNav{position:absolute;left:30px;right:30px;bottom:24px;display:flex;align-items:center;justify-content:space-between;z-index:3}
+.dots{display:flex;gap:8px}.dot{width:10px;height:10px;border-radius:99px;background:#39536e}.dot.on{width:30px;background:var(--yellow)}
+.navBtn{border:0;border-radius:14px;padding:13px 19px;background:#173958;color:#fff;font-weight:800;cursor:pointer}
+.navBtn.primary{background:linear-gradient(180deg,#2de099,#17b972);color:#041c12;box-shadow:0 7px 0 #08754b}
+#game{flex-direction:column}
+.hud{height:82px;display:flex;align-items:center;padding:0 18px;background:#08192b;border-bottom:1px solid rgba(255,255,255,.08);gap:12px;z-index:5}
+.gameBrand{font-family:"Barlow Condensed";font-size:28px;font-weight:900;margin-right:auto}
+.hudChip{border-radius:14px;background:#102d4b;padding:8px 12px;min-width:88px}
+.hudChip .lab{font-size:10px;letter-spacing:.12em;color:#8fb0cb;text-transform:uppercase;font-weight:800}
+.hudChip .val{font-family:"Barlow Condensed";font-size:24px;font-weight:900;line-height:1}
+.hearts{font-size:20px;letter-spacing:2px}
+.iconBtn{height:44px;border-radius:14px;border:1px solid #244765;background:#0d223b;color:#fff;cursor:pointer;font-size:16px;font-weight:900;padding:0 13px}
+.gameBody{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(350px,.82fr);gap:16px;padding:16px;background:#07111f}
+.leftCol{min-height:0;display:grid;grid-template-rows:245px 1fr;gap:14px}
+.world{position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(180deg,#123454 0 47%,#0d263f 47% 100%);border:1px solid rgba(255,255,255,.08)}
+.worldSky{position:absolute;inset:0;background:radial-gradient(circle at 78% 18%,rgba(255,218,75,.2),transparent 9%),linear-gradient(180deg,rgba(43,217,255,.06),transparent 45%)}
+.worldGrid{position:absolute;inset:auto 0 0;height:53%;background:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:28px 28px}
+.zone{position:absolute;bottom:54px;width:18%;min-width:120px;height:112px;border-radius:16px;border:2px solid #275272;background:linear-gradient(180deg,#143b5e,#0e2d49);padding:11px;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+.zone .zt{font-family:"Barlow Condensed";font-size:21px;font-weight:900}.zone .zs{font-size:10px;color:#91a9be;text-transform:uppercase;font-weight:800;letter-spacing:.08em;margin-top:3px}
+.zone.vendor{left:3%}.zone.icp{left:28%}.zone.staging{left:53%}.zone.field{right:3%}
+.zone.active{border-color:var(--yellow);box-shadow:0 0 0 4px rgba(255,218,75,.09),0 12px 34px rgba(0,0,0,.28)}
+.zone.done{border-color:var(--green)}
+.road{position:absolute;left:0;right:0;bottom:0;height:52px;background:#0a1016;border-top:3px solid #263746}
+.road:after{content:"";position:absolute;left:0;right:0;top:23px;height:4px;background:repeating-linear-gradient(90deg,#f4d756 0 45px,transparent 45px 86px)}
+.vehicle{position:absolute;bottom:44px;left:6%;width:120px;height:54px;transition:left 1.0s cubic-bezier(.2,.8,.2,1);z-index:4}
+.tank{position:absolute;left:0;bottom:8px;width:78px;height:38px;border-radius:20px 7px 7px 20px;background:#d6dfe6;border:4px solid #8698a8}
+.cab{position:absolute;right:0;bottom:0;width:46px;height:43px;background:#ef654b;border-radius:8px 11px 5px 5px}
+.wheel{position:absolute;bottom:-7px;width:20px;height:20px;border-radius:50%;background:#101820;border:5px solid #4c5a66}.w1{left:14px}.w2{left:90px}
+.resourceBadge{position:absolute;left:50%;top:-28px;transform:translateX(-50%);padding:5px 9px;border-radius:999px;background:#08182a;border:1px solid #315579;font-size:11px;font-weight:900;white-space:nowrap}
+.phonePulse{position:absolute;bottom:164px;left:66%;font-size:34px;opacity:0}.phonePulse.go{animation:popPhone 1.25s ease}
+@keyframes popPhone{0%{opacity:0;transform:scale(.5) rotate(-15deg)}20%{opacity:1;transform:scale(1.1)}75%{opacity:1}100%{opacity:0;transform:scale(.8)}}
+.clipPulse{position:absolute;bottom:162px;left:61%;font-size:34px;opacity:0}.clipPulse.go{animation:popClip 1.25s ease}
+@keyframes popClip{0%{opacity:0;transform:translateY(18px)}20%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
+.radioPulse{position:absolute;bottom:164px;left:38%;font-size:34px;opacity:0}.radioPulse.go{animation:popRadio 1.1s ease}
+@keyframes popRadio{0%{opacity:0;transform:scale(.7)}20%{opacity:1;transform:scale(1.08)}70%{opacity:1}100%{opacity:0;transform:scale(.9)}}
+.worldStatus{position:absolute;top:14px;left:16px;right:16px;display:flex;align-items:center;justify-content:space-between;z-index:3}
+.worldStatus .assignment{font-family:"Barlow Condensed";font-size:22px;font-weight:900}
+.worldStatus .state{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#b6c8d8;font-weight:800}
+.quiz{min-height:0;border-radius:24px;background:linear-gradient(180deg,#0e2947,#091b30);border:1px solid rgba(255,255,255,.08);padding:18px;overflow:auto}
+.promptLabel{font-size:11px;color:#87a0b5;letter-spacing:.12em;text-transform:uppercase;font-weight:800}
+.prompt{font-family:"Barlow Condensed";font-size:clamp(30px,3.5vw,46px);font-weight:900;line-height:.98;margin:7px 0 15px}
+.choiceGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.choice{min-height:116px;border:2px solid #234a6d;border-radius:18px;background:linear-gradient(180deg,#123252,#0d2744);padding:14px;color:white;text-align:left;cursor:pointer;transition:.16s transform,.16s border,.16s box-shadow}
+.choice:hover{transform:translateY(-3px);border-color:#3a86c5;box-shadow:0 10px 28px rgba(0,0,0,.25)}
+.choice .key{width:30px;height:30px;border-radius:9px;background:#1f517e;display:grid;place-items:center;font-weight:900;margin-bottom:8px}
+.choice .ct{font-size:14px;font-weight:800;line-height:1.3}
+.choice.good{border-color:#42ed9c;background:linear-gradient(180deg,#123f3a,#0a302c)}
+.choice.bad{border-color:#ff5567;background:linear-gradient(180deg,#49202a,#35151e);animation:shake .34s}
+@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
+.side{min-height:0;display:flex;flex-direction:column;gap:12px}
+.panel{background:linear-gradient(180deg,#0f2742,#0a1b2e);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:16px}
+.reqPanel{border-top:5px solid #ff5e65}
+.reqTitle{font-family:"Barlow Condensed";font-size:27px;font-weight:900;display:flex;justify-content:space-between;align-items:center}
+.typePill{font-family:Inter;font-size:10px;padding:5px 8px;border-radius:999px;background:#183b60;color:#bcd1e2;text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+.reqRows{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.reqRow{background:#102e4d;border-radius:11px;padding:9px 10px}.reqRow span{display:block;font-size:9px;color:#8ca6bd;text-transform:uppercase;font-weight:800;letter-spacing:.08em}.reqRow b{font-size:13px;display:block;margin-top:2px}
+.imhBtn{width:100%;border:0;border-radius:14px;padding:13px;background:#173a5f;color:#fff;font-weight:900;cursor:pointer}
+.imh{display:none;margin-top:10px;padding:14px;border-radius:12px;background:#081624;border:1px solid #1e405f;color:#dce8f1;font-size:16px;line-height:1.5}
+.imh.show{display:block}
+.statGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.bigStat{font-family:"Barlow Condensed";font-size:42px;font-weight:900;line-height:.9}.statLab{font-size:9px;color:#8ea5ba;text-transform:uppercase;letter-spacing:.1em;font-weight:800;margin-top:6px}
+.progressTrack{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.progressDot{height:8px;border-radius:99px;background:#203c56}.progressDot.done{background:var(--green)}.progressDot.current{background:var(--yellow)}
+.feedbackToast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,25px);opacity:0;z-index:50;min-width:360px;max-width:82vw;padding:18px 22px;border-radius:18px;background:#0c2139;border:1px solid #2c567a;box-shadow:0 18px 50px rgba(0,0,0,.45);font-weight:900;font-size:17px;line-height:1.35;text-align:center;transition:.24s}
+.feedbackToast.show{opacity:1;transform:translate(-50%,0)}.feedbackToast.ok{border-color:#33df92}.feedbackToast.no{border-color:#ff5969}
+.modalOverlay{position:fixed;inset:0;background:rgba(3,9,16,.74);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modalOverlay.show{display:flex}
+.modalBox{width:min(680px,94vw);border-radius:30px;padding:32px;background:linear-gradient(160deg,#102d4c,#091a2c);border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 100px rgba(0,0,0,.55);text-align:center}
+.modalIcon{font-size:64px;margin-bottom:12px}.modalBox h3{font-family:"Barlow Condensed";font-size:52px;line-height:.95;margin:0 0 14px;text-transform:uppercase}.modalBox p{font-size:18px;line-height:1.45;color:#d0ddea;margin:0 auto 24px;max-width:580px}
+.modalActions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.gameOverBox{border:2px solid var(--red)}.bonusBox{border:2px solid var(--yellow)}.icpBox{border:2px solid var(--green)}
+#win{align-items:center;justify-content:center;text-align:center;padding:28px}
+.winBox{position:relative;z-index:2;width:min(780px,94vw);padding:42px;border-radius:34px;background:linear-gradient(160deg,#102b49,#091a2e);border:1px solid rgba(255,255,255,.1);box-shadow:0 30px 90px rgba(0,0,0,.4)}
+.badge{width:140px;height:140px;border-radius:50%;margin:0 auto 22px;background:radial-gradient(circle at 35% 28%,#fff5a2,#ffd03b 45%,#d89600 72%);box-shadow:0 0 0 10px rgba(255,216,77,.08),0 18px 55px rgba(255,205,0,.28);display:grid;place-items:center;color:#442d00;font-family:"Barlow Condensed";font-size:50px;font-weight:900}
+.winBox h2{font-family:"Barlow Condensed";font-size:64px;line-height:.9;margin:0 0 12px;text-transform:uppercase}
+.finalScore{font-family:"Barlow Condensed";font-size:38px;color:var(--cyan);font-weight:900;margin-bottom:20px}
+.winBox p{color:#ccdae7;font-size:18px;line-height:1.4}
+.winActions{display:flex;gap:12px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.secondaryCta{border:1px solid #315a7b;border-radius:16px;padding:15px 20px;background:#112f4e;color:white;font-weight:900;cursor:pointer}
+@supports (padding: max(0px)) {
+  .hud { padding-left:max(18px, env(safe-area-inset-left)); padding-right:max(18px, env(safe-area-inset-right)); }
+  #title,#intro,#win { padding-left:max(26px, env(safe-area-inset-left)); padding-right:max(26px, env(safe-area-inset-right)); }
+  .gameBody { padding-bottom:max(16px, env(safe-area-inset-bottom)); }
+}
+@media(max-width:980px){
+ .gameBody{grid-template-columns:1fr}.side{display:none}
+ .leftCol{grid-template-rows:220px 1fr}
+ .choiceGrid{grid-template-columns:1fr}
+ .hud{height:70px;padding:0 10px}.gameBrand{font-size:22px}.hudChip{min-width:70px;padding:7px 9px}.hudChip .val{font-size:20px}
+ .world .zone{min-width:90px;width:21%;padding:8px}.zone .zt{font-size:17px}.zone.vendor{left:1%}.zone.icp{left:26%}.zone.staging{left:51%}.zone.field{right:1%}
+}
+</style>
 </head>
-
 <body>
-  <div class="page">
-
-    <main class="hero">
-      <div class="eyebrow">
-        An idea in play
-      </div>
-
-      <h1>THE RESPONSE GAME</h1>
-
-      <div class="tagline">
-        What you do changes what comes next.
-      </div>
-
-      <div class="bigidea">
-        No script.<br>
-        <span class="faded">No fixed path.</span><br>
-        Just the next move.
-      </div>
-
-      <div class="loop-wrap">
-        <div class="loop-ring"></div>
-        <div class="orbit-dot"></div>
-
-        <div class="node one">
-          SOMETHING HAPPENS
-        </div>
-
-        <div class="node two">
-          YOU CHOOSE
-        </div>
-
-        <div class="node three">
-          THINGS CHANGE
-        </div>
-
-        <div class="node four">
-          NOW WHAT?
-        </div>
-
-        <div class="loop-center">
-          <span>↻</span>
-        </div>
-      </div>
-
-      <div class="descriptor">
-        <strong>Communication.</strong>
-        Uncertainty.
-        Choices.
-        Coordination.
-        Consequences.
-        Adaptation.
-      </div>
-
-      <div class="thought">
-        Then the game changes.
-      </div>
-
-      <div class="divider"></div>
-
-      <section class="opportunity">
-        <h2>
-          Maybe you know what this becomes.
-        </h2>
-
-        <p>
-          The concept and TheResponseGame.com are open to
-          development, partnership, or acquisition.
-        </p>
-
-        <div class="buttons">
-          <a
-            class="button primary"
-            href="mailto:the.dude.actual69@gmail.com?subject=The%20Response%20Game%20-%20Let's%20Build%20It"
-          >
-            BUILD THE IDEA
-          </a>
-
-          <a
-            class="button secondary"
-            href="mailto:the.dude.actual69@gmail.com?subject=TheResponseGame.com%20Acquisition%20Inquiry"
-          >
-            ACQUIRE THE DOMAIN
-          </a>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      THE RESPONSE GAME &nbsp; • &nbsp; CONCEPT &nbsp; • &nbsp; DOMAIN &nbsp; • &nbsp; OPPORTUNITY
-    </footer>
-
+<section id="title" class="screen active">
+  <div class="bg"><div class="gridlines"></div></div>
+  <div style="position:relative;z-index:2;text-align:center">
+    <div class="logoMark"></div>
+    <div class="kicker">THE RESPONSE GAME · ICS PROCESS CHALLENGE</div>
+    <h1>RESOURCE<br>RUN</h1>
+    <div class="titleSub">Every assignment changes. The process still has to work.</div>
+    <button class="cta" onclick="startIntro()">RECEIVE ASSIGNMENT</button>
+    <div class="smallNote">RESOURCE RUN · ICS 213-RR · INTERACTIVE TRAINING GAME</div>
   </div>
+</section>
+
+<section id="intro" class="screen">
+ <div class="bg"><div class="gridlines"></div></div>
+ <div class="introShell">
+  <div class="introCard active">
+   <div class="stepNum">01 / 03</div><div class="introIcon">📨</div>
+   <h2>A new request just hit the ICP.</h2>
+   <p>Every assignment may be different. Route it correctly.</p>
+  </div>
+  <div class="introCard">
+   <div class="stepNum">02 / 03</div><div class="introIcon">🗺️</div>
+   <h2>Watch the incident world.</h2>
+   <p>The resource moves as your decisions move the process.</p>
+  </div>
+  <div class="introCard">
+   <div class="stepNum">03 / 03</div><div class="introIcon">📘</div>
+   <h2>Use the IMH.</h2>
+   <p>This is a job-aid challenge. Use the Incident Management Handbook.</p>
+  </div>
+  <div class="introNav">
+   <button class="navBtn" onclick="introPrev()">← Back</button>
+   <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div>
+   <button id="introNext" class="navBtn primary" onclick="introNext()">Next →</button>
+  </div>
+ </div>
+</section>
+
+<section id="game" class="screen">
+ <div class="hud">
+  <button class="iconBtn" onclick="openICPConfirm()"><svg class="icsIcon" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3"/><path d="M4 36 L36 4 L36 36 Z" fill="currentColor"/></svg>BACK TO ICP</button>
+  <div class="gameBrand">RESOURCE RUN</div>
+  <div class="hudChip"><div class="lab">Score</div><div class="val" id="score">0</div></div>
+  <div class="hudChip"><div class="lab">Streak</div><div class="val" id="streak">0x</div></div>
+  <div class="hudChip"><div class="lab">Lives</div><div class="val hearts" id="lives">♥♥♥</div></div>
+  <button class="iconBtn" id="soundBtn" onclick="toggleSound()">🔊</button>
+ </div>
+ <div class="gameBody">
+  <div class="leftCol">
+   <div class="world">
+    <div class="worldSky"></div><div class="worldGrid"></div>
+    <div class="worldStatus"><div class="assignment" id="assignmentLabel"></div><div class="state" id="worldState"></div></div>
+    <div class="zone vendor" id="zVendor"><div class="zt">SUPPLIER</div><div class="zs">External source</div></div>
+    <div class="zone icp" id="zICP"><div class="zt">ICP</div><div class="zs">Command + coordination</div></div>
+    <div class="zone staging" id="zStaging"><div class="zt">STAGING</div><div class="zs">Receive + check in</div></div>
+    <div class="zone field" id="zField"><div class="zt" id="fieldTitle">FIELD</div><div class="zs" id="fieldSub">Final operational assignment</div></div>
+    <div class="vehicle" id="vehicle"><div class="resourceBadge" id="resourceBadge">RESOURCE</div><div class="tank" id="vehicleBody"></div><div class="cab"></div><div class="wheel w1"></div><div class="wheel w2"></div></div>
+    <div class="phonePulse" id="phonePulse">☎️</div><div class="clipPulse" id="clipPulse">📋</div><div class="radioPulse" id="radioPulse">📻</div>
+    <div class="road"></div>
+   </div>
+   <div class="quiz">
+    <div class="promptLabel">Choose the next move</div>
+    <div class="prompt" id="prompt"></div>
+    <div class="choiceGrid" id="choices"></div>
+   </div>
+  </div>
+
+  <aside class="side">
+   <div class="panel reqPanel">
+    <div class="reqTitle">ICS 213-RR <span class="typePill" id="routePill"></span></div>
+    <div class="reqRows">
+     <div class="reqRow"><span>Requested Resource</span><b id="reqResource"></b></div>
+     <div class="reqRow"><span>Quantity</span><b id="reqQty"></b></div>
+     <div class="reqRow"><span>Needed At</span><b id="reqDest"></b></div>
+     <div class="reqRow"><span>Required By</span><b id="reqTime"></b></div>
+     <div class="reqRow"><span>Priority</span><b id="reqPriority"></b></div>
+     <div class="reqRow"><span>Status</span><b id="reqStatus"></b></div>
+    </div>
+   </div>
+
+   <div class="panel">
+    <button class="imhBtn" onclick="toggleIMH()">OPEN INCIDENT MANAGEMENT HANDBOOK (IMH)</button>
+    <div class="imh" id="imh"></div>
+   </div>
+
+   <div class="panel">
+    <div class="statGrid">
+     <div><div class="bigStat" id="sideScore">0</div><div class="statLab">Points</div></div>
+     <div><div class="bigStat" id="sideStreak">0x</div><div class="statLab">Streak</div></div>
+     <div><div class="bigStat" id="sideStep">1/7</div><div class="statLab">Step</div></div>
+    </div>
+    <div class="progressTrack" id="progressTrack"></div>
+   </div>
+  </aside>
+ </div>
+</section>
+
+<section id="win" class="screen">
+ <div class="bg"><div class="gridlines"></div></div>
+ <div class="winBox">
+  <div class="badge">RR</div>
+  <h2>Assignment Complete</h2>
+  <div class="finalScore" id="finalScore"></div>
+  <p id="winText"></p>
+  <div class="winActions">
+   <button class="cta" onclick="newAssignment()">START NEW ASSIGNMENT</button>
+   <button class="secondaryCta" onclick="showBonus()">DRAW COMPLICATION</button>
+   <button class="secondaryCta" onclick="goICP()"><svg class="icsIcon" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3"/><path d="M4 36 L36 4 L36 36 Z" fill="currentColor"/></svg>BACK TO ICP</button>
+  </div>
+ </div>
+</section>
+
+<div id="toast" class="feedbackToast"></div>
+
+<div id="gameOverModal" class="modalOverlay">
+ <div class="modalBox gameOverBox">
+  <div class="modalIcon">💥</div>
+  <h3>Request Lost in the System</h3>
+  <p id="gameOverText"></p>
+  <div class="modalActions"><button class="cta" onclick="retryQuestion()">REWORK REQUEST</button><button class="secondaryCta" onclick="goICP()">BACK TO ICP</button></div>
+ </div>
+</div>
+
+<div id="bonusModal" class="modalOverlay">
+ <div class="modalBox bonusBox">
+  <div class="modalIcon">⚡</div>
+  <h3>Complication Card</h3>
+  <p id="bonusText"></p>
+  <div class="modalActions"><button class="cta" onclick="closeBonus()">RETURN TO OPERATIONS</button><button class="secondaryCta" onclick="newAssignmentFromModal()">START NEW ASSIGNMENT</button></div>
+ </div>
+</div>
+
+<div id="icpModal" class="modalOverlay">
+ <div class="modalBox icpBox">
+  <div class="modalIcon"><svg class="icsIcon" style="width:62px;height:62px;margin:0" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3"/><path d="M4 36 L36 4 L36 36 Z" fill="currentColor"/></svg></div>
+  <h3>Return to the ICP?</h3>
+  <p>Your current assignment progress will reset.</p>
+  <div class="modalActions"><button class="cta" onclick="goICP()">CONFIRM — BACK TO ICP</button><button class="secondaryCta" onclick="closeICPConfirm()">RETURN TO ASSIGNMENT</button></div>
+ </div>
+</div>
+
+<script>
+let introIndex=0, step=0, score=0, streak=0, lives=3, soundOn=true, scenario=null, flow=[];
+
+const scenarios=[
+ {resource:"Vacuum Truck",qty:"1",dest:"Division Alpha",time:"1600",priority:"Urgent",route:"Tactical",available:false,icon:"VAC TRUCK",final:"Division Alpha"},
+ {resource:"Portable Light Tower",qty:"2",dest:"Division Bravo",time:"1800",priority:"High",route:"Tactical",available:true,icon:"LIGHT TOWER",final:"Division Bravo"},
+ {resource:"Intrinsically Safe Radios",qty:"12",dest:"Operations",time:"1500",priority:"High",route:"Support",available:false,icon:"RADIOS",final:"Operations"},
+ {resource:"Level B PPE Sets",qty:"8",dest:"Entry Team",time:"1400",priority:"Urgent",route:"Support",available:true,icon:"PPE",final:"Entry Team"},
+ {resource:"Portable Generator",qty:"1",dest:"Staging Area",time:"1700",priority:"Normal",route:"Support",available:false,icon:"GENERATOR",final:"Staging Area"},
+ {resource:"Air Monitoring Technician",qty:"1",dest:"HazMat Group",time:"1330",priority:"Urgent",route:"Tactical",available:false,icon:"TECHNICIAN",final:"HazMat Group"},
+ {resource:"Boom Trailer",qty:"1",dest:"Division Delta",time:"1630",priority:"High",route:"Tactical",available:true,icon:"BOOM TRAILER",final:"Division Delta"},
+ {resource:"Portable Restroom Units",qty:"6",dest:"Base",time:"1900",priority:"Normal",route:"Support",available:false,icon:"RESTROOMS",final:"Base"}
+];
+const complications=[
+ "The supplier calls back: ETA slipped by 90 minutes. What gets updated, who needs to know, and does the request priority change?",
+ "The resource arrives at the field instead of Staging. What must happen before the incident can accurately account for it?",
+ "Finance flags the vendor cost as exceeding delegated purchasing authority. What happens before the commitment is approved?",
+ "A duplicate 213-RR is discovered for the same scarce resource. Who reconciles the requests and how should status be documented?",
+ "Operations cancels the need after the resource has already been ordered. What actions should Logistics, Resource Unit, and Finance take?",
+ "The wrong model of equipment arrives. It is close—but does not meet the requested capability. Accept it, reject it, or clarify first?"
+];
+
+function makeFlow(s){
+ return [
+  {
+   title:"Request Initiated",zone:"ICP",state:"Request created",anim:"radio",
+   prompt:`A need for ${s.qty} ${s.resource}${s.qty==="1"?"":"s"} is identified. What happens first?`,
+   choices:[
+    ["Complete an ICS 213-RR with the resource need, quantity, destination, and required time",1],
+    ["Call Staging and tell them something is coming",0],
+    ["Wait until the end of the operational period to document it",0]
+   ],
+   imh:"Requisitioner: identify the resource need and type, then complete the ICS 213-RR Resource Request in the IAP."
+  },
+  {
+   title:"Route the Request",zone:"ICP",state:"Routing decision",anim:"radio",
+   prompt:`This request is classified as ${s.route.toUpperCase()}. Which route should it follow?`,
+   choices:s.route==="Tactical" ? [
+    ["Resource Unit",1],["Finance",0],["Vendor directly",0]
+   ] : [
+    ["Logistics",1],["Field Operations",0],["Staging only",0]
+   ],
+   imh:"Use the Tactical vs Support decision point. Tactical requests route through Resource Unit; Support requests route to Logistics."
+  },
+  {
+   title:"Review & Clarify",zone:"ICP",state:"Request under review",anim:"radio",
+   prompt:s.route==="Tactical" ? 
+    "The Resource Unit receives the request. What should happen next?" :
+    "Logistics receives the support request. What should happen next?",
+   choices:s.route==="Tactical" ? [
+    ["Review for clarity and check ordered resources / staging availability",1],
+    ["Immediately order from an outside supplier",0],
+    ["Send it directly to Finance without review",0]
+   ] : [
+    ["Review for clarity and verify exactly what is needed before sourcing",1],
+    ["Send the request directly to the field",0],
+    ["Close it because support resources are not tracked",0]
+   ],
+   imh:s.route==="Tactical" ?
+    "Resource Unit reviews the ICS 213-RR for clarity, checks ordered resources and staging availability, and returns it for clarification when needed." :
+    "Logistics reviews support requests for clarity before sourcing or ordering. Clarify incomplete requests before committing resources."
+  },
+  {
+   title:"Availability Check",zone:s.available?"Staging":"Supplier",state:s.available?"Resource available internally":"External sourcing required",anim:s.available?"clip":"phone",
+   prompt:s.available ?
+    `The requested ${s.resource} is available internally. What is the best next move?` :
+    `The requested ${s.resource} is NOT available internally. What is the best next move?`,
+   choices:s.available ? [
+    ["Reserve / earmark the available resource for the specific assignment and update status",1],
+    ["Order another one anyway",0],
+    ["Send it directly without updating anyone",0]
+   ] : [
+    ["Route to Logistics to source / order the resource",1],
+    ["Close the request as unavailable",0],
+    ["Send an unverified substitute without clarification",0]
+   ],
+   imh:s.available ?
+    "If equipment is available, earmark it for the specific use and update resource status so the incident knows it is committed." :
+    "If the needed resource is not available internally, Logistics sources and orders it. Capture supplier, price, UOM, ETA, and request status."
+  },
+  {
+   title:s.available?"Prepare for Assignment":"Source / Order",zone:s.available?"Staging":"Supplier",state:s.available?"Resource being readied":"Vendor contacted",anim:s.available?"clip":"phone",
+   prompt:s.available ?
+    "The resource is committed. What information still needs to remain visible before deployment?" :
+    "A qualified supplier is found. What belongs with the order?",
+   choices:s.available ? [
+    ["Assignment, location, status, and accountability information",1],
+    ["Only the resource name",0],
+    ["Nothing else—the resource is already available",0]
+   ] : [
+    ["Price, unit of measure, ETA, supplier details, and the completed ICS 213-RR",1],
+    ["Only the supplier phone number",0],
+    ["Only the ETA",0]
+   ],
+   imh:s.available ?
+    "Availability does not replace accountability. Maintain assignment and status visibility as the resource is activated." :
+    "Logistics contacts suppliers, captures price, UOM, ETA and vendor details, and completes the request record. Finance may be involved for purchasing authority or long-term commitments."
+  },
+  {
+   title:"Receive & Check In",zone:"Staging",state:"Resource arriving",anim:"truck",
+   prompt:`The ${s.resource} arrives or is activated for incident use. What should happen before final assignment?`,
+   choices:[
+    ["Receive / check in the resource and document accountability before deployment",1],
+    ["Send it directly to the end user with no check-in",0],
+    ["Document it only when it demobilizes",0]
+   ],
+   imh:"Staging or the designated check-in location receives resources and records check-in/accountability before deployment. Use the applicable check-in/status tools such as ICS 211."
+  },
+  {
+   title:"Assign & Track",zone:"Field",state:"Resource deployed",anim:"truck",
+   prompt:`The ${s.resource} is ready for ${s.final}. What keeps the process complete?`,
+   choices:[
+    ["Issue / assign it, update resource status, and keep the incident record current",1],
+    ["Let the vendor or user decide where it goes",0],
+    ["Leave the status unchanged until the incident ends",0]
+   ],
+   imh:"Operations / Staging / Resource Unit maintain assignment and status visibility as the resource is issued. Update status changes so the incident can account for where the resource is and what it is doing."
+  }
+ ];
+}
+
+function setScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function startIntro(){beep(520,.08);setScreen('intro');renderIntro()}
+function renderIntro(){
+ const cards=[...document.querySelectorAll('.introCard')], dots=[...document.querySelectorAll('.dot')];
+ cards.forEach((c,i)=>c.classList.toggle('active',i===introIndex));
+ dots.forEach((d,i)=>d.classList.toggle('on',i===introIndex));
+ document.getElementById('introNext').textContent=introIndex===2?'Begin →':'Next →';
+}
+function introNext(){beep(650,.06);if(introIndex<2){introIndex++;renderIntro()}else{newAssignment()}}
+function introPrev(){if(introIndex>0){introIndex--;beep(420,.05);renderIntro()}else{setScreen('title')}}
+function newAssignment(){scenario=scenarios[Math.floor(Math.random()*scenarios.length)];flow=makeFlow(scenario);step=0;score=0;streak=0;lives=3;setScreen('game');populateScenario();renderGame();setVehicleZone('ICP',true)}
+function newAssignmentFromModal(){closeBonus();newAssignment()}
+function populateScenario(){
+ document.getElementById('assignmentLabel').textContent=`ASSIGNMENT · ${scenario.resource.toUpperCase()}`;
+ document.getElementById('resourceBadge').textContent=scenario.icon;
+ document.getElementById('reqResource').textContent=scenario.resource;document.getElementById('reqQty').textContent=scenario.qty;
+ document.getElementById('reqDest').textContent=scenario.dest;document.getElementById('reqTime').textContent=scenario.time;
+ document.getElementById('reqPriority').textContent=scenario.priority;document.getElementById('routePill').textContent=scenario.route;
+ document.getElementById('fieldTitle').textContent=scenario.final.toUpperCase();document.getElementById('fieldSub').textContent='Final operational assignment';
+}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function renderGame(){
+ const s=flow[step];
+ document.getElementById('prompt').textContent=s.prompt;document.getElementById('imh').textContent=s.imh;document.getElementById('imh').classList.remove('show');
+ document.getElementById('reqStatus').textContent=s.state;document.getElementById('worldState').textContent=s.state;
+ document.getElementById('score').textContent=score;document.getElementById('sideScore').textContent=score;document.getElementById('streak').textContent=streak+'x';document.getElementById('sideStreak').textContent=streak+'x';
+ document.getElementById('lives').textContent='♥'.repeat(lives)+'♡'.repeat(3-lives);document.getElementById('sideStep').textContent=(step+1)+'/'+flow.length;
+ const p=document.getElementById('progressTrack');p.innerHTML='';flow.forEach((_,i)=>{const d=document.createElement('div');d.className='progressDot '+(i<step?'done':i===step?'current':'');p.appendChild(d)});
+ const cg=document.getElementById('choices');cg.innerHTML='';
+ shuffle(s.choices).forEach((c,i)=>{const b=document.createElement('button');b.className='choice';b.innerHTML=`<div class="key">${String.fromCharCode(65+i)}</div><div class="ct">${c[0]}</div>`;b.onclick=()=>choose(b,c[1]);cg.appendChild(b)});
+ updateZones(s.zone);
+}
+function choose(btn,correct){
+ if(correct){
+  btn.classList.add('good'); const pts=100+streak*25;score+=pts;streak++;beep(820,.08);toast('CORRECT ROUTE +'+pts,'ok',1700);playTransition(flow[step]);
+  setTimeout(()=>{step++;if(step>=flow.length)win();else renderGame()},1100)
+ }else{
+  btn.classList.add('bad');streak=0;lives--;beep(170,.12);toast('NOT THIS ROUTE — OPEN THE IMH, VERIFY THE NEXT STEP, THEN TRY AGAIN.','no',4200);
+  document.getElementById('lives').textContent='♥'.repeat(Math.max(lives,0))+'♡'.repeat(Math.max(3-lives,0));document.getElementById('streak').textContent='0x';document.getElementById('sideStreak').textContent='0x';
+  setTimeout(()=>btn.classList.remove('bad'),620);if(lives<=0)setTimeout(gameOver,650)
+ }
+}
+function updateZones(zone){['zVendor','zICP','zStaging','zField'].forEach(id=>document.getElementById(id).classList.remove('active','done'));const map={Supplier:'zVendor',ICP:'zICP',Staging:'zStaging',Field:'zField'};if(map[zone])document.getElementById(map[zone]).classList.add('active')}
+function setVehicleZone(zone,instant=false){const pos={Supplier:'6%',ICP:'31%',Staging:'56%',Field:'81%'};const v=document.getElementById('vehicle');if(instant){v.style.transition='none';v.style.left=pos[zone]||'31%';void v.offsetWidth;v.style.transition='left 1s cubic-bezier(.2,.8,.2,1)'}else v.style.left=pos[zone]||'31%'}
+function playTransition(s){
+ if(s.anim==='phone'){pulse('phonePulse');dialTones();setVehicleZone('Supplier')}
+ if(s.anim==='clip'){pulse('clipPulse');beep(620,.08);setVehicleZone('Staging')}
+ if(s.anim==='radio'){pulse('radioPulse');radioChirp();setVehicleZone('ICP')}
+ if(s.anim==='truck'){engineChug();setVehicleZone(s.zone==='Field'?'Field':'Staging');pulse('clipPulse')}
+}
+function pulse(id){const e=document.getElementById(id);e.classList.remove('go');void e.offsetWidth;e.classList.add('go')}
+function toggleIMH(){document.getElementById('imh').classList.toggle('show');beep(470,.04)}
+function win(){setVehicleZone('Field');setScreen('win');document.getElementById('finalScore').textContent=`FINAL SCORE ${score.toLocaleString()} · BEST STREAK ${streak}x`;document.getElementById('winText').textContent=`${scenario.qty} ${scenario.resource}${scenario.qty==='1'?'':'s'} successfully routed to ${scenario.final}. Start another assignment and the scenario will change.`;fanfare()}
+function showBonus(){document.getElementById('bonusText').textContent=complications[Math.floor(Math.random()*complications.length)];document.getElementById('bonusModal').classList.add('show');bonusChime()}
+function closeBonus(){document.getElementById('bonusModal').classList.remove('show')}
+function gameOver(){gameOverSound();document.getElementById('gameOverText').textContent=`Three lives gone. Somewhere, ${scenario.resource.toLowerCase()} is probably asking, “Who actually owns this request?”`;document.getElementById('gameOverModal').classList.add('show')}
+function retryQuestion(){document.getElementById('gameOverModal').classList.remove('show');lives=3;streak=0;renderGame()}
+function openICPConfirm(){document.getElementById('icpModal').classList.add('show');beep(400,.05)}
+function closeICPConfirm(){document.getElementById('icpModal').classList.remove('show')}
+function goICP(){document.querySelectorAll('.modalOverlay').forEach(m=>m.classList.remove('show'));introIndex=0;step=0;score=0;streak=0;lives=3;setScreen('title')}
+function toast(msg,type,duration=2200){const t=document.getElementById('toast');t.textContent=msg;t.className='feedbackToast show '+type;clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove('show'),duration)}
+function toggleSound(){soundOn=!soundOn;document.getElementById('soundBtn').textContent=soundOn?'🔊':'🔇'}
+function beep(freq,dur,vol=.06){if(!soundOn)return;try{const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC(),o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(vol,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+dur);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+dur)}catch(e){}}
+function fanfare(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.16,.07),i*120))}
+function bonusChime(){[740,880,1040].forEach((f,i)=>setTimeout(()=>beep(f,.12,.055),i*95))}
+function dialTones(){[697,770,852].forEach((f,i)=>setTimeout(()=>beep(f,.08,.045),i*120))}
+function engineChug(){[95,110,90,120].forEach((f,i)=>setTimeout(()=>beep(f,.07,.035),i*90))}
+function radioChirp(){[930,1150,880].forEach((f,i)=>setTimeout(()=>beep(f,.045,.035),i*70))}
+function gameOverSound(){[440,392,349,294,220].forEach((f,i)=>setTimeout(()=>beep(f,.22,.07),i*120))}
+</script>
 </body>
 </html>

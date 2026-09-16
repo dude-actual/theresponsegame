@@ -1,21 +1,19 @@
-# The Response Game — Resource Run Platform v14 RC1
+# The Response Game — Resource Run Platform v15 RC1
 
 Resource Run is a browser-based incident-management simulation platform for practicing decisions across evolving incidents. The product is designed to feel like professional operational software while preserving real-world ICS concepts and organization-specific resource-request procedures.
 
-## v14 release focus
+## v15 release focus
 
-v14 is a **front-end modernization release**. The simulation engine, scoring model, progression, retention, analytics, and incident content are preserved.
+v15 is a **consequence-visibility release**. The simulation engine, scoring model, progression, retention, analytics, and incident content are preserved.
 
 The release adds:
 
-- a persistent command-status instrument panel;
-- professional resource lifecycle / deployment visualization;
-- queue timing and priority states;
-- resource utilization / availability states;
-- ten incident-specific visual themes;
-- command-and-control visual hierarchy;
-- AAR presentation aligned with the simulator;
-- v14 production QA and service-worker cache updates.
+- a live Incident Impact Feed linking decisions to operational outcomes;
+- a Common Operating Picture status layer for resource posture, objectives, incident trend, critical needs, and incident trajectory;
+- plain-language operational translations of existing resource / role consequences;
+- an Incident Outcome Chain at session completion;
+- a Decision-to-Outcome Timeline in generated AARs;
+- v15 production QA and service-worker cache updates.
 
 ## Current production scope
 
@@ -64,7 +62,7 @@ The ICS 213RR resource-request workflow remains a core Resources Unit / Logistic
 
 ## Command dashboard
 
-The v14 persistent Command Status surface displays:
+The persistent Command Status surface displays:
 
 - Incident
 - Role
@@ -76,6 +74,31 @@ The v14 persistent Command Status surface displays:
 - Critical Needs
 - Incident Cost
 - IER Projection
+
+v15 adds a companion Common Operating Picture status surface displaying:
+
+- Resource Posture
+- Mission Objectives
+- Incident Trend
+- Critical Need
+- Incident Trajectory
+
+These views are derived from existing engine state and do not introduce new incident mechanics.
+
+## Incident consequence visibility
+
+v15 observes consequence relationships that already exist in the engine and exposes them in operational language.
+
+The live Incident Impact Feed distinguishes:
+
+- player-caused negative consequences;
+- correct operational actions;
+- completed resource deployments;
+- missed required-time impacts;
+- changing external incident conditions;
+- downstream changes to stabilization, responder effectiveness, tempo, situational awareness, accountability, documentation, unmet needs, and cost.
+
+At incident conclusion, the Outcome Chain summarizes what happened, why it happened, which decision or condition caused the change, and the operational result.
 
 ## Resource operations visualization
 
@@ -148,7 +171,8 @@ Completed sessions produce a persistent report with:
 - improvement areas;
 - recommended retraining;
 - competency state;
-- analytics summary.
+- analytics summary;
+- v15 decision-to-outcome timeline.
 
 AARs can be downloaded as branded HTML and session data as JSON.
 
@@ -165,10 +189,15 @@ AARs can be downloaded as branded HTML and session data as JSON.
 - `trg-v13-experience.js` — retention, mission narrative, daily/weekly/seasonal operations, guided onboarding
 - `trg-v13-audio.js` — procedural professional audio cues
 
-### v14 production presentation
+### Command presentation retained from v14
 
 - `trg-v14-ui.js` — professional command-dashboard controller / rendering
 - `trg-v14.css` — visual system, responsive command layout, incident themes
+
+### v15 consequence visibility
+
+- `trg-v15-impact.js` — observational consequence / outcome presentation layer
+- `trg-v15.css` — Impact Feed, COP status, and Outcome Chain presentation
 - `index.html` — production application shell
 - `trg-sw.js` — static asset service worker
 - `manifest.webmanifest` / `trg-mark.svg` — app identity
@@ -196,7 +225,12 @@ The platform is designed around ICS organizational concepts and uses standard IC
 
 https://theresponsegame.com/
 
-## v14 documentation
+## v15 documentation
+
+- `docs/V15_CONSEQUENCE_AUDIT.md`
+- `docs/RELEASE_NOTES_V15_RC1.md`
+
+## v14 design documentation
 
 - `docs/V14_VISUAL_AUDIT.md`
 - `docs/V14_UX_ARCHITECTURE.md`

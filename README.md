@@ -1,6 +1,23 @@
-# The Response Game — Resource Run Platform v12
+# The Response Game — Resource Run Platform v13 RC1
 
 Resource Run is a browser-based serious-game platform for practicing incident-management decisions across evolving incidents. The game is designed to feel like an operational simulation while preserving real-world ICS concepts and organization-specific resource-request procedures.
+
+## Release-candidate experience
+
+The v13 release candidate adds a mission-first experience layer over the validated v12 incident engine:
+
+- single-screen mission briefings;
+- live operational-intelligence feed;
+- deployment / consequence alerts;
+- guided first mission and contextual help;
+- Incident of the Day, Daily Challenges, Weekly Operations, and Seasonal Operations;
+- challenge streaks and bonus progression;
+- professional procedural audio cues;
+- refined The Response Game brand system;
+- service-worker static asset caching;
+- automated GitHub Actions QA.
+
+The simulation core remains ICS-aligned and retains the ten incident packs, role progression, analytics, leaderboards, and AAR reports.
 
 ## Current production scope
 
@@ -49,11 +66,31 @@ The ICS 213RR resource-request workflow remains a core Resources Unit / Logistic
 
 ## Live dashboards
 
-The simulation exposes assigned resources, available resources, pending work, unmet needs, operational impacts, priority pressure, responder effectiveness, incident stabilization, operational tempo, simulated cost, and objectives / constraints / current conditions.
+The simulation exposes:
+
+- assigned resources
+- available resources
+- pending work
+- unmet needs
+- operational impacts
+- priority pressure
+- responder effectiveness
+- incident stabilization
+- operational tempo
+- simulated cost
+- objectives / constraints / current conditions
 
 ## Incident Effectiveness Rating
 
-The IER combines Accuracy, Speed, Accountability, Documentation, Operational Impact, Mission Success, and Cost Control.
+The IER combines:
+
+- Accuracy
+- Speed
+- Accountability
+- Documentation
+- Operational Impact
+- Mission Success
+- Cost Control
 
 ## Analytics
 
@@ -63,13 +100,28 @@ Tracked learning domains include prioritization, routing, sourcing, documentatio
 
 ## Leaderboards
 
-The client supports local session rankings, certification rankings, mastery rankings, and an organizational leaderboard adapter.
+The client supports:
+
+- local session rankings
+- certification rankings
+- mastery rankings
+- an organizational leaderboard adapter
 
 Shared organizational rankings require a configured backend. The static GitHub Pages client does not fabricate multi-user rankings.
 
 ## Session reports / AAR
 
-Completed sessions produce a persistent report with objectives and status, IER and sub-scores, operational impacts, simulated cost, strengths, improvement areas, recommended retraining, competency state, and analytics summary.
+Completed sessions produce a persistent report with:
+
+- objectives and status
+- IER and sub-scores
+- operational impacts
+- simulated cost
+- strengths
+- improvement areas
+- recommended retraining
+- competency state
+- analytics summary
 
 AARs can be downloaded as HTML and session data can be downloaded as JSON.
 
@@ -77,12 +129,17 @@ AARs can be downloaded as HTML and session data can be downloaded as JSON.
 
 Production files:
 
+- `trg-v13-experience.js` — retention, mission narrative, daily/weekly/seasonal operations, guided onboarding
+- `trg-v13-audio.js` — procedural professional audio cues
+- `trg-v13-ui.js` — release-candidate experience controller
+- `trg-v13.css` — v13 brand / interaction / mobile experience layer
+- `trg-sw.js` — same-origin static asset service worker
+- `manifest.webmanifest` / `trg-mark.svg` — app identity
 - `index.html` — application shell
 - `trg-v12-data.js` — incident packs, role definitions, resources, complications, registry
 - `trg-v12-services.js` — profiles, analytics, reports, leaderboards, AAR export
 - `trg-v12-engine.js` — hazard-agnostic simulation engine
-- `trg-v12-ui.js` — UI controller
-- `trg-v12.css` — responsive visual system
+- `trg-v12.css` — validated base responsive layout primitives retained beneath the v13 experience layer
 - `docs/PLATFORM_ARCHITECTURE.md` — platform architecture and organizational scaling
 - `docs/SCENARIO_AUTHORING.md` — authoring contract for future incident packs
 
@@ -108,3 +165,11 @@ The platform is designed around ICS organizational concepts and uses standard IC
 ## Production URL
 
 https://theresponsegame.com/
+
+## Release documentation
+
+- `docs/FINAL_EXPERIENCE_AUDIT.md`
+- `docs/BRAND_SYSTEM.md`
+- `docs/QA_REPORT_RC1.md`
+- `docs/PERFORMANCE_REPORT.md`
+- `docs/ACCESSIBILITY_REPORT.md`

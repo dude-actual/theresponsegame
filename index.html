@@ -4,15 +4,21 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <meta name="theme-color" content="#06111f"/>
-<title>The Response Game — Resource Run Platform</title>
-<meta name="description" content="A scalable ICS-aligned incident simulation platform for resource management, situational awareness, planning, logistics, operations, and command."/>
+<title>The Response Game — Resource Run</title>
+<meta name="description" content="A professional ICS-aligned operational simulation. Run evolving incidents, manage scarce resources, build mastery, and learn the system under pressure."/>
 <link rel="canonical" href="https://theresponsegame.com/"/>
 <meta property="og:title" content="The Response Game — Resource Run"/>
-<meta property="og:description" content="Choose an incident. Take an ICS role. Manage four operational periods and the consequences of your decisions."/>
-<meta property="og:image" content="https://image.thum.io/get/ogImage/https://theresponsegame.com/?preview=v12"/>
+<meta property="og:description" content="Run the incident. Make the call. Watch the consequences. Build operational mastery across evolving ICS simulations."/>
+<meta property="og:image" content="https://image.thum.io/get/ogImage/https://theresponsegame.com/?preview=v13"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="trg-v12.css?v=12"/>
+<link rel="stylesheet" href="trg-v13.css?v=13.0.0-rc1"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<link rel="icon" href="trg-mark.svg" type="image/svg+xml"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 </head>
 <body>
 <a class="skip" href="#decisionPanel">Skip to active decision</a>
@@ -31,10 +37,10 @@
 <div id="app">
 <section id="home" class="screen active">
  <div class="ambient"><div class="grid"></div><div class="radar r1"></div><div class="radar r2"></div><div class="terrain"></div></div>
- <header class="brandbar"><div class="brandmark">TRG</div><div><strong>The Response Game</strong><span>Incident Simulation Platform</span></div></header>
+ <header class="brandbar"><div class="brandmark" aria-label="TRG">TRG</div><div><strong>The Response Game</strong><span>Operational Simulation Platform</span></div></header>
  <main class="home-layout">
   <section class="hero-copy"><span class="kicker">Resource Run Platform</span><h1>Run the incident.<br>Learn the system.</h1><p>Choose an incident, take an ICS role, and manage four operational periods where resources, conditions, costs, and consequences carry forward.</p>
-   <div class="hero-actions"><button class="btn primary" id="launchBtn">Launch Simulation</button><button class="btn secondary" id="careerBtn">Career & Mastery</button><button class="btn ghost" id="leaderBtn">Leaderboards</button><button class="btn ghost" id="reportsBtn">Session Reports</button></div>
+   <div class="hero-actions"><button class="btn primary" id="launchBtn">Launch Simulation</button><button class="btn secondary" id="careerBtn">Career &amp; Mastery</button><button class="btn ghost" id="leaderBtn">Leaderboards</button><button class="btn ghost" id="reportsBtn">Session Reports</button></div>
    <div class="profile-strip"><div><span>Current Role</span><b id="homeRank">Resources Unit Trainee</b></div><div><span>Career XP</span><b id="homeXp">0</b></div><div><span>Mastery</span><b id="homeMastery">0%</b></div><div><span>Best IER</span><b id="homeBest">0</b></div></div>
   </section>
   <section class="setup glass">
@@ -62,5 +68,5 @@
 <section id="results" class="screen results-screen"><main class="results-wrap"><section class="result-hero glass"><span class="kicker">Incident Complete</span><h1>Incident Effectiveness Rating</h1><div class="ier"><b id="finalIer">0</b><span>IER</span></div><h2 id="finalGrade">—</h2><p id="finalSummary"></p></section><div class="result-grid"><section class="glass result-card"><span class="kicker">Performance</span><div id="scoreBreakdown"></div></section><section class="glass result-card"><span class="kicker">After Action Review</span><div id="aarSummary"></div></section><section class="glass result-card"><span class="kicker">Career Progress</span><div id="careerSummary"></div></section><section class="glass result-card"><span class="kicker">Achievements</span><div id="achievementSummary"></div></section></div><div class="result-actions"><button class="btn primary" id="againBtn">Run Another Incident</button><button class="btn secondary" id="downloadAarBtn"><svg><use href="#i-download"/></svg>Download AAR</button><button class="btn secondary" id="downloadJsonBtn">Download Data</button><button class="btn ghost" id="resultLeaderBtn">Leaderboards</button><button class="btn ghost" id="resultHomeBtn">Back to ICP</button></div></main></section>
 </div>
 <div id="modalBack" class="modal-back" aria-hidden="true"><section id="modal" class="modal glass" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><span id="modalKicker" class="kicker">Incident Update</span><h2 id="modalTitle">Update</h2><div id="modalBody"></div><div id="modalActions" class="modal-actions"></div></section></div>
-<script src="trg-v12-data.js?v=12"></script><script src="trg-v12-services.js?v=12"></script><script src="trg-v12-engine.js?v=12"></script><script src="trg-v12-ui.js?v=12"></script>
+<script src="trg-v12-data.js?v=12"></script><script src="trg-v12-services.js?v=12"></script><script src="trg-v12-engine.js?v=12"></script><script src="trg-v13-experience.js?v=13.0.0-rc1"></script><script src="trg-v13-audio.js?v=13.0.0-rc1"></script><script src="trg-v13-ui.js?v=13.0.0-rc1"></script>
 </body></html>

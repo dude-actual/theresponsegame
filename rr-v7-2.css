@@ -1,0 +1,65 @@
+/* intro */
+#intro .wrap{position:absolute;inset:0;display:grid;place-items:center;padding:22px}
+.introShell{width:min(900px,94vw);display:grid;gap:16px;position:relative;z-index:2}
+.introCard{display:none;min-height:400px;border-radius:28px;padding:34px;background:linear-gradient(180deg,rgba(11,25,44,.88),rgba(8,19,33,.92));backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
+.introCard.active{display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.stepKicker{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--yellow);font-weight:900}
+.introTitle{font-family:"Barlow Condensed";font-size:clamp(54px,7vw,88px);line-height:.9;text-transform:uppercase;margin:12px 0 12px}
+.introText{font-size:clamp(20px,2.3vw,28px);line-height:1.35;color:#d4e1ec;font-weight:650;max-width:650px}
+.introNav{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.dots{display:flex;gap:8px;align-items:center}.dot{width:10px;height:10px;border-radius:99px;background:#2a4561}.dot.on{width:30px;background:var(--yellow)}
+.navBtn{border:1px solid rgba(124,164,199,.35);background:#10253d;color:#fff;border-radius:14px;padding:13px 16px;font-weight:850;cursor:pointer}
+.navBtn.primary{background:linear-gradient(180deg,#2f8fff,#216eff)}
+
+/* app */
+#game{background:radial-gradient(circle at top,#0d2748,#07111f 52%,#040a13 100%)}
+.app{height:100dvh;display:grid;grid-template-rows:72px minmax(0,1fr) 78px;max-width:1320px;margin:0 auto;padding:12px 18px 18px;gap:12px}
+.topBar{display:flex;align-items:center;gap:14px;min-width:0}
+.topBtn{height:58px;border-radius:18px;padding:0 16px;background:rgba(9,24,40,.82);backdrop-filter:blur(10px);border:1px solid rgba(113,157,196,.32);color:#f8fbff;font-weight:900;display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.topBtn svg{width:28px;height:28px}
+.brandBlock{min-width:0;flex:1 1 auto;padding:0 8px}
+.brandBlock .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#8eabc4;font-weight:850}
+.brandBlock .gameName{font-family:"Barlow Condensed";font-size:40px;line-height:.9;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topMeta{display:flex;gap:10px;flex:0 0 auto}
+.infoChip{min-width:104px;background:rgba(10,24,40,.82);backdrop-filter:blur(10px);border:1px solid rgba(113,157,196,.25);border-radius:18px;padding:11px 14px}
+.infoChip .lab{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#8eaac2;font-weight:800}
+.infoChip .val{font-family:"Barlow Condensed";font-size:28px;line-height:1;font-weight:900;margin-top:2px}
+.hearts{letter-spacing:1px;color:#ff6b7b}
+
+.stage{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px}
+.primaryCol{min-height:0;display:grid;grid-template-rows:250px minmax(0,1fr);gap:14px}
+.panel{background:linear-gradient(180deg,rgba(12,30,50,.92),rgba(8,20,34,.96));border:1px solid rgba(255,255,255,.08);border-radius:28px;box-shadow:var(--shadow)}
+.worldPanel{position:relative;overflow:hidden;padding:18px 22px 18px}
+.worldPanel::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(circle at 86% 12%,rgba(63,177,255,.24),transparent 18%),
+  linear-gradient(180deg,rgba(28,78,129,.12),transparent 28%),
+  linear-gradient(180deg,#0b2140 0%,#07192f 52%,#07111f 100%)}
+.worldMeta{position:relative;z-index:3;display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.worldMeta .assignment{font-family:"Barlow Condensed";font-size:42px;line-height:.9;text-transform:uppercase;font-weight:900;letter-spacing:.01em;max-width:68%}
+.worldMeta .assignmentSub{margin-top:6px;color:#a8bfd5;font-size:14px;font-weight:650}
+.worldMeta .state{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#c1d0dc;font-weight:900;text-align:right;max-width:28%}
+.scene{position:absolute;left:0;right:0;bottom:0;top:76px;overflow:hidden}
+.m1,.m2,.m3,.hill1,.hill2,.hill3,.treeline1,.treeline2{position:absolute;left:0;right:0}
+.m1{bottom:115px;height:150px;background:linear-gradient(180deg,transparent 0,#0a2444 100%);clip-path:polygon(0 100%,8% 63%,16% 74%,22% 48%,29% 66%,35% 45%,43% 74%,52% 49%,60% 65%,68% 38%,76% 61%,82% 47%,88% 72%,96% 56%,100% 63%,100% 100%)}
+.m2{bottom:92px;height:126px;background:#0a1f39;opacity:.92;clip-path:polygon(0 100%,9% 70%,17% 78%,25% 55%,32% 68%,40% 44%,47% 58%,55% 35%,63% 57%,70% 33%,76% 54%,82% 40%,88% 62%,95% 48%,100% 55%,100% 100%)}
+.m3{bottom:78px;height:118px;background:#08192e;opacity:.9;clip-path:polygon(0 100%,7% 78%,15% 84%,23% 61%,30% 75%,39% 57%,46% 77%,54% 58%,62% 69%,71% 49%,80% 68%,87% 56%,94% 73%,100% 63%,100% 100%)}
+.treeline1{bottom:62px;height:48px;background:repeating-conic-gradient(from 45deg at 50% 100%, transparent 0deg 60deg, #081725 60deg 120deg) 0 0/38px 30px repeat-x;opacity:.7}
+.treeline2{bottom:56px;height:32px;background:repeating-conic-gradient(from 45deg at 50% 100%, transparent 0deg 60deg, #06111e 60deg 120deg) 0 0/28px 22px repeat-x;opacity:.75}
+.road{position:absolute;left:0;right:0;bottom:30px;height:44px;background:linear-gradient(180deg,#0d131a,#091016);border-top:2px solid rgba(141,172,196,.22)}
+.road:after{content:"";position:absolute;left:6%;right:6%;top:20px;height:4px;background:repeating-linear-gradient(90deg,#ffcf3e 0 34px,transparent 34px 78px)}
+.structure{position:absolute;bottom:74px;opacity:.98}
+.structure .light{position:absolute;background:rgba(255,245,180,.86);box-shadow:0 0 12px rgba(255,242,170,.55)}
+.warehouse{left:5.5%;width:190px;height:94px}
+.warehouse .body{position:absolute;inset:20px 0 0;border-radius:6px 6px 0 0;background:#123b60}
+.warehouse .roof{position:absolute;left:14px;right:14px;top:0;height:28px;background:#164d7b;clip-path:polygon(0 100%,14% 0,86% 0,100% 100%)}
+.warehouse .door{position:absolute;left:46px;right:46px;bottom:0;height:56px;background:#0b2741;border:2px solid #2a6089;border-bottom:0}
+.warehouse .light.l1{width:24px;height:4px;left:54px;top:42px}.warehouse .light.l2{width:24px;height:4px;right:54px;top:42px}
+.icpTent{left:34%;width:210px;height:104px}
+.icpTent .roof{position:absolute;left:0;right:0;top:0;height:46px;background:#295b8f;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.icpTent .body{position:absolute;left:18px;right:18px;top:40px;bottom:0;border-radius:10px 10px 0 0;background:#123659;border:2px solid #2a618d;border-bottom:0}
+.icpTent .door{position:absolute;left:82px;width:46px;bottom:0;height:42px;background:#0c2237}
+.icpTent .pole{position:absolute;left:50%;top:-14px;width:3px;height:22px;background:#7abaff}
+.icpTent .flag{position:absolute;left:calc(50% + 3px);top:-12px;width:18px;height:12px;background:#7abaff;clip-path:polygon(0 0,100% 45%,0 100%)}
+.stagingBay{left:61%;width:230px;height:104px}
+.stagingBay .shell{position:absolute;left:0;right:0;top:6px;bottom:0;background:#103252;border-radius:54% 54% 10px 10px/58% 58% 10px 10px;border:2px solid #285d89;border-bottom:0}
+.stagingBay .opening{position:absolute;left:74px;right:74px;bottom:0;height:58px;background:#0a2440;border-radius:8px 8px 0 0}

@@ -17,6 +17,7 @@
 <meta name="twitter:description" content="Interactive ICS 213-RR resource request process challenge."/>
 <meta name="twitter:image" content="https://theresponsegame.com/share-preview.png"/>
 <link rel="stylesheet" href="resource-run.css?v=2"/>
+<link rel="stylesheet" href="resource-run-mobile-v3.css?v=3"/>
 </head>
 <body>
 <section id="title" class="screen active">
@@ -43,12 +44,13 @@
 
 <section id="game" class="screen">
  <div class="hud">
-  <button class="iconBtn" onclick="openICPConfirm()"><svg class="icsIcon" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3"/><path d="M4 36 L36 4 L36 36 Z" fill="currentColor"/></svg><span class="backLabel">BACK TO ICP</span></button>
+  <button class="iconBtn" onclick="openICPConfirm()" aria-label="Back to Incident Command Post"><svg class="icsIcon" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3"/><path d="M4 36 L36 4 L36 36 Z" fill="currentColor"/></svg><span class="backLabel">BACK TO ICP</span></button>
   <div class="gameBrand">RESOURCE RUN</div>
   <div class="hudChip"><div class="lab">Score</div><div class="val" id="score">0</div></div>
   <div class="hudChip"><div class="lab">Streak</div><div class="val" id="streak">0x</div></div>
   <div class="hudChip"><div class="lab">Lives</div><div class="val hearts" id="lives">♥♥♥</div></div>
-  <button class="iconBtn" id="soundBtn" onclick="toggleSound()">🔊</button>
+  <button class="iconBtn mobileOnly" id="imhHudBtn" onclick="openIMHModal()" aria-label="Open Incident Management Handbook"><span aria-hidden="true">📘</span><span>IMH</span></button>
+  <button class="iconBtn" id="soundBtn" onclick="toggleSound()" aria-label="Toggle sound">🔊</button>
  </div>
  <div class="gameBody">
   <div class="leftCol">
@@ -86,13 +88,29 @@
 
 <section id="win" class="screen">
  <div class="bg"><div class="gridlines"></div></div>
- <div class="winBox"><div class="badge">RR</div><h2>Assignment Complete</h2><div class="finalScore" id="finalScore"></div><p id="winText"></p><div class="winActions"><button class="cta" onclick="newAssignment()">START NEW ASSIGNMENT</button><button class="secondary" onclick="showBonus()">DRAW COMPLICATION</button><button class="secondary" onclick="goICP()">BACK TO ICP</button></div></div>
+ <div class="winBox"><div class="badge">RR</div><h2>Assignment Complete</h2><div class="finalScore" id="finalScore"></div><p id="winText"></p><div class="winActions"><button class="cta" onclick="newAssignment()">START NEW ASSIGNMENT</button><button class="secondary" onclick="showBonus()">DRAW A COMPLICATION CARD</button><button class="secondary" onclick="goICP()">BACK TO ICP</button></div></div>
 </section>
 
 <div id="toast" class="feedbackToast"></div>
+
+<div id="imhModal" class="modalOverlay">
+ <div class="modalBox imhModalBox">
+  <div class="modalIcon">📘</div>
+  <div class="imhModalEyebrow" id="imhModalStep">CURRENT STEP</div>
+  <h3>Incident Management Handbook</h3>
+  <p class="imhModalHint">Use the IMH as a job aid. This guide shows the process guidance for the decision you are working right now.</p>
+  <div class="imhModalText" id="imhModalText"></div>
+  <div class="modalActions"><button class="cta" onclick="closeIMHModal()">RETURN TO ASSIGNMENT</button></div>
+ </div>
+</div>
+
 <div id="gameOverModal" class="modalOverlay"><div class="modalBox gameOverBox"><div class="modalIcon">💥</div><h3>Request Lost in the System</h3><p id="gameOverText"></p><div class="modalActions"><button class="cta" onclick="retryQuestion()">REWORK REQUEST</button><button class="secondary" onclick="goICP()">BACK TO ICP</button></div></div></div>
-<div id="bonusModal" class="modalOverlay"><div class="modalBox bonusBox"><div class="modalIcon">⚡</div><h3>Complication Card</h3><p id="bonusText"></p><div class="modalActions"><button class="cta" onclick="closeBonus()">RETURN TO OPERATIONS</button><button class="secondary" onclick="newAssignmentFromModal()">START NEW ASSIGNMENT</button></div></div></div>
+
+<div id="bonusModal" class="modalOverlay"><div class="modalBox bonusBox"><div class="modalIcon">⚡</div><h3>Bonus Complication Card</h3><p style="margin-bottom:12px;color:#91a8bb;font-size:14px;font-weight:700">One more problem to solve before you clear the assignment.</p><p id="bonusText"></p><div class="modalActions"><button class="cta" onclick="closeBonus()">RETURN TO RESULTS</button><button class="secondary" onclick="newAssignmentFromModal()">START NEW ASSIGNMENT</button></div></div></div>
+
 <div id="icpModal" class="modalOverlay"><div class="modalBox icpBox"><div class="modalIcon"><svg class="icsIcon" style="width:62px;height:62px;margin:0" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3"/><path d="M4 36 L36 4 L36 36 Z" fill="currentColor"/></svg></div><h3>Return to the ICP?</h3><p>Your current assignment progress will reset.</p><div class="modalActions"><button class="cta" onclick="goICP()">CONFIRM — BACK TO ICP</button><button class="secondary" onclick="closeICPConfirm()">RETURN TO ASSIGNMENT</button></div></div></div>
+
 <script src="resource-run.js?v=2"></script>
+<script src="resource-run-mobile-v3.js?v=3"></script>
 </body>
 </html>

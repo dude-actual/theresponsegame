@@ -1,0 +1,106 @@
+.dockItem .val{font-family:"Barlow Condensed";font-size:28px;line-height:1;font-weight:900}
+.dockBtn{color:#fff;font-weight:900}
+.dockBtn .icon{font-size:20px;line-height:1}
+
+.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);min-width:320px;max-width:min(740px,88vw);padding:16px 20px;border-radius:18px;background:#0e243b;border:1px solid #2f597d;box-shadow:0 24px 60px rgba(0,0,0,.45);font-weight:900;text-align:center;opacity:0;pointer-events:none;transition:.22s;z-index:80}
+.toast.show{opacity:1;transform:translate(-50%,0)}.toast.ok{border-color:var(--green)}.toast.no{border-color:var(--red)}
+
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(2,8,15,.66);backdrop-filter:blur(10px);z-index:90}
+.overlay.show{display:flex}
+.modal{width:min(680px,94vw);border-radius:30px;border:1px solid rgba(255,255,255,.1);box-shadow:var(--shadow);background:linear-gradient(180deg,rgba(10,25,43,.96),rgba(8,18,30,.98));padding:30px 28px;text-align:center}
+.modal .badgeIcon{font-size:56px;line-height:1;margin-bottom:12px}
+.modal .icsBadge{display:inline-flex;align-items:center;justify-content:center;width:78px;height:78px;border-radius:22px;border:1px solid rgba(255,255,255,.16);background:rgba(14,37,62,.72);margin-bottom:14px}
+.modal .icsBadge svg{width:40px;height:40px}
+.modal h3{margin:0 0 10px;font-family:"Barlow Condensed";font-size:58px;line-height:.92;text-transform:uppercase}
+.modal p{margin:0 auto 22px;max-width:520px;font-size:20px;line-height:1.45;color:#d4e1ec}
+.modalActions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.modal.gameOver{border-color:rgba(255,93,111,.65)}.modal.icp{border-color:rgba(56,223,146,.65)}.modal.bonus{border-color:rgba(255,207,62,.65)}
+
+#win .heroWrap{padding:22px}
+.winCard{position:relative;width:min(1120px,94vw);min-height:min(84vh,760px);border-radius:34px;overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);background:#09131f;display:grid;place-items:center}
+
+.winCard::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,13,23,.22),rgba(5,10,19,.7))}
+.winInner{position:relative;z-index:2;max-width:760px;padding:34px;text-align:center}
+.winInner .eyebrow{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--yellow);font-weight:900}
+.winInner h2{margin:10px 0 12px;font-family:"Barlow Condensed";font-size:clamp(72px,10vw,118px);line-height:.88;text-transform:uppercase}
+.finalScore{font-family:"Barlow Condensed";font-size:clamp(34px,4.4vw,56px);color:var(--cyan);font-weight:900;margin-bottom:16px}
+.winText{font-size:20px;line-height:1.5;color:#d3e0eb}
+.winActions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+
+.hiddenDesktop{display:none}
+
+@supports (padding: max(0px)) {
+  .app{padding-left:max(18px, env(safe-area-inset-left));padding-right:max(18px, env(safe-area-inset-right));padding-bottom:max(18px, env(safe-area-inset-bottom));}
+  .heroWrap,#intro .wrap,#win .heroWrap,.overlay{padding-left:max(22px, env(safe-area-inset-left));padding-right:max(22px, env(safe-area-inset-right));padding-top:max(22px, env(safe-area-inset-top));padding-bottom:max(22px, env(safe-area-inset-bottom));}
+}
+
+@media (max-width: 1080px){
+  .stage{grid-template-columns:1fr}
+  .sideCol{display:none}
+}
+
+@media (max-width: 760px){
+  body{overflow:hidden}
+  .heroWrap{padding:16px}
+  .heroCard{height:min(80vh,620px);border-radius:24px}
+  .heroTitleBlock{top:40%;width:90%}
+  .heroRR{width:54px;height:54px;border-radius:14px;font-size:26px}
+  .heroBrandLine{font-size:9px}
+  .heroMainTitle{font-size:58px;margin:8px 0}
+  .heroTagline{font-size:14px}
+  .heroProcess{gap:8px;font-size:8px;margin-top:14px}
+  .heroProcess span:not(:last-child)::after{margin-left:8px}
+  .heroMiniScene{left:2%;right:2%;bottom:48px;height:70px}
+  .heroBuilding.supplier{width:74px;height:40px}.heroBuilding.icp{width:70px;height:44px}.heroBuilding.staging{width:84px;height:44px}.heroBuilding.field{width:56px;height:38px}
+  .heroTruck{width:66px;height:28px;left:43%}.heroTruck::before{width:45px;height:20px}.heroTruck::after{width:26px;height:23px}.heroTruck .w{width:13px;height:13px;border-width:3px}.heroTruck .w2{right:4px}
+  .titleMini{top:16px;left:16px;padding:11px 14px;border-radius:14px}
+  .titleMini .brand{font-size:18px}.titleMini .kicker{font-size:9px}
+  .heroActions{left:16px;right:16px;bottom:18px;align-items:stretch;flex-direction:column}
+  .heroCaption .tiny{font-size:10px}.heroCaption .sub{font-size:14px}
+  .cta{font-size:15px;padding:15px 18px;border-radius:15px}
+  .secondaryBtn,.ghostBtn{font-size:14px;padding:13px 14px;border-radius:14px}
+
+  .introCard{min-height:360px;padding:22px;border-radius:24px}
+  .introTitle{font-size:52px}.introText{font-size:17px}.stepKicker{font-size:11px}
+
+  .app{padding:10px 10px 12px;grid-template-rows:60px minmax(0,1fr) 72px;gap:10px}
+  .topBar{gap:8px}
+  .topBtn{height:50px;padding:0 12px;border-radius:16px;font-size:13px}
+  .topBtn svg{width:24px;height:24px}
+  .brandBlock .eyebrow{display:none}
+  .brandBlock .gameName{font-size:27px}
+  .topMeta{display:none}
+
+  .primaryCol{grid-template-rows:180px minmax(0,1fr);gap:10px}
+  .worldPanel{padding:12px 14px;border-radius:22px}
+  .worldMeta .assignment{font-size:24px;max-width:72%}
+  .worldMeta .assignmentSub{font-size:11px;margin-top:3px}
+  .worldMeta .state{font-size:9px;max-width:28%}
+  .scene{top:56px}
+  .m1{bottom:95px;height:110px}.m2{bottom:82px;height:90px}.m3{bottom:72px;height:80px}
+  .treeline1{bottom:57px;height:30px}.treeline2{bottom:54px;height:22px}
+  .road{bottom:22px;height:34px}.road:after{top:15px;height:3px;left:5%;right:5%;background:repeating-linear-gradient(90deg,#ffcf3e 0 24px,transparent 24px 54px)}
+  .warehouse{left:4.5%;width:96px;height:50px}.warehouse .body{top:10px}.warehouse .roof{left:8px;right:8px;height:16px}.warehouse .door{left:24px;right:24px;height:28px}.warehouse .light.l1{left:26px;top:24px;width:12px}.warehouse .light.l2{right:26px;top:24px;width:12px}
+  .icpTent{left:33%;width:105px;height:56px}.icpTent .roof{height:22px}.icpTent .body{left:10px;right:10px;top:20px}.icpTent .door{left:39px;width:20px;height:24px}.icpTent .pole{top:-8px;height:14px}.icpTent .flag{top:-8px;width:11px;height:7px}
+  .stagingBay{left:60%;width:115px;height:54px}.stagingBay .opening{left:36px;right:36px;height:28px}.stagingBay .crate{width:9px;height:9px}.stagingBay .c1{left:22px}.stagingBay .c2{left:33px}.stagingBay .c3{right:26px}.stagingBay .c4{right:37px}
+  .fieldOps{right:3.5%;width:86px;height:60px}.fieldOps .tower{right:12px;width:10px;height:55px}.fieldOps .mast{right:9px;top:-1px;width:13px;height:13px;border-width:2px}.fieldOps .wave{border-width:2px}.fieldOps .w1{right:19px;top:1px;width:12px;height:12px}.fieldOps .w2{right:15px;top:-3px;width:20px;height:20px}.fieldOps .w3{right:10px;top:-8px;width:28px;height:28px}.fieldOps .tent{width:34px;height:24px}
+  .markerRow{bottom:74px;left:3%;right:3%}
+  .marker{font-size:8px;gap:5px}.marker .dot{width:8px;height:8px}.marker.active .dot{box-shadow:0 0 0 7px rgba(255,207,62,.12),0 0 18px rgba(255,207,62,.32)}
+  .vehicle{bottom:33px;width:92px;height:42px}.vbody{width:62px;height:28px;border-width:2px}.vcab{width:34px;height:31px}.vwind{width:13px;height:10px;right:6px;top:7px}.wheel{width:18px;height:18px;border-width:4px;bottom:-7px}.wh1{left:11px}.wh2{left:66px}.resourceBadge{top:-22px;font-size:8px;padding:4px 6px}.headlight{width:52px;height:24px;top:12px}.phonePulse,.clipPulse,.radioPulse{bottom:92px;font-size:20px}
+
+  .questionPanel{padding:14px 14px 12px;border-radius:22px;overflow:hidden}
+  .questionLabel{font-size:9px}.prompt{font-size:clamp(24px,7.4vw,34px);margin:8px 0 6px}.assignmentLine{font-size:12px;margin-bottom:10px}
+  .choices{grid-template-columns:1fr;grid-template-rows:repeat(3,minmax(0,1fr));gap:8px}
+  .choice{min-height:0;padding:12px;border-radius:18px;align-items:center}.choice .key{width:34px;height:34px;font-size:21px;border-radius:10px}.choice .ct{font-size:16px;line-height:1.22}
+
+  .dock{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+  .dockItem,.dockBtn{border-radius:16px;padding:8px 4px}
+  .dockItem .lab,.dockBtn .lab{font-size:8px;letter-spacing:.12em}
+  .dockItem .val{font-size:21px}.dockBtn .icon{font-size:18px}
+
+  .toast{bottom:84px;min-width:0;width:calc(100% - 22px);padding:13px 14px;border-radius:14px;font-size:13px}
+  .modal{width:100%;border-radius:24px;padding:24px 18px}
+  .modal h3{font-size:42px}.modal p{font-size:16px}.modalActions{gap:8px}
+  .winCard{min-height:calc(100dvh - 40px);border-radius:24px}.winInner{padding:18px}.winInner h2{font-size:64px}.finalScore{font-size:32px}.winText{font-size:17px}
+  .winActions{gap:8px}.winActions .cta,.winActions .secondaryBtn{width:100%;justify-content:center}
+}

@@ -1,75 +1,66 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#06111f" />
-  <meta name="color-scheme" content="dark" />
-  <title>Resource Run — The Response Game</title>
-  <meta name="description" content="Resource Run is an evolving incident resource-management simulation built around the ICS 213-RR process." />
-  <link rel="canonical" href="https://theresponsegame.com/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Resource Run — The Response Game" />
-  <meta property="og:description" content="Four operational periods. Limited resources. Every decision changes what happens next." />
-  <meta property="og:url" content="https://theresponsegame.com/" />
-  <meta property="og:image" content="https://image.thum.io/get/ogImage/https://theresponsegame.com/?preview=v11" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Resource Run — The Response Game" />
-  <meta name="twitter:description" content="An evolving ICS resource-management simulation." />
-  <meta name="twitter:image" content="https://image.thum.io/get/ogImage/https://theresponsegame.com/?preview=v11" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="rr-v11-core.css?v=11.1" />
-  <link rel="stylesheet" href="rr-v11-sim.css?v=11.1" />
-  <link rel="stylesheet" href="rr-v11-responsive.css?v=11.1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#06111f"/>
+<title>The Response Game — Resource Run Platform</title>
+<meta name="description" content="A scalable ICS-aligned incident simulation platform for resource management, situational awareness, planning, logistics, operations, and command."/>
+<link rel="canonical" href="https://theresponsegame.com/"/>
+<meta property="og:title" content="The Response Game — Resource Run"/>
+<meta property="og:description" content="Choose an incident. Take an ICS role. Manage four operational periods and the consequences of your decisions."/>
+<meta property="og:image" content="https://image.thum.io/get/ogImage/https://theresponsegame.com/?preview=v12"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="trg-v12.css?v=12"/>
 </head>
 <body>
-<a class="skip-link" href="#decisionPanel">Skip to active decision</a>
-
-<svg class="icon-sprite" aria-hidden="true" focusable="false">
-  <symbol id="i-icp" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="2" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M4 36 36 4v32H4Z" fill="currentColor"/></symbol>
-  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5v-16Z"/></symbol>
-  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></symbol>
-  <symbol id="i-volume-off" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 5 5M22 9l-5 5"/></symbol>
-  <symbol id="i-route" viewBox="0 0 24 24"><path d="M4 18c0-3 2-5 5-5h6c3 0 5-2 5-5"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="8" r="2"/></symbol>
-  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 12h6M9 16h6"/></symbol>
-  <symbol id="i-truck" viewBox="0 0 28 20"><path d="M2 5h14v9H2zM16 8h5l4 4v2h-9z"/><circle cx="7" cy="16" r="2.3"/><circle cx="21" cy="16" r="2.3"/></symbol>
-  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
-  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2.7 20h18.6L12 3Z"/><path d="M12 9v5M12 17h.01"/></symbol>
-  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
-  <symbol id="i-badge" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="m8 12-2 9 6-3 6 3-2-9"/></symbol>
-  <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 20c0-4 2.5-7 6-7s6 3 6 7M14 14c3 0 5 2 5 5"/></symbol>
-  <symbol id="i-weather" viewBox="0 0 24 24"><path d="M6 16h11a4 4 0 0 0 .5-8A6 6 0 0 0 6 10a3 3 0 0 0 0 6Z"/><path d="m8 19-1 2M13 19l-1 2M18 19l-1 2"/></symbol>
-  <symbol id="i-queue" viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></symbol>
-  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m8 12 3 3 5-6"/></symbol>
+<a class="skip" href="#decisionPanel">Skip to active decision</a>
+<svg class="sprite" aria-hidden="true">
+ <symbol id="i-icp" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M4 36 36 4v32H4Z" fill="currentColor"/></symbol>
+ <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a3 3 0 0 1 3-3h4v17H7a3 3 0 0 0-3 3zM20 5a3 3 0 0 0-3-3h-4v17h4a3 3 0 0 1 3 3z"/></symbol>
+ <symbol id="i-truck" viewBox="0 0 28 20"><path d="M2 5h14v9H2zM16 8h5l4 4v2h-9z"/><circle cx="7" cy="16" r="2.2"/><circle cx="21" cy="16" r="2.2"/></symbol>
+ <symbol id="i-map" viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/></symbol>
+ <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20V7"/></symbol>
+ <symbol id="i-list" viewBox="0 0 24 24"><path d="M7 6h14M7 12h14M7 18h14"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></symbol>
+ <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m8 12 3 3 5-6"/></symbol>
+ <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+ <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19z"/><path d="M12 9v5M12 17h.01"/></symbol>
+ <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></symbol>
 </svg>
-
-<div id="appRoot" class="app-root">
-  <section id="landing" class="screen screen--landing is-active" aria-labelledby="landingTitle">
-    <div class="landing-atmosphere" aria-hidden="true"><div class="radar radar-a"></div><div class="radar radar-b"></div><div class="grid-haze"></div><div class="terrain t1"></div><div class="terrain t2"></div><div class="terrain t3"></div></div>
-    <header class="landing-brand"><div class="brand-mark">RR</div><div><div class="brand-overline">The Response Game</div><div class="brand-caption">Operational Resource Simulation</div></div></header>
-    <main class="landing-layout">
-      <div class="landing-copy"><span class="eyebrow">Evolving Incident Simulation</span><h1 id="landingTitle">Resource Run</h1><p class="landing-lede">Four operational periods. Limited resources. Every decision changes what happens next.</p><div class="landing-actions"><button class="btn btn-primary" id="startMissionBtn" type="button">Start Incident</button><button class="btn btn-secondary" id="openCareerBtn" type="button">Career & Mastery</button></div><div class="landing-profile" aria-label="Player progression"><div><span>Current Role</span><strong id="landingRank">Resources Unit Trainee</strong></div><div><span>Career XP</span><strong id="landingXp">0</strong></div><div><span>Mastery</span><strong id="landingMastery">0%</strong></div></div></div>
-      <div class="landing-console glass"><div class="console-head"><div><span class="eyebrow">Incident Generator</span><h2>Mission Setup</h2></div><span class="status-dot status-dot-green"></span></div><label class="field-label">Difficulty</label><div class="difficulty-grid" id="difficultyGrid"><button class="difficulty-card is-selected" data-difficulty="Recruit" type="button"><strong>Recruit</strong><span>Guided routing</span></button><button class="difficulty-card" data-difficulty="Qualified" type="button"><strong>Qualified</strong><span>Faster tempo</span></button><button class="difficulty-card" data-difficulty="Advanced" type="button"><strong>Advanced</strong><span>Resource conflicts</span></button><button class="difficulty-card" data-difficulty="Section Chief" type="button"><strong>Section Chief</strong><span>Cross-function pressure</span></button><button class="difficulty-card" data-difficulty="Command Staff" type="button"><strong>Command Staff</strong><span>Maximum complexity</span></button></div><div class="setup-stats"><div><span>Operational Periods</span><strong>4</strong></div><div><span>Incident Requests</span><strong>8–14</strong></div><div><span>Conditions</span><strong>Dynamic</strong></div></div></div>
-    </main>
+<div id="app">
+<section id="home" class="screen active">
+ <div class="ambient"><div class="grid"></div><div class="radar r1"></div><div class="radar r2"></div><div class="terrain"></div></div>
+ <header class="brandbar"><div class="brandmark">TRG</div><div><strong>The Response Game</strong><span>Incident Simulation Platform</span></div></header>
+ <main class="home-layout">
+  <section class="hero-copy"><span class="kicker">Resource Run Platform</span><h1>Run the incident.<br>Learn the system.</h1><p>Choose an incident, take an ICS role, and manage four operational periods where resources, conditions, costs, and consequences carry forward.</p>
+   <div class="hero-actions"><button class="btn primary" id="launchBtn">Launch Simulation</button><button class="btn secondary" id="careerBtn">Career & Mastery</button><button class="btn ghost" id="leaderBtn">Leaderboards</button><button class="btn ghost" id="reportsBtn">Session Reports</button></div>
+   <div class="profile-strip"><div><span>Current Role</span><b id="homeRank">Resources Unit Trainee</b></div><div><span>Career XP</span><b id="homeXp">0</b></div><div><span>Mastery</span><b id="homeMastery">0%</b></div><div><span>Best IER</span><b id="homeBest">0</b></div></div>
   </section>
-
-  <section id="briefing" class="screen" aria-labelledby="briefingTitle"><div class="briefing-shell glass"><div class="briefing-top"><span class="eyebrow">Incident Briefing</span><span id="briefingCounter">1 / 3</span></div><article class="brief-card is-active" data-step="0"><div class="brief-icon"><svg viewBox="0 0 24 24"><use href="#i-queue"/></svg></div><h2 id="briefingTitle">Requests now compete for attention.</h2><p>Prioritize the incident, route each request correctly, and protect scarce resources across four operational periods.</p></article><article class="brief-card" data-step="1"><div class="brief-icon"><svg viewBox="0 0 24 24"><use href="#i-alert"/></svg></div><h2>Mistakes create operational consequences.</h2><p>Bad routing, weak documentation, and missed accountability reduce mission effectiveness and can delay critical field work.</p></article><article class="brief-card" data-step="2"><div class="brief-icon"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></div><h2>The IMH is part of the game.</h2><p>Use the handbook whenever you need it. Mastery means knowing how to find and apply the process under pressure.</p></article><div class="briefing-footer"><div class="brief-dots"><i class="on"></i><i></i><i></i></div><div class="brief-actions"><button class="btn btn-quiet" id="briefBackBtn">Back</button><button class="btn btn-primary" id="briefNextBtn">Next</button></div></div></div></section>
-
-  <section id="game" class="screen" aria-label="Active Resource Run incident"><div class="sim-shell"><header class="sim-topbar glass"><button class="icon-button" id="backToIcpBtn" aria-label="Return to Incident Command Post"><svg viewBox="0 0 40 40"><use href="#i-icp"/></svg><span>ICP</span></button><div class="sim-titleblock"><span>The Response Game</span><strong id="incidentName">Resource Run</strong></div><div class="period-strip" aria-label="Operational period progression"><span id="period1" class="period-chip is-active">OP 1</span><span id="period2" class="period-chip">OP 2</span><span id="period3" class="period-chip">OP 3</span><span id="period4" class="period-chip">OP 4</span></div><div class="sim-clock"><svg viewBox="0 0 24 24"><use href="#i-clock"/></svg><strong id="simTime">07:00</strong></div></header>
-      <main class="sim-layout"><section class="operations glass"><div class="section-head"><div><span class="eyebrow">Incident Picture</span><h2 id="incidentTitle">Resource Operations</h2></div><div class="weather-chip"><svg viewBox="0 0 24 24"><use href="#i-weather"/></svg><span id="weatherText">Clear</span></div></div><div class="incident-map" id="incidentMap"><div class="map-grid"></div><div class="map-scan"></div><div class="map-contour c1"></div><div class="map-contour c2"></div><div class="map-contour c3"></div><div class="map-zone zone-a"><span>Division Alpha</span></div><div class="map-zone zone-b"><span>Division Bravo</span></div><div class="map-zone zone-c"><span>Base</span></div><div class="map-zone zone-d"><span>Staging</span></div><div id="resourceIcons" class="resource-icons" aria-hidden="true"></div><div id="impactLayer" class="impact-layer" aria-live="polite"></div></div><div class="impact-bar"><div><span>Operational Impact</span><strong id="impactScore">100</strong></div><div class="impact-meter"><i id="impactMeter"></i></div><div id="impactSummary" class="impact-summary">No unresolved operational impacts.</div></div></section>
-      <section id="decisionPanel" class="decision glass" aria-labelledby="decisionTitle"><div class="decision-head"><div><span class="eyebrow">Active Request</span><h2 id="decisionTitle">Select a request</h2></div><span id="requestPriority" class="priority-tag">—</span></div><div id="requestBrief" class="request-brief"></div><div id="decisionPrompt" class="decision-prompt">Choose a request from the queue to begin.</div><div id="feedbackLine" class="feedback-line" aria-live="polite"></div><div id="choiceGrid" class="choice-grid"></div><div class="decision-tools"><button class="tool-button" id="openImhBtn"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg><span>Open IMH</span></button><button class="tool-button" id="soundBtn" aria-pressed="true"><svg id="soundIcon" viewBox="0 0 24 24"><use href="#i-volume"/></svg><span>Sound</span></button></div></section>
-      <aside class="command-rail"><section class="rail-card glass"><div class="rail-head"><span class="eyebrow">Request Queue</span><strong id="queueCount">0</strong></div><div id="requestQueue" class="request-queue"></div></section><section class="rail-card glass"><div class="rail-head"><span class="eyebrow">Resource Availability</span><strong id="resourceCount">0</strong></div><div id="resourceInventory" class="inventory"></div></section><section class="rail-card glass rail-card-compact"><div class="rail-head"><span class="eyebrow">Incident Effectiveness</span><strong id="ierLive">100</strong></div><div class="metric-mini"><span>Accuracy</span><i><b id="mAccuracy"></b></i><strong id="accuracyLive">100</strong></div><div class="metric-mini"><span>Accountability</span><i><b id="mAccountability"></b></i><strong id="accountabilityLive">100</strong></div><div class="metric-mini"><span>Documentation</span><i><b id="mDocumentation"></b></i><strong id="documentationLive">100</strong></div></section></aside></main>
-      <nav class="mobile-bar glass" aria-label="Incident controls"><button id="mobileQueueBtn"><svg viewBox="0 0 24 24"><use href="#i-queue"/></svg><span>Queue</span><b id="mobileQueueCount">0</b></button><button id="mobileInventoryBtn"><svg viewBox="0 0 24 24"><use href="#i-truck"/></svg><span>Resources</span></button><button id="mobileMetricsBtn"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg><span>Effectiveness</span><b id="mobileIer">100</b></button><button id="mobileImhBtn"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg><span>IMH</span></button></nav></div></section>
-
-  <section id="periodReview" class="screen" aria-labelledby="periodReviewTitle"><div class="review-shell glass"><span class="eyebrow">Operational Period Complete</span><h2 id="periodReviewTitle">OP 1 Review</h2><p id="periodReviewText"></p><div id="periodMetrics" class="period-metrics"></div><div id="periodImpacts" class="period-impacts"></div><button class="btn btn-primary" id="continuePeriodBtn">Begin Next Operational Period</button></div></section>
-  <section id="results" class="screen" aria-labelledby="resultsTitle"><div class="results-shell"><section class="results-hero glass"><span class="eyebrow">Incident Complete</span><h2 id="resultsTitle">Incident Effectiveness Rating</h2><div class="ier-ring"><span id="finalIer">0</span><small>IER</small></div><div id="finalGrade" class="final-grade">—</div><p id="resultsSummary"></p></section><section class="results-grid"><div class="results-card glass"><span class="eyebrow">Performance</span><div id="scoreBreakdown" class="score-breakdown"></div></div><div class="results-card glass"><span class="eyebrow">Coaching</span><div id="coachingList" class="coaching-list"></div></div><div class="results-card glass"><span class="eyebrow">Career Progress</span><div id="careerResults" class="career-results"></div></div><div class="results-card glass"><span class="eyebrow">Achievements</span><div id="achievementResults" class="achievement-results"></div></div></section><div class="results-actions"><button class="btn btn-primary" id="newIncidentBtn">Run Another Incident</button><button class="btn btn-secondary" id="resultsCareerBtn">Career & Mastery</button><button class="btn btn-quiet" id="resultsIcpBtn">Back to ICP</button></div></div></section>
+  <section class="setup glass">
+   <div class="section-title"><div><span class="kicker">Simulation Setup</span><h2>Build the incident</h2></div><i class="online"></i></div>
+   <label>Incident Type</label><div id="incidentPicker" class="incident-picker"></div>
+   <label>ICS Role</label><div id="rolePicker" class="role-picker"></div>
+   <label>Difficulty</label><div id="difficultyPicker" class="difficulty-picker"></div>
+   <div class="setup-summary"><div><span>Operational Periods</span><b>4</b></div><div><span>Conditions</span><b>Dynamic</b></div><div><span>Requests</span><b>Accumulating</b></div></div>
+  </section>
+ </main>
+</section>
+<section id="briefing" class="screen center-screen"><article class="brief glass"><div class="brief-head"><span class="kicker">Incident Briefing</span><b id="briefCount">1 / 3</b></div><div id="briefBody"></div><div class="brief-foot"><div id="briefDots" class="dots"></div><div><button class="btn ghost" id="briefBack">Back</button><button class="btn primary" id="briefNext">Next</button></div></div></article></section>
+<section id="game" class="screen game-screen">
+ <div class="shell">
+  <header class="top glass"><button class="icon-btn" id="icpBtn"><svg><use href="#i-icp"/></svg><span>ICP</span></button><div class="incident-heading"><span id="roleLabel">Resources Unit</span><b id="incidentName">Incident</b></div><div id="opStrip" class="op-strip"></div><div class="clock"><svg><use href="#i-clock"/></svg><b id="simClock">07:00</b></div></header>
+  <main class="game-grid">
+   <section class="ops glass"><div class="card-head"><div><span class="kicker">Common Operating Picture</span><h2 id="opCondition">Operational Period 1</h2></div><span class="weather" id="conditionTag">Initial Conditions</span></div><div class="map" id="map"><div class="map-grid"></div><div class="scan"></div><div class="contour c1"></div><div class="contour c2"></div><div class="zone z1">DIV A</div><div class="zone z2">DIV B</div><div class="zone z3">STAGING</div><div class="zone z4">BASE</div><div id="resourceLayer"></div><div id="impactLayer"></div></div><div class="ops-metrics"><div><span>Responder Effectiveness</span><b id="responderMetric">100</b></div><div><span>Stabilization</span><b id="stabilizationMetric">55</b></div><div><span>Operational Tempo</span><b id="tempoMetric">100</b></div><div><span>Simulated Cost</span><b id="costMetric">$0</b></div></div></section>
+   <section class="decision glass" id="decisionPanel"><div class="card-head"><div><span class="kicker">Active Work</span><h2 id="decisionTitle">Select the next item</h2></div><span id="priorityTag" class="tag">QUEUE</span></div><div id="workMeta" class="work-meta"></div><div id="prompt" class="prompt">Prioritize the pending work.</div><div id="feedback" class="feedback" aria-live="polite"></div><div id="choices" class="choices"></div><div class="tools"><button id="imhBtn" class="tool"><svg><use href="#i-book"/></svg>Open IMH</button><button id="situationBtn" class="tool"><svg><use href="#i-map"/></svg>Situation</button></div></section>
+   <aside class="rail"><section class="rail-card glass"><div class="rail-head"><span class="kicker">Pending Work</span><b id="pendingCount">0</b></div><div id="queue" class="queue"></div></section><section class="rail-card glass"><div class="rail-head"><span class="kicker">Resources</span><b id="availableCount">0</b></div><div id="inventory" class="inventory"></div></section><section class="rail-card glass compact"><div class="rail-head"><span class="kicker">Incident Dashboard</span><b id="ierLive">100</b></div><div class="dashboard"><div><span>Requests Assigned</span><b id="assignedDash">0</b></div><div><span>Available</span><b id="availableDash">0</b></div><div><span>Pending</span><b id="pendingDash">0</b></div><div><span>Unmet Needs</span><b id="unmetDash">0</b></div><div><span>Impacts</span><b id="impactDash">0</b></div><div><span>Priority</span><b id="priorityDash">—</b></div></div></section></aside>
+  </main>
+  <nav class="mobile-nav glass"><button id="mQueue"><svg><use href="#i-list"/></svg><span>Queue</span><b id="mQueueN">0</b></button><button id="mResources"><svg><use href="#i-truck"/></svg><span>Resources</span></button><button id="mSituation"><svg><use href="#i-map"/></svg><span>Situation</span></button><button id="mMetrics"><svg><use href="#i-chart"/></svg><span>IER</span><b id="mIer">100</b></button><button id="mImh"><svg><use href="#i-book"/></svg><span>IMH</span></button></nav>
+ </div>
+</section>
+<section id="period" class="screen center-screen"><article class="review glass"><span class="kicker">Operational Period Complete</span><h1 id="periodTitle">OP 1 Review</h1><p id="periodSummary"></p><div id="periodScores" class="score-grid"></div><div id="periodImpacts" class="impact-list"></div><button class="btn primary" id="nextPeriodBtn">Begin Next Operational Period</button></article></section>
+<section id="results" class="screen results-screen"><main class="results-wrap"><section class="result-hero glass"><span class="kicker">Incident Complete</span><h1>Incident Effectiveness Rating</h1><div class="ier"><b id="finalIer">0</b><span>IER</span></div><h2 id="finalGrade">—</h2><p id="finalSummary"></p></section><div class="result-grid"><section class="glass result-card"><span class="kicker">Performance</span><div id="scoreBreakdown"></div></section><section class="glass result-card"><span class="kicker">After Action Review</span><div id="aarSummary"></div></section><section class="glass result-card"><span class="kicker">Career Progress</span><div id="careerSummary"></div></section><section class="glass result-card"><span class="kicker">Achievements</span><div id="achievementSummary"></div></section></div><div class="result-actions"><button class="btn primary" id="againBtn">Run Another Incident</button><button class="btn secondary" id="downloadAarBtn"><svg><use href="#i-download"/></svg>Download AAR</button><button class="btn secondary" id="downloadJsonBtn">Download Data</button><button class="btn ghost" id="resultLeaderBtn">Leaderboards</button><button class="btn ghost" id="resultHomeBtn">Back to ICP</button></div></main></section>
 </div>
-<div id="dialogBackdrop" class="dialog-backdrop" aria-hidden="true"><section id="dialog" class="dialog glass" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div class="dialog-icon" id="dialogIcon"><svg viewBox="0 0 24 24"><use href="#i-alert"/></svg></div><span class="eyebrow" id="dialogEyebrow">Incident Update</span><h2 id="dialogTitle">Update</h2><div id="dialogBody"></div><div id="dialogActions" class="dialog-actions"></div></section></div>
-<script src="rr-v11-data.js?v=11.1"></script>
-<script src="rr-v11-engine.js?v=11.1"></script>
-<script src="rr-v11-engine-hotfix.js?v=11.1"></script>
-<script src="rr-v11-ui.js?v=11.1"></script>
-</body>
-</html>
+<div id="modalBack" class="modal-back" aria-hidden="true"><section id="modal" class="modal glass" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><span id="modalKicker" class="kicker">Incident Update</span><h2 id="modalTitle">Update</h2><div id="modalBody"></div><div id="modalActions" class="modal-actions"></div></section></div>
+<script src="trg-v12-data.js?v=12"></script><script src="trg-v12-services.js?v=12"></script><script src="trg-v12-engine.js?v=12"></script><script src="trg-v12-ui.js?v=12"></script>
+</body></html>

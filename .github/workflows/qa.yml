@@ -25,6 +25,8 @@ jobs:
           grep -q 'trg-v13.css?v=13.0.0-rc1' index.html
           grep -q 'trg-v13-ui-fixed.js?v=13.0.0-rc1.1' index.html
           ! grep -q 'trg-v12-ui.js' index.html
+      - name: DOM contract
+        run: node tests/dom-contract.mjs
       - name: Engine smoke tests
         run: node tests/smoke.mjs
       - name: Accessibility guardrails

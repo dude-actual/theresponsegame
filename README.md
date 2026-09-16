@@ -1,23 +1,21 @@
-# The Response Game — Resource Run Platform v13 RC1
+# The Response Game — Resource Run Platform v14 RC1
 
-Resource Run is a browser-based serious-game platform for practicing incident-management decisions across evolving incidents. The game is designed to feel like an operational simulation while preserving real-world ICS concepts and organization-specific resource-request procedures.
+Resource Run is a browser-based incident-management simulation platform for practicing decisions across evolving incidents. The product is designed to feel like professional operational software while preserving real-world ICS concepts and organization-specific resource-request procedures.
 
-## Release-candidate experience
+## v14 release focus
 
-The v13 release candidate adds a mission-first experience layer over the validated v12 incident engine:
+v14 is a **front-end modernization release**. The simulation engine, scoring model, progression, retention, analytics, and incident content are preserved.
 
-- single-screen mission briefings;
-- live operational-intelligence feed;
-- deployment / consequence alerts;
-- guided first mission and contextual help;
-- Incident of the Day, Daily Challenges, Weekly Operations, and Seasonal Operations;
-- challenge streaks and bonus progression;
-- professional procedural audio cues;
-- refined The Response Game brand system;
-- service-worker static asset caching;
-- automated GitHub Actions QA.
+The release adds:
 
-The simulation core remains ICS-aligned and retains the ten incident packs, role progression, analytics, leaderboards, and AAR reports.
+- a persistent command-status instrument panel;
+- professional resource lifecycle / deployment visualization;
+- queue timing and priority states;
+- resource utilization / availability states;
+- ten incident-specific visual themes;
+- command-and-control visual hierarchy;
+- AAR presentation aligned with the simulator;
+- v14 production QA and service-worker cache updates.
 
 ## Current production scope
 
@@ -52,33 +50,47 @@ The platform unlocks increasingly broad views of the incident:
 
 ## Platform gameplay
 
-- four accumulating operational periods
-- pending requests carry forward
-- scarce resource inventory persists
-- resource commitments reduce later availability
-- simulated costs accumulate
-- objectives can become at-risk
-- conditions and constraints change
-- decisions affect responder effectiveness, stabilization, tempo, situational awareness, cost, and operational impact
-- role-specific tasks change gameplay as the player advances
+- four accumulating operational periods;
+- pending requests carry forward;
+- scarce resource inventory persists;
+- resource commitments reduce later availability;
+- simulated costs accumulate;
+- objectives can become at-risk;
+- conditions and constraints change;
+- decisions affect responder effectiveness, stabilization, tempo, situational awareness, cost, and operational impact;
+- role-specific tasks change gameplay as the player advances.
 
 The ICS 213RR resource-request workflow remains a core Resources Unit / Logistics learning thread. The IMH remains an in-game job aid.
 
-## Live dashboards
+## Command dashboard
 
-The simulation exposes:
+The v14 persistent Command Status surface displays:
 
-- assigned resources
-- available resources
-- pending work
-- unmet needs
-- operational impacts
-- priority pressure
-- responder effectiveness
-- incident stabilization
-- operational tempo
-- simulated cost
-- objectives / constraints / current conditions
+- Incident
+- Role
+- Operational Period
+- Mission Effectiveness
+- Stabilization
+- Responder Effectiveness
+- Operational Tempo
+- Critical Needs
+- Incident Cost
+- IER Projection
+
+## Resource operations visualization
+
+The simulator exposes:
+
+- pending work with priority and time-to-needed;
+- available / committed / deployed / out-of-service resource state;
+- utilization indicators;
+- active resource-request lifecycle progress;
+- deployment / late-state indicators;
+- destination and Tactical / Support routing context.
+
+The request lifecycle visualization is based directly on existing engine stages:
+
+`document → route → review → availability → source → check-in → deploy`
 
 ## Incident Effectiveness Rating
 
@@ -92,6 +104,21 @@ The IER combines:
 - Mission Success
 - Cost Control
 
+## Retention / progression
+
+The platform retains:
+
+- Incident of the Day
+- Daily Challenges
+- Weekly Operations
+- Seasonal Operations
+- career XP
+- role / difficulty unlocks
+- mastery paths
+- achievements
+- incident streaks
+- session history
+
 ## Analytics
 
 Event-level analytics are stored locally and can optionally be forwarded to an organizational endpoint. Events include session starts, period starts, requests, work selection, decisions, condition changes, consequences, IMH use, period endings, and session endings.
@@ -102,10 +129,10 @@ Tracked learning domains include prioritization, routing, sourcing, documentatio
 
 The client supports:
 
-- local session rankings
-- certification rankings
-- mastery rankings
-- an organizational leaderboard adapter
+- local session rankings;
+- certification rankings;
+- mastery rankings;
+- an organizational leaderboard adapter.
 
 Shared organizational rankings require a configured backend. The static GitHub Pages client does not fabricate multi-user rankings.
 
@@ -113,37 +140,40 @@ Shared organizational rankings require a configured backend. The static GitHub P
 
 Completed sessions produce a persistent report with:
 
-- objectives and status
-- IER and sub-scores
-- operational impacts
-- simulated cost
-- strengths
-- improvement areas
-- recommended retraining
-- competency state
-- analytics summary
+- objectives and status;
+- IER and sub-scores;
+- operational impacts;
+- simulated cost;
+- strengths;
+- improvement areas;
+- recommended retraining;
+- competency state;
+- analytics summary.
 
-AARs can be downloaded as HTML and session data can be downloaded as JSON.
+AARs can be downloaded as branded HTML and session data as JSON.
 
-## Expansion architecture
+## Production architecture
 
-Production files:
+### Simulation / content core
 
-- `trg-v13-experience.js` — retention, mission narrative, daily/weekly/seasonal operations, guided onboarding
-- `trg-v13-audio.js` — procedural professional audio cues
-- `trg-v13-ui.js` — release-candidate experience controller
-- `trg-v13.css` — v13 brand / interaction / mobile experience layer
-- `trg-sw.js` — same-origin static asset service worker
-- `manifest.webmanifest` / `trg-mark.svg` — app identity
-- `index.html` — application shell
 - `trg-v12-data.js` — incident packs, role definitions, resources, complications, registry
 - `trg-v12-services.js` — profiles, analytics, reports, leaderboards, AAR export
 - `trg-v12-engine.js` — hazard-agnostic simulation engine
-- `trg-v12.css` — validated base responsive layout primitives retained beneath the v13 experience layer
-- `docs/PLATFORM_ARCHITECTURE.md` — platform architecture and organizational scaling
-- `docs/SCENARIO_AUTHORING.md` — authoring contract for future incident packs
 
-Future games can register additional incident packs, roles, resources, or game modes through `TRG.REGISTRY` without replacing the simulation core.
+### Experience systems retained from v13
+
+- `trg-v13-experience.js` — retention, mission narrative, daily/weekly/seasonal operations, guided onboarding
+- `trg-v13-audio.js` — procedural professional audio cues
+
+### v14 production presentation
+
+- `trg-v14-ui.js` — professional command-dashboard controller / rendering
+- `trg-v14.css` — visual system, responsive command layout, incident themes
+- `index.html` — production application shell
+- `trg-sw.js` — static asset service worker
+- `manifest.webmanifest` / `trg-mark.svg` — app identity
+
+Historical v11-v13 source remains in the repository for development history, but production does not load the legacy UI controllers.
 
 ## Optional organizational services
 
@@ -166,10 +196,17 @@ The platform is designed around ICS organizational concepts and uses standard IC
 
 https://theresponsegame.com/
 
-## Release documentation
+## v14 documentation
 
-- `docs/FINAL_EXPERIENCE_AUDIT.md`
+- `docs/V14_VISUAL_AUDIT.md`
+- `docs/V14_UX_ARCHITECTURE.md`
+- `docs/V14_IMPLEMENTATION_SUMMARY.md`
+- `docs/V14_BEFORE_AFTER.md`
+- `docs/V14_PERFORMANCE_ACCESSIBILITY.md`
+- `docs/RELEASE_NOTES_V14_RC1.md`
+
+## Platform / authoring documentation
+
+- `docs/PLATFORM_ARCHITECTURE.md`
+- `docs/SCENARIO_AUTHORING.md`
 - `docs/BRAND_SYSTEM.md`
-- `docs/QA_REPORT_RC1.md`
-- `docs/PERFORMANCE_REPORT.md`
-- `docs/ACCESSIBILITY_REPORT.md`

@@ -5,7 +5,7 @@ const html=fs.readFileSync('index.html','utf8');
 const js=fs.readFileSync('trg-v15-impact.js','utf8');
 const css=fs.readFileSync('trg-v15.css','utf8');
 
-assert.match(html,/data-release="v15"/,'production shell identifies v15');
+assert.match(html,/data-release="v1[5-9]"/,'production shell retains v15 consequence layer in v15+ release');
 assert.match(html,/trg-v15\.css\?v=15\.0\.0-rc1/,'production loads v15 CSS');
 assert.match(html,/trg-v15-impact\.js\?v=15\.0\.0-rc1/,'production loads v15 impact controller');
 for(const token of ['Incident Impact Feed','Resource Posture','Mission Objectives','Incident Trend','Critical Need','Incident Trajectory','Incident Outcome Chain'])assert.ok(js.includes(token),`v15 includes ${token}`);

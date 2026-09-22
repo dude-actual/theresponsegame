@@ -1,4 +1,4 @@
-# The Response Game — Incident Simulation Platform Architecture (v12)
+# The Response Game — Incident Simulation Platform Architecture (v16)
 
 ## Purpose
 
@@ -203,3 +203,16 @@ The same platform can host additional games through `TRG.REGISTRY.registerGameMo
 - session reporting
 
 Examples: planning-cycle game, SimCell communications game, situation-status game, command decision game, or field-to-ICP information-flow simulation.
+
+
+## v16 Planning Cycle layer
+
+`trg-v16-planning.js` extends the platform with planning products without changing engine calculations. It observes existing incident state and provides objective-management dispositions, operational-period summaries, resource forecasts, three-horizon operational outlooks, command briefs, future operational requirements, planning recommendations, planning analytics events, and AAR planning analysis.
+
+The practical planning rhythm is:
+
+**Assess Situation → Validate Objectives → Forecast Resources → Build Next OP → Brief / Execute**
+
+Objective dispositions and planning recommendations are advisory records. They do not alter IER, request generation, incident consequences, incident time, XP, or progression.
+
+The planning layer keeps future expansion modular. Formal objectives-development, Tactics Meeting / Planning Meeting workflows, ICS 215 / 215A-oriented modules, demobilization planning, and instructor-led command workflows can be added later without forcing those activities into the Resource Run request-processing loop.

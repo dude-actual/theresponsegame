@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const html=fs.readFileSync('index.html','utf8');
+const js=fs.readFileSync('trg-v16-planning.js','utf8');
+const css=fs.readFileSync('trg-v16.css','utf8');
+assert.match(html,/data-release="v16"/,'production shell identifies v16');
+assert.match(html,/trg-v16\.css\?v=16\.0\.0-rc1/,'production loads v16 CSS');
+assert.match(html,/trg-v16-planning\.js\?v=16\.0\.0-rc1/,'production loads v16 planning controller');
+for(const token of ['Objective Management','Operational Outlook','Resource Forecast','Future Operational Requirements','Planning Recommendations','Planning Cycle Analysis'])assert.ok(js.includes(token),`v16 includes ${token}`);
+for(const fn of ['objectiveManagement','resourceForecast','planningRecommendations','operationalOutlook','commandBriefing','periodSummary','finalPlanningAnalysis','patchEngine','patchReports'])assert.ok(js.includes(`function ${fn}`),`v16 includes ${fn}`);
+assert.match(js,/const start=P\.start/,'planning layer observes engine start');
+assert.match(js,/const begin=P\.beginPeriod/,'planning layer observes operational period start');
+assert.match(js,/const close=P\.closePeriod/,'planning layer observes operational period close');
+assert.match(js,/planning_objective_disposition/,'objective planning disposition is analytics-visible');
+assert.match(css,/\.planning-dialog/,'planning brief has a responsive presentation');
+assert.match(css,/\.period-planning-summary/,'operational period planning summary is presented');
+console.log('v16 planning contract passed.');

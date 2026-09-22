@@ -1,19 +1,23 @@
-# The Response Game — Resource Run Platform v15 RC1
+# The Response Game — Resource Run Platform v16 RC1
 
 Resource Run is a browser-based incident-management simulation platform for practicing decisions across evolving incidents. The product is designed to feel like professional operational software while preserving real-world ICS concepts and organization-specific resource-request procedures.
 
-## v15 release focus
+## v16 release focus
 
-v15 is a **consequence-visibility release**. The simulation engine, scoring model, progression, retention, analytics, and incident content are preserved.
+v16 is the first **Planning Cycle / Incident Management ecosystem** release. The simulation engine, scoring model, progression, retention, analytics, and incident content remain preserved.
 
 The release adds:
 
-- a live Incident Impact Feed linking decisions to operational outcomes;
-- a Common Operating Picture status layer for resource posture, objectives, incident trend, critical needs, and incident trajectory;
-- plain-language operational translations of existing resource / role consequences;
-- an Incident Outcome Chain at session completion;
-- a Decision-to-Outcome Timeline in generated AARs;
-- v15 production QA and service-worker cache updates.
+- objective management with Carry Forward / Review / Revise planning dispositions;
+- operational-period planning summaries;
+- resource forecasting based on known inventory and visible demand;
+- three-horizon operational outlooks;
+- command planning briefs and future operational requirements;
+- planning recommendations derived from existing incident state;
+- Planning Cycle analysis in the AAR;
+- v16 production QA and service-worker cache updates.
+
+The v15 consequence-visibility systems remain active.
 
 ## Current production scope
 
@@ -198,6 +202,11 @@ AARs can be downloaded as branded HTML and session data as JSON.
 
 - `trg-v15-impact.js` — observational consequence / outcome presentation layer
 - `trg-v15.css` — Impact Feed, COP status, and Outcome Chain presentation
+
+### v16 planning-cycle layer
+
+- `trg-v16-planning.js` — objective management, operational outlooks, resource forecasting, command briefs, planning summaries, and AAR planning analysis
+- `trg-v16.css` — responsive planning-cycle presentation
 - `index.html` — production application shell
 - `trg-sw.js` — static asset service worker
 - `manifest.webmanifest` / `trg-mark.svg` — app identity
@@ -224,6 +233,11 @@ The platform is designed around ICS organizational concepts and uses standard IC
 ## Production URL
 
 https://theresponsegame.com/
+
+## v16 documentation
+
+- `docs/V16_PLANNING_ARCHITECTURE.md`
+- `docs/RELEASE_NOTES_V16_RC1.md`
 
 ## v15 documentation
 

@@ -1,5 +1,17 @@
-const VERSION='trg-v16-rc1';
-const CORE=['/','/index.html','/trg-v12.css?v=12','/trg-v14.css?v=14.0.0-rc1','/trg-v15.css?v=15.0.0-rc1','/trg-v16.css?v=16.0.0-rc1','/trg-v12-data.js?v=12','/trg-v12-services.js?v=12','/trg-v12-engine.js?v=12','/trg-v13-experience.js?v=13.0.0-rc1','/trg-v13-audio.js?v=13.0.0-rc1','/trg-v14-ui.js?v=14.0.0-rc1','/trg-v15-impact.js?v=15.0.0-rc1','/trg-v16-planning.js?v=16.0.0-rc1','/trg-mark.svg','/manifest.webmanifest'];
-self.addEventListener('install',event=>{event.waitUntil(caches.open(VERSION).then(cache=>Promise.allSettled(CORE.map(url=>cache.add(url)))));self.skipWaiting()});
-self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('trg-')&&k!==VERSION).map(k=>caches.delete(k)))));self.clients.claim()});
-self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET')return;const url=new URL(req.url);if(url.origin!==location.origin)return;if(req.mode==='navigate'){event.respondWith(fetch(req).then(r=>{const copy=r.clone();caches.open(VERSION).then(c=>c.put('/index.html',copy));return r}).catch(()=>caches.match('/index.html')));return}event.respondWith(caches.match(req).then(cached=>{const network=fetch(req).then(r=>{if(r.ok)caches.open(VERSION).then(c=>c.put(req,r.clone()));return r}).catch(()=>cached);return cached||network}))});
+const VERSION = 'trg-v17-1';
+const CORE = ['./','./index.html','./v17-engine.js?v=17.1','./v17-ui.js?v=17.1','./v17.css?v=17.1','./assets/v17/harbor.svg','./assets/v17/harbor-dawn.svg','./assets/v17/fonts/barlow-condensed-semibold-latin.woff2','./assets/v17/fonts/ibm-plex-sans-latin-variable.woff2','./trg-mark.svg','./manifest.webmanifest'];
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(VERSION).then(cache => cache.addAll(CORE)));
+  self.skipWaiting();
+});
+self.addEventListener('activate', event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('trg-') && key !== VERSION).map(key => caches.delete(key)))).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', event => {
+  const request = event.request, url = new URL(request.url);
+  if (request.method !== 'GET' || url.origin !== self.location.origin) return;
+  event.respondWith(fetch(request).then(response => {
+    if (response.ok) { const saved = response.clone(); event.waitUntil(caches.open(VERSION).then(cache => cache.put(request, saved))); }
+    return response;
+  }).catch(async () => (await caches.match(request)) || (request.mode === 'navigate' ? caches.match('./index.html') : Response.error())));
+});

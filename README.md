@@ -6,7 +6,11 @@
 
 Open the repository through a static web server and load `index.html`. No build step, package install, account, API key or external service is required. For example, `python -m http.server 8080` serves the repository at `http://localhost:8080`.
 
-The briefing offers **Guided shift** and **Under pressure**. Incident time advances when the player acts, so reading and comparing information never consume a real-time timer. The intended first-time duration is 10–15 minutes; measured user testing remains part of evaluation.
+The game opens at a welcome page explaining the experience and its objective. Choose **Start oil spill scenario** to read the incident story, your Resources Unit role, the locations and the mission. Select **Guided shift** or **Under pressure**, continue to the controls introduction, then choose **Begin playing**. Saved scenarios can be resumed from the welcome page.
+
+Every work item explains why it has arrived and what action the player is taking. Waiting work explains its prerequisites. Submitting a decision leaves its result and consequences on screen until the player chooses the next item. New periods open with a briefing drawn from the current incident state. **Screen guide** provides in-game help without discarding an unfinished form.
+
+Incident time advances when the player acts, so reading and comparing information never consume a real-time timer. The intended first-time duration is 10–15 minutes; measured user testing remains part of evaluation.
 
 The three periods cover:
 

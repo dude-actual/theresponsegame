@@ -2,6 +2,22 @@
 
 This record distinguishes verified results from checks still to perform. Static checks and automated playthroughs do not establish player engagement, professional suitability, formal accessibility conformance or a measured 10–15 minute first-time session.
 
+## Player feedback and onboarding revision — 2026-09-28
+
+The first player evaluation found the entry experience unintuitive: it did not explain the platform, Blackwater Reach, the player's role, the objective, the controls or enough of the incident story. "Take the desk" was ambiguous, and task transitions felt abrupt. This is evidence that the original first-time comprehension criterion was not met, despite technical tests passing.
+
+The revision adds a game home, explicit start button, narrative scenario/role briefing, four-area controls introduction, contextual instructions for every work item, visible prerequisites, separate desk-action and arrival deadlines, and state-derived period briefings. Results remain visible until the player continues. Relevant incident-team replies appear with the action result. Returning to the site opens the game home, with saved work and completed reports accessible there.
+
+Validation of the revised flow:
+
+- All eight automated test files pass. New controller checks verify that reading the briefing/controls does not consume incident time, unfinished prerequisites disable submission, an action result survives resume, in-game help leaves the current form intact, and period briefings describe consequences from the actual state.
+- Rendered Edge checks on Windows covered the home and scenario briefing at 1366 x 900 and 320 x 740, and the controls introduction, first-period decisions, results and period transition at 390 x 844. Checked document width against client width; no horizontal overflow in those views.
+- Played the complete first period through the UI: clarified RR-041, routed the requests, sourced Harbor Response and allocated four boom sections to the marsh, one to the channel and one to reserve. The second-period briefing retained the $3,200 commitment and channel gap and explained the retained spare's consequence.
+- Verified keyboard entry/submission, useful waiting text and disabled sourcing before prerequisites, reload/resume at 07:16, and explicit progression from a result to the next request.
+- Opening and dismissing Screen guide preserved edited allocation values (4 and 1), returned focus to its invoking button, and did not consume time.
+
+These checks establish that the revised flow functions. A second player evaluation is still needed to establish whether it is now intuitive and whether the richer story sustains interest. The earlier full-playthrough evidence below applies to the underlying slice; this revision's rendered check covered onboarding through the second-period introduction, with full progression covered by the controller and engine tests.
+
 ## Baseline preservation and audit
 
 - Preserved the original production shell as `v16.html` before replacing `index.html`.

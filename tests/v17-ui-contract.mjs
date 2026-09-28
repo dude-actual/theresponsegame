@@ -59,11 +59,28 @@ for(const seed of [
   {[careerKey]:{completed:[null,'valid','valid'],xp:'<img>',mastery:{a:'bad',b:Infinity}},[reportsKey]:[null,{},[]]},
   {[sessionKey]:{state:{schema:17,tasks:[],resources:[],history:[],events:[],queue:[],traffic:[],period:0,minute:0}}}
 ]) {
-  const app=boot(seed);assert.match(app.html(),/Take the desk/);assert.doesNotMatch(app.html(),/data-action='resume'/);
+  const app=boot(seed);assert.match(app.html(),/Start oil spill scenario/);assert.doesNotMatch(app.html(),/data-action='resume'/);
   app.click('start');assert.equal(app.state().period,0);
 }
 
-const app=boot();app.click('start');
+const app=boot();
+assert.match(app.html(),/Welcome to The Response Game/);
+assert.equal(app.state(),undefined,'Landing page must not start an incident');
+app.click('briefing');
+assert.match(app.html(),/What happened/);
+assert.match(app.html(),/incident command post/);
+assert.equal(app.state(),undefined,'Reading the scenario is not an operational action');
+app.click('start');
+assert.match(app.html(),/Know where to look/);
+const beforeOrientation=JSON.stringify(app.state());
+app.click('enter-incident');
+assert.equal(JSON.stringify(app.state()),beforeOrientation,'Entering the controls must not consume incident time');
+app.click('select-task',{id:'monitor'});
+assert.match(app.html(),/Waiting before you can act/);
+assert.match(app.html(),/type='submit' disabled/);
+app.click('select-task',{id:'validate'});
+const guideTime=app.state().minute, deskBeforeGuide=app.html();
+app.click('screen-guide');assert.match(app.dialog(),/Your incident screen/);assert.equal(app.html(),deskBeforeGuide);assert.equal(app.state().minute,guideTime);
 assert.equal(app.state().tasks.length,12);assert.equal(app.state().minute,0);
 assert.equal(app.beacons.length,0,'No analytics are sent without explicit configuration');
 const instrumented=boot({},false,'https://analytics.example.test/ingest');
@@ -93,6 +110,13 @@ app.click('select-task',{id:'validate'});assert.equal(app.state().minute,0);
 app.click('home');assert.match(app.html(),/Resume/);app.click('resume');
 
 app.submit('validate',{fields:['capability','location','neededBy']});
+assert.equal(app.json(sessionKey).selected,'validate','Submission keeps the completed action visible');
+assert.match(app.html(),/What it means for the response/);
+assert.match(app.html(),/Clarification returned/);
+assert.match(app.html(),/Continue: Route the two requests/);
+const heldResult=boot(Object.fromEntries(app.memory));heldResult.click('resume');
+assert.match(heldResult.html(),/What it means for the response/,'Result survives save and resume');
+app.click('next-task');assert.equal(app.json(sessionKey).selected,'route');
 app.submit('route',{tactical:'resources',support:'logistics'});
 app.submit('monitor',{vendor:'harbor'});
 app.submit('boom',{marsh:3,channel:2});
@@ -100,11 +124,17 @@ assert.equal(app.state().tasks.filter(t=>t.period===0&&t.status==='done').length
 app.click('review');assert.match(app.html(),/Shift review/);
 app.click('return-play');assert.equal(app.context.document.body.className,'view-resources');
 app.click('review');app.click('advance');assert.equal(app.state().period,1);
+assert.match(app.html(),/The field picture has changed/);assert.match(app.html(),/Operations reports a boom coupling failure/);
+assert.match(app.html(),/coverage stayed in place/);
+app.click('enter-incident');
 app.submit('arrival',{verified:['id','leader','capability','comms'],assignment:'source'});
 app.submit('status',{skimmer:'out_of_service',evidence:'maintenance'});
 app.submit('reassign',{strategy:'contract',approval:'yes'});
 app.submit('forecast',{relief:1,waste:1});
 app.click('review');app.click('advance');assert.equal(app.state().period,2);
+assert.match(app.html(),/Prepare the team that takes over/);
+assert.match(app.html(),/1 relief crew order/);
+app.click('enter-incident');
 app.submit('relief',{assign:'source',verified:'yes'});
 app.submit('cop',{items:['monitor','boom','eta','skimmer'],note:'Verified local record.'});
 app.submit('escalation',{recipients:['operations','safety','logistics','command'],concern:'both',note:'Carry constraints forward.'});
@@ -123,7 +153,7 @@ app.click('export-html',{id:app.state().id});assert.match(await app.blobs.at(-1)
 // Reopening a finished checkpoint repairs a missing archive independently of XP.
 const recoverySeed=Object.fromEntries(app.memory);delete recoverySeed[reportsKey];
 const recovered=boot(recoverySeed);assert.equal(recovered.json(careerKey).xp,originalXP);assert.equal(recovered.json(reportsKey).length,1);
-const reloaded=boot(Object.fromEntries(recovered.memory));assert.equal(reloaded.json(careerKey).sessions,1);assert.equal(reloaded.json(reportsKey).length,1);
+const reloaded=boot(Object.fromEntries(recovered.memory));assert.equal(reloaded.json(careerKey).sessions,1);assert.equal(reloaded.json(reportsKey).length,1);assert.match(reloaded.html(),/Welcome to The Response Game/);
 
 // AAR strings remain text when rendering and when downloaded as HTML.
 const hostile=structuredClone(app.json(reportsKey)[0]);

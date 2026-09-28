@@ -70,3 +70,5 @@ See [the audit and experience design](docs/V17_GAMEPLAY_AUDIT.md) for source-bac
 ## Proposed player-first redesign
 
 The [28 September player-first review and implementation plan](docs/PLAYER_FIRST_REDESIGN.md) audits revision 17.4 against the new onboarding, simplicity and replay goals. [Screen wireframes](docs/PLAYER_FIRST_WIREFRAMES.html) illustrate the proposed opening, decision, allocation and outcome hierarchy. These are design deliverables; the playable runtime has not yet been changed to this proposed flow.
+
+The follow-on [emotional engagement review](docs/EMOTIONAL_ENGAGEMENT_AUDIT.md) contains five ranked top-20 lists, scene and tension audits, state-based visual storytelling recommendations and a retention plan. Its [consequence storyboard](docs/EMOTIONAL_STORYBOARD.html) compares two scripted runs through the unchanged engine to illustrate how an earlier allocation can become a memorable consequence. It is a presentation study, not a playable mission or a change to saved games.

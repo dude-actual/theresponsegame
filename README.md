@@ -66,3 +66,7 @@ Get-ChildItem tests/*.mjs | ForEach-Object { node $_.FullName; if ($LASTEXITCODE
 GitHub Actions performs syntax and automated tests on pushes to `main`/`v17-rebuild` and pull requests. Mock-DOM controller checks do not substitute for rendered browser, assistive-technology or player testing.
 
 See [the audit and experience design](docs/V17_GAMEPLAY_AUDIT.md) for source-backed findings, preservation decisions and the full slice; [the QA record](docs/V17_QA.md) distinguishes completed checks from evaluation still required. Earlier architecture and release documents remain historical references.
+
+## Proposed player-first redesign
+
+The [28 September player-first review and implementation plan](docs/PLAYER_FIRST_REDESIGN.md) audits revision 17.4 against the new onboarding, simplicity and replay goals. [Screen wireframes](docs/PLAYER_FIRST_WIREFRAMES.html) illustrate the proposed opening, decision, allocation and outcome hierarchy. These are design deliverables; the playable runtime has not yet been changed to this proposed flow.

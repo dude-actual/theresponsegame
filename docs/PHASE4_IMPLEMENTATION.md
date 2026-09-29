@@ -1,6 +1,8 @@
 # Oil Spill vertical slice — Phase 4 execution plan
 
-29 September 2026. Integration branch: `v17-rebuild`. Verified baseline: `a96bf31922e89e922ff5c6842bcf9fdaea91442c`. This is an implementation backlog and release contract, not another design proposal.
+29 September 2026. Integration branch: `v17-rebuild`. Original planning baseline: `a96bf31922e89e922ff5c6842bcf9fdaea91442c`. Verified foundation merge: `6b38eadbdc1bf9efe48dd16259617f6e6b31b009`. This is an implementation backlog and release contract, not another design proposal.
+
+**Execution update:** PR #2 was reviewed and tested at `4291a6e963d9aa7c08df0a7b14f5a8ea81833145`, passed GitHub QA run 36612155501, and was merged into `v17-rebuild` at the foundation merge above. Item 02 engine work is implemented on `feat/operational-recovery` for a separate integration PR; it is not yet merged. All 10 local test files pass, including 21 new recovery cases. The detached `restoreState` function is the only Item 03 persistence scaffolding delivered here. Controller checkpoint migration, drafts and acknowledgments remain pending. See `V17_QA.md` for exact coverage and limitations.
 
 The Player First Redesign, Emotional Engagement Audit, wireframes and narrative storyboard are approved requirements. Their approval does not mean their runtime implementation exists. Where older approved documents propose unlocks, additional variants, analytics systems or progression, the latest production brief takes precedence: no new scenarios, progression, currencies, badges, achievements or metrics. Use the two existing current/demand variants. Preserve existing reports and historical records.
 
@@ -8,9 +10,9 @@ The Player First Redesign, Emotional Engagement Audit, wireframes and narrative 
 
 **Health: viable simulation foundation; not a release candidate for the approved experience.** One DOM-free engine owns incident truth. One controller owns rendering/storage, and one stylesheet serves production. The approved scene flow, automatic routine work, persistent visual consequences and outcome-first replay are not integrated. The controller and stylesheet require replacement of their old compositions, not additional wrappers.
 
-- PR #1 is open, unmerged, and targets `main`; its head matches the inspected baseline. Its description still primarily describes revision 17.4 and must be rewritten around the finished implementation before release.
+- PR #1 remains the integration-to-`main` release PR; its integration branch now includes the foundation merge. Its description still primarily describes revision 17.4 and must be rewritten around the finished implementation before release. This increment does not merge it.
 - GitHub push and PR QA succeeded at this exact baseline: runs 36576960657 and 36576972592. Those checks cover code/contracts, not user comprehension or commercial quality.
-- GitHub issues currently contain only PR #1; no implementation issues have been filed. The issue bodies below are ready to copy into GitHub, not claims of created tickets.
+- At the original planning baseline, GitHub issues contained only PR #1. PR #2 has since merged. The issue bodies below are implementation contracts, not claims of created implementation tickets.
 - Two review comments are still applicable in code: archived-report replay reads global `state`; QA uses a clean-worktree whitespace check. Both are explicitly assigned below.
 - `v17-rebuild` is unprotected. Repository rulesets returned an empty list. Reading `main` protection returned 403, so its protection is **unverified**, not assumed absent.
 - The only checked-in workflow is `.github/workflows/qa.yml`; it runs Node 24 syntax, all `tests/*.mjs`, and whitespace checks. No browser job, RC artifact or branch-preview deployment is checked in.
@@ -19,7 +21,7 @@ The Player First Redesign, Emotional Engagement Audit, wireframes and narrative 
 
 ### Completion estimate
 
-**Current completion: 45%. Remaining: 55%.** This is a weighted engineering judgment against the approved release contract, not elapsed effort, a code-count calculation or a confidence claim about fun. Precision is approximately ±10 percentage points. Human acceptance gates remain unknown and cannot be awarded partial credit merely because automation passes.
+**Original planning estimate: 45% complete, 55% remaining.** The table is retained as that baseline, not a recalculated completion claim after Item 02. This is a weighted engineering judgment against the approved release contract, not elapsed effort, a code-count calculation or a confidence claim about fun. Precision is approximately ±10 percentage points. Human acceptance gates remain unknown and cannot be awarded partial credit merely because automation passes.
 
 | Acceptance area | Weight | Earned | Reason |
 | --- | ---: | ---: | --- |
@@ -41,7 +43,7 @@ P0 blocks this approved release. P1 is required for its quality and must also cl
 | --- | --- | --- | --- |
 | State/command ownership | `createState`, `act`, `validateAction`, `refresh` | Physical eligibility independent of chapter; useful correction paths (P0) | Refactor existing engine; retain atomic copy/apply and conservation. |
 | Arrivals | `processArrivals`, actual ETA, capability/verification | Before-deadline reception; recover incomplete reception (P0) | Foundation patch implements engine seam; UI wiring remains pending. |
-| Bad/late plans | Delays, holds and costs actually accrue | Qualified replacement, late relief, status correction, origin-gap recovery (P0) | Explicit bounded corrections; never repeat a purchase under the same ID. |
+| Bad/late plans | Bounded status/relief correction; real replacement/channel/support orders implemented on Item 02 branch | Integration review and focused UI exposure (P0) | Preserve original histories, costs, delays and unique identities; no repair by status change. |
 | Routine process | Validation/routing/receipt/COP commands | Team automation with provenance, no hidden player score (P0) | Replace quiz prerequisites; preserve resource truth and local functional ownership. |
 | Time/pacing | `tick`, three periods, `advance` | 7–9 meaningful commitments, useful next-arrival action, no twelve-form gate (P0) | Change eligibility/transition orchestration in engine and scene selector. |
 | Opening | `home`, `briefing`, `orientation` | One Start, immediate crew need, three qualified approaches (P0) | Replace mandatory briefing/tour; optional help retains useful facts. |
@@ -74,7 +76,7 @@ Each block is a ticket body. Complexity is relative implementation/verification 
 
 **Files:** `v17-engine.js`; `tests/v17-arrival-recovery.mjs`.
 
-**Dependencies:** none. **Complexity:** S. **Status:** implemented and locally tested in the foundation PR; not merged.
+**Dependencies:** none. **Complexity:** S. **Status:** engine seam merged through PR #2 at `6b38eadbdc1bf9efe48dd16259617f6e6b31b009`; focused UI exposure remains in 05.
 
 **Acceptance:** Harbor can be received at 07:36 and support source work at 07:44, before 07:55; early arrival command rejected; correction consumes eight minutes, retains original record/penalty and references it; wrong capability cannot be corrected into readiness; duplicates rejected; source duty hold remains without relief.
 
@@ -86,7 +88,7 @@ Each block is a ticket body. Complexity is relative implementation/verification 
 
 **Files:** `v17-engine.js` (`validateAction`, `apply`, `refresh`, `order`, `processArrivals`, `record`, `validateState`); new recovery tests.
 
-**Dependencies:** 01. **Complexity:** L.
+**Dependencies:** 01. **Complexity:** L. **Status:** engine implementation and regression coverage complete on `feat/operational-recovery`, pending integration review/merge. Includes one bounded additional relief/waste order when the original forecast omitted that support. Read-only recovery eligibility and physical limits support later focused scenes; no new runtime UI is delivered here.
 
 **Acceptance:** each recoverable constraint has a finite legal action or an explicit physical limit; IDs/order references remain unique; no spending/score exploit through repeats; late help stays late; SK-02 remains incapable; saved corrections replay identically. Preserve decision-to-correction links across exports.
 
@@ -98,7 +100,7 @@ Each block is a ticket body. Complexity is relative implementation/verification 
 
 **Files:** `v17-ui.js` (`read`, `write`, startup loader, `persist`, `startRun`); `v17-engine.js` validator/migration seam if needed; controller/fixture tests.
 
-**Dependencies:** 02. **Complexity:** M.
+**Dependencies:** 02. **Complexity:** M. **Status:** detached schema-17 restore seam supplied by 02; checkpoint envelope, controller migration, drafts and result acknowledgments remain the next blocking implementation work.
 
 **Acceptance:** resume returns to the same unresolved scene/draft; acknowledged events do not replay; unapplied choices do not change resources; old completed AARs remain accessible; malformed storage produces useful recovery text; no silent overwrite when migration fails.
 
@@ -339,8 +341,8 @@ Categories separate the source of the risk. Rank reflects release impact first, 
 
 The fastest credible path is **engine eligibility/recovery → persistent focused beginning → complete mission → visible consequences/ending → meaningful replay → exact-build acceptance and release**. Reuse the two authored variants, licensed harbor assets, resource engine and report system. Do not spend the critical path expanding incident families, art tooling, progression or a new architecture generation.
 
-**Immediate PR:** `fix/resource-arrival-recovery` → `v17-rebuild`, “Allow timely monitoring reception and preserve check-in corrections.” It is deliberately a foundation PR: engine plus regression tests, with this execution backlog. It does not claim the new player flow is usable yet. UI access, broader replacement/correction and all later gates remain open.
+**Foundation PR completed:** `fix/resource-arrival-recovery` → `v17-rebuild` merged as PR #2. **Current increment:** `feat/operational-recovery` → `v17-rebuild`, bounded operational recovery. Both are engine increments; the approved focused player flow is still pending.
 
-The foundation change preserves schema 17 and current twelve-task test paths. It adds `correct-checkin` with complete verification/source assignment only, and an optional `correctsHistoryIndex` linking append-only evidence. All nine automated test files pass locally, including 24 prior full trajectories and the new arrival/recovery checks. No new runtime UI, CSS, save migration, worker version or production deployment is part of this PR.
+The foundation change preserves schema 17 and current twelve-task test paths. Item 02 extends optional `correctsHistoryIndex` links to status/relief and additional orders/reception, with new resource/order identities. All 10 automated test files pass locally, including 24 prior full trajectories and 21 bounded-recovery cases. No new runtime UI, CSS, checkpoint migration, worker version or production deployment is part of Item 02.
 
-Next after foundation review: issue 02, bounded recovery; then checkpoint/team-action work before focused opening. Do not report the 45% estimate as 100% because this first patch or CI passes. Human testing, protected release operation and the accepted player experience are still required.
+Next blocking implementation step after Item 02 integration review: Item 03, checkpoint persistence and migration, before team-action work and the focused opening. Do not report the original 45% estimate as 100% because engine tests or CI pass. Human testing, protected release operation and the accepted player experience are still required.

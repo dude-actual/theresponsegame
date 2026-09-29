@@ -2,6 +2,22 @@
 
 This record distinguishes verified results from checks still to perform. Static checks and automated playthroughs do not establish player engagement, professional suitability, formal accessibility conformance or a measured 10–15 minute first-time session.
 
+## Bounded operational recovery — 2026-09-29
+
+Foundation PR #2 was reviewed and tested at `4291a6e963d9aa7c08df0a7b14f5a8ea81833145`. All nine then-existing test files passed, no posted review findings remained, and GitHub QA run 36612155501 succeeded at that exact head. The expected-head merge produced `6b38eadbdc1bf9efe48dd16259617f6e6b31b009`, verified on `v17-rebuild`.
+
+Item 02 was implemented from that merge on `feat/operational-recovery`. Local verification:
+
+- **10/10 test files passed; 11/11 JavaScript syntax checks passed.** The complete committed-change whitespace check also passed.
+- New recovery suite: **21 cases, 416 accepted commands, 178 atomic rejections, 40 restore comparisons.** Counts include commands performed against restored copies. Rejected commands compare the entire state before/after, including time, cost, resources, orders, history and evidence.
+- Existing engine regression: **392 accepted actions, 24 complete trajectories**, with unchanged representative strong/mixed/damaging scores **89/85/41**. Historical smoke coverage remains **70 incident/role combinations**. Foundation arrival/recovery, controller persistence/reward deduplication, report exports, worker and production contracts all pass.
+- Wrong-vendor replacement covers both difficulties, both existing variants and both qualified vendors. Actual arrival alone does not clear the source hold; verified reception and authorized assignment are required. The incompatible asset, original sourcing choice/order/cost and elapsed delay remain. Advanced regional replacement retains its quoted ETA and the 12-minute revised delay.
+- Channel recovery covers both qualified vendors, distinct order/resource identity and actual reception. Equal-duration work after assignment verifies that restored monitoring improves simulated recovery. Original source monitoring stays assigned.
+- Bad status, unverified/misplaced/reserve relief, omitted support and late en-route relief have bounded legal paths. Old completed task records remain unchanged. Late relief preserves the duty-limit event; SK-02 stays incapable. Repeats, invalid inputs, identity/reference corruption and every recovery command after completion reject without mutation.
+- Schema-17 histories without recovery metadata still restore. Restoring detaches the state and does not replay decisions. Tests compare commands before arrival, orders and completed corrections across restore, and preserve report history/cost.
+
+Limits: this increment changes the engine and tests only, plus these existing evidence/roadmap documents. Recovery commands and physical-limit explanations are not yet wired into player-facing scenes. `recoveryOptions` returns legal command templates for a future controller; verification and Operations approval still need to be obtained in that interaction before submitting a command. `restoreState` does not implement checkpoint envelopes, scene drafts, result acknowledgments or archive migration. No new rendered-browser, assistive-technology or human-engagement claim is made. No production deployment, release-PR merge, additional scenario, metric or parallel state owner is included.
+
 ## Player feedback and onboarding revision — 2026-09-28
 
 The first player evaluation found the entry experience unintuitive: it did not explain the platform, Blackwater Reach, the player's role, the objective, the controls or enough of the incident story. "Take the desk" was ambiguous, and task transitions felt abrupt. This is evidence that the original first-time comprehension criterion was not met, despite technical tests passing.

@@ -67,7 +67,9 @@ GitHub Actions performs syntax and automated tests on pushes to `main`/`v17-rebu
 
 See [the audit and experience design](docs/V17_GAMEPLAY_AUDIT.md) for source-backed findings, preservation decisions and the full slice; [the QA record](docs/V17_QA.md) distinguishes completed checks from evaluation still required. Earlier architecture and release documents remain historical references.
 
-## Proposed player-first redesign
+## Approved design and Phase 4 implementation
+
+The player-first redesign and emotional engagement treatment below are approved source requirements. The [Phase 4 execution plan](docs/PHASE4_IMPLEMENTATION.md) maps the remaining work to ordered GitHub-ready issues, milestones, code locations and release gates. The initial arrival/recovery engine patch is a foundation change; the focused player-facing flow still requires implementation.
 
 The [28 September player-first review and implementation plan](docs/PLAYER_FIRST_REDESIGN.md) audits revision 17.4 against the new onboarding, simplicity and replay goals. [Screen wireframes](docs/PLAYER_FIRST_WIREFRAMES.html) illustrate the proposed opening, decision, allocation and outcome hierarchy. These are design deliverables; the playable runtime has not yet been changed to this proposed flow.
 

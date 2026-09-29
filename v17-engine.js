@@ -37,6 +37,13 @@
   ];
   const ACTION_TASK = {validate:'validate',route:'route',source:'monitor',allocate:'boom',checkin:'arrival',reconcile:'status',reassign:'reassign',forecast:'forecast',relief:'relief',cop:'cop',escalate:'escalation',handover:'handover'};
   const CATEGORIES = ['documentation','routing','sourcing','allocation','accountability','forecasting','situational-awareness','coordination'];
+  // One additional package per unmet recovery need. Identity survives save/restore.
+  const RECOVERY_PACKAGES = {
+    source:{resourceId:'MON-R1',orderId:'ORD-MON-R1',purpose:'source-monitor',location:'Source berth'},
+    channel:{resourceId:'MON-C1',orderId:'ORD-MON-C1',purpose:'channel-monitor',location:'Channel'},
+    relief:{resourceId:'RLF-REC1',orderId:'ORD-RELIEF-REC1',purpose:'relief'},
+    waste:{resourceId:'WST-REC1',orderId:'ORD-WASTE-REC1',purpose:'waste'}
+  };
   let sequence = 0;
 
   function traffic(s, from, text) { s.traffic.push({minute:s.minute,from,text}); }
@@ -57,6 +64,12 @@
     if (index < 0) throw new Error('Original decision is missing.');
     s.history.at(-1).correctsHistoryIndex = index;
     s.events.at(-1).correctsHistoryIndex = index;
+  }
+  function packageOrdered(s, p) { return s.orders.some(o=>o.id===p.orderId)||!!resource(s,p.resourceId); }
+  function recoveryRecord(s, action, change, consequence, constraint, category, prior, p) {
+    record(s,action,change,consequence,constraint,category,'strong');
+    linkCorrection(s,priorDecision(s,prior));
+    for(const entry of [s.history.at(-1),s.events.at(-1)]) Object.assign(entry,{resourceId:p.resourceId,orderId:p.orderId});
   }
   function hasSourceRelief(s) { return s.resources.some(r => r.kind === 'relief' && r.status === 'assigned' && r.location === 'Source berth' && r.verified); }
   function wasteReady(s) { return s.resources.filter(r => r.kind === 'waste' && r.status === 'available').length; }
@@ -135,6 +148,7 @@
     refresh(s);
   }
   function order(s, id, supplier, price, eta, resourceIds, requestId, uom = 'package / operational period') {
+    if(s.orders.some(o=>o.id===id))throw new Error('Order identity already exists.');
     s.orders.push({id,supplier,costBasis:price,uom,eta,resourceIds,requestId,status:'ordered'});
     s.cost += price;
     event(s,'order_placed',{orderId:id,supplier,cost:price,eta,resourceIds,requestId});
@@ -222,6 +236,12 @@
     if(s.events.some(e=>!e||typeof e.type!=='string'||!Number.isFinite(e.minute)))return fail('The saved analytics are invalid.');
     if(s.orders.some(o=>!o||typeof o.id!=='string'||typeof o.supplier!=='string'||!Number.isFinite(o.costBasis)||o.costBasis<0||!Number.isFinite(o.eta)||!Array.isArray(o.resourceIds)||o.resourceIds.some(id=>!resource(s,id))))return fail('The saved order references are invalid.');
     if(new Set(s.orders.map(o=>o.id)).size!==s.orders.length||s.cost!==s.orders.reduce((sum,o)=>sum+o.costBasis,0))return fail('The saved orders contain duplicate identities or inconsistent cost.');
+    for(const p of Object.values(RECOVERY_PACKAGES)) {
+      const o=s.orders.find(o=>o.id===p.orderId),r=resource(s,p.resourceId);
+      if(!o&&!r)continue; // Existing schema-17 saves need no new fields.
+      const kind=p.purpose.endsWith('monitor')?'monitor':p.purpose;
+      if(!o||!r||o.recoveryPurpose!==p.purpose||o.resourceIds.length!==1||o.resourceIds[0]!==r.id||r.kind!==kind||!r.capable||r.eta!==o.eta)return fail('The additional resource does not match its order.');
+    }
     if(resource(s,'SK-02').capable!==false)return fail('SK-02 cannot work before its failed pump is repaired after handover.');
     if(s.history.some((h,i)=>h.correctsHistoryIndex!==undefined&&(!Number.isInteger(h.correctsHistoryIndex)||h.correctsHistoryIndex<0||h.correctsHistoryIndex>=i)))return fail('A correction does not reference an earlier decision.');
     if(s.flags.monitorId!==null&&typeof s.flags.monitorId!=='string')return fail('The monitoring assignment is invalid.');
@@ -272,6 +292,30 @@
         const r=resource(s,a.resourceId);
         if (!r||r.kind!=='relief'||!r.capable||!['awaiting_checkin','staging','assigned'].includes(r.status)) return 'A qualified relief crew must physically arrive before it can take the source assignment.';
         return a.verified===true&&a.assign==='source'&&a.approval===true ? null : 'Verify the crew and record Operations approval for the source assignment.';
+      }
+      case 'order-monitor': {
+        if(!['source','channel'].includes(a.assignment))return 'Choose the source or channel monitoring need.';
+        const p=RECOVERY_PACKAGES[a.assignment],v=VENDORS.find(v=>v.id===a.vendor);
+        if(!v?.capable||v.id==='internal')return 'Logistics needs a qualified external atmospheric-monitoring team.';
+        if(s.tasks.find(t=>t.id==='monitor').status!=='done'||priorDecision(s,'Monitoring source')<0)return 'Commit the initial monitoring request first.';
+        if(packageOrdered(s,p))return 'An additional team is already ordered for this assignment. Follow its arrival and reception.';
+        if(a.assignment==='channel')return s.flags.channelMonitoringGap ? null : 'Channel monitoring is already covered.';
+        const original=resource(s,s.flags.monitorId);
+        if(!original||original.capable)return 'A qualified source team is already committed. Receive or correct its assignment instead.';
+        return s.tasks.find(t=>t.id==='arrival').status==='done' ? null : 'Receive the original resource and record its capability mismatch before ordering a replacement.';
+      }
+      case 'receive-monitor': {
+        if(!['source','channel'].includes(a.assignment))return 'Choose the authorized monitoring assignment.';
+        const p=RECOVERY_PACKAGES[a.assignment],r=resource(s,p.resourceId),o=s.orders.find(o=>o.id===p.orderId);
+        if(!o||a.resourceId!==p.resourceId||!r||!r.capable||!['awaiting_checkin','staging'].includes(r.status))return 'The ordered atmospheric team must arrive and await reception before assignment.';
+        return arrayChoice(a.verified,['id','leader','capability','comms'],true)&&a.approval===true ? null : 'Verify the arriving team and record Operations approval for its assignment.';
+      }
+      case 'order-support': {
+        if(!['relief','waste'].includes(a.kind))return 'Choose relief or waste support.';
+        if(s.tasks.find(t=>t.id==='forecast').status!=='done'||priorDecision(s,'Next-period forecast')<0)return 'Record the initial support forecast first.';
+        const p=RECOVERY_PACKAGES[a.kind];
+        if(packageOrdered(s,p)||s.resources.some(r=>r.kind===a.kind))return 'This support already has a committed resource. Follow its arrival or correct its assignment.';
+        return null;
       }
       case 'reconcile': return ['available','assigned','out_of_service'].includes(a.skimmer)&&['staging','maintenance','ops'].includes(a.evidence) ? null : 'Choose a resource status and evidence source.';
       case 'reassign': return ['hold','move','contract'].includes(a.strategy)&&typeof a.approval==='boolean' ? null : 'Choose a reassignment strategy and record its authorization.';
@@ -380,6 +424,39 @@
         traffic(s,'Operations',notice);
         record(s,'Relief correction',notice,s.safetyHold?'Source work still requires qualified monitoring.':'Source monitoring and relief now support continued work.','The earlier gap and its elapsed consequences remain in the record.','accountability','strong');
         linkCorrection(s,priorDecision(s,'Relief assignment')); break;
+      }
+      case 'order-monitor': {
+        const p=RECOVERY_PACKAGES[a.assignment],v=VENDORS.find(v=>v.id===a.vendor);
+        const quotedEta=s.minute+v.eta,slip=s.difficulty==='advanced'&&v.id==='regional'?12:0,eta=quotedEta+slip;
+        s.resources.push({id:p.resourceId,name:`${v.name} / ${a.assignment} monitoring`,kind:'monitor',status:'en_route',location:'To East Staging',eta,capable:true,verified:false});
+        order(s,p.orderId,v.name,v.cost,eta,[p.resourceId],a.assignment==='source'?'RR-041':'Channel monitoring restoration','team / operational period');
+        Object.assign(s.orders.at(-1),{quotedEta,recoveryPurpose:p.purpose});
+        if(slip)traffic(s,'Logistics','Regional dispatch reports an additional 12-minute road transfer. The order retains its original quote and revised arrival time.');
+        tick(s,6);
+        notice=`Logistics ordered ${v.name} for ${p.location}; cost $${v.cost.toLocaleString('en-US')}, ETA ${String(7+Math.floor(eta/60)).padStart(2,'0')}:${String(eta%60).padStart(2,'0')}.`;
+        traffic(s,'Logistics',notice);
+        recoveryRecord(s,'Additional monitoring order',notice,'The monitoring gap remains until actual arrival, reception and authorized assignment.','Prior orders and their costs remain committed; late help does not erase earlier delay.','sourcing','Monitoring source',p); break;
+      }
+      case 'receive-monitor': {
+        const p=RECOVERY_PACKAGES[a.assignment],r=resource(s,p.resourceId);
+        r.verified=true;r.status='assigned';r.location=p.location;
+        if(a.assignment==='source')s.flags.monitorId=r.id;
+        else s.flags.channelMonitoringGap=false;
+        tick(s,8);
+        notice=`${r.name} received, verified and assigned to ${p.location} with Operations approval.`;
+        traffic(s,'Staging',notice);
+        recoveryRecord(s,'Additional monitoring received',notice,a.assignment==='channel'?'Channel monitoring is restored.':s.safetyHold?'Monitoring is ready; source work still needs verified relief.':'Source monitoring now supports the assignment.','Earlier unsupported work and all original resource records remain in the handover.','accountability','Monitoring source',p); break;
+      }
+      case 'order-support': {
+        const p=RECOVERY_PACKAGES[a.kind],relief=a.kind==='relief';
+        const eta=s.minute+(relief?s.intel.reliefLead:s.intel.wasteLead),price=relief?s.intel.reliefCost:s.intel.wasteCost;
+        s.resources.push({id:p.resourceId,name:relief?'Additional relief crew':'Additional waste package',kind:a.kind,status:'en_route',location:'To East Staging',eta,capable:true,verified:false});
+        order(s,p.orderId,'Logistics support order',price,eta,[p.resourceId],relief?'RR-061':'RR-062');
+        s.orders.at(-1).recoveryPurpose=p.purpose;
+        tick(s,8);
+        notice=`Logistics ordered one ${a.kind} package with a ${relief?s.intel.reliefLead:s.intel.wasteLead}-minute lead time; cost $${price.toLocaleString('en-US')}.`;
+        traffic(s,'Logistics',notice);
+        recoveryRecord(s,'Additional support order',notice,'The resource is on order, not available at the incident.','The earlier support gap remains in the record. Relief still needs reception and assignment after arrival.','forecasting','Next-period forecast',p);break;
       }
       case 'reassign': {
         s.flags.reassignment=a.strategy;
@@ -504,5 +581,24 @@
     try { const state=copy(saved); refresh(state); return {ok:true,state}; }
     catch { return {ok:false,error:'The incident record could not be restored.'}; }
   }
-  root.RR17={createState,act,report,validateState,restoreState,VENDORS:copy(VENDORS),PERIODS:copy(PERIODS),SCENARIOS:copy(SCENARIOS)};
+  // Read-only eligibility for a future focused scene, never another state owner.
+  function recoveryOptions(s) {
+    const integrity=validateState(s);if(!integrity.ok)return integrity;
+    if(s.finished)return {ok:true,actions:[],limits:['This response has been handed over. Start another run to make new decisions.']};
+    const verified=['id','leader','capability','comms'];
+    const candidates=[{type:'correct-checkin',verified,assignment:'source'},
+      {type:'correct-status',skimmer:'out_of_service',evidence:'maintenance'},
+      ...s.resources.filter(r=>r.kind==='relief').map(r=>({type:'correct-relief',resourceId:r.id,verified:true,assign:'source',approval:true})),
+      ...['source','channel'].flatMap(assignment=>[
+        ...VENDORS.filter(v=>v.capable&&v.id!=='internal').map(v=>({type:'order-monitor',assignment,vendor:v.id})),
+        {type:'receive-monitor',assignment,resourceId:RECOVERY_PACKAGES[assignment].resourceId,verified,approval:true}]),
+      ...['relief','waste'].map(kind=>({type:'order-support',kind}))];
+    const limits=[];
+    if(s.period>=1)limits.push('SK-02 cannot work: its failed pump cannot be repaired before handover. A status correction updates the record only.');
+    if(s.resources.some(r=>r.status==='en_route'))limits.push('Resources still travelling cannot be received or assigned before actual arrival.');
+    if(resource(s,s.flags.monitorId)?.capable===false)limits.push('Water-quality equipment cannot provide atmospheric monitoring. A qualified replacement must be ordered and received.');
+    if(s.flags.boom.marsh+s.flags.boom.channel<s.intel.marshDemand+s.intel.channelDemand)limits.push('Containment demand exceeds deployed coverage. Correcting a record cannot create additional boom or repair a failed section.');
+    return {ok:true,actions:copy(candidates.filter(a=>!validateAction(s,a))),limits};
+  }
+  root.RR17={createState,act,report,validateState,restoreState,recoveryOptions,VENDORS:copy(VENDORS),PERIODS:copy(PERIODS),SCENARIOS:copy(SCENARIOS)};
 })(globalThis);

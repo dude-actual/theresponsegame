@@ -52,6 +52,12 @@
     event(s,source === 'player' ? 'decision' : 'condition_change',{action,category,quality,change,consequence,constraint,source});
   }
   function taskDone(s, id) { const task = s.tasks.find(item => item.id === id); task.status = 'done'; task.completedAt = s.minute; }
+  function priorDecision(s, action) { return s.history.findIndex(h=>h.source==='player'&&h.action===action); }
+  function linkCorrection(s, index) {
+    if (index < 0) throw new Error('Original decision is missing.');
+    s.history.at(-1).correctsHistoryIndex = index;
+    s.events.at(-1).correctsHistoryIndex = index;
+  }
   function hasSourceRelief(s) { return s.resources.some(r => r.kind === 'relief' && r.status === 'assigned' && r.location === 'Source berth' && r.verified); }
   function wasteReady(s) { return s.resources.filter(r => r.kind === 'waste' && r.status === 'available').length; }
   function monitoringReady(s) {
@@ -215,6 +221,9 @@
     if(s.history.some(h=>!h||!Number.isFinite(h.minute)||!['action','change','consequence','constraint','category'].every(k=>typeof h[k]==='string')||!['strong','mixed','damaging'].includes(h.quality)))return fail('The saved decision history is invalid.');
     if(s.events.some(e=>!e||typeof e.type!=='string'||!Number.isFinite(e.minute)))return fail('The saved analytics are invalid.');
     if(s.orders.some(o=>!o||typeof o.id!=='string'||typeof o.supplier!=='string'||!Number.isFinite(o.costBasis)||o.costBasis<0||!Number.isFinite(o.eta)||!Array.isArray(o.resourceIds)||o.resourceIds.some(id=>!resource(s,id))))return fail('The saved order references are invalid.');
+    if(new Set(s.orders.map(o=>o.id)).size!==s.orders.length||s.cost!==s.orders.reduce((sum,o)=>sum+o.costBasis,0))return fail('The saved orders contain duplicate identities or inconsistent cost.');
+    if(resource(s,'SK-02').capable!==false)return fail('SK-02 cannot work before its failed pump is repaired after handover.');
+    if(s.history.some((h,i)=>h.correctsHistoryIndex!==undefined&&(!Number.isInteger(h.correctsHistoryIndex)||h.correctsHistoryIndex<0||h.correctsHistoryIndex>=i)))return fail('A correction does not reference an earlier decision.');
     if(s.flags.monitorId!==null&&typeof s.flags.monitorId!=='string')return fail('The monitoring assignment is invalid.');
     if(s.flags.monitorId&&!resource(s,s.flags.monitorId))return fail('The monitoring assignment references a missing resource.');
     if(s.tasks.find(t=>t.id==='monitor').status==='done'&&!s.flags.monitorId)return fail('The completed source order has no resource.');
@@ -249,7 +258,20 @@
         if (!monitor || monitor.status === 'en_route') return 'The monitoring resource has not arrived.';
         if (!monitor.capable) return 'This equipment cannot provide atmospheric monitoring. A qualified replacement is required.';
         if (monitoringReady(s)) return 'Source monitoring is already verified and assigned.';
+        if (priorDecision(s,'Resource check-in')<0) return 'The original check-in record is unavailable.';
         return arrayChoice(a.verified,['id','leader','capability','comms'],true)&&a.assignment==='source' ? null : 'Complete all verification and assign the qualified team to Source berth.';
+      }
+      case 'correct-status': {
+        if (s.tasks.find(t=>t.id==='status').status!=='done'||priorDecision(s,'Status reconciliation')<0) return 'Record the initial equipment status before correcting it.';
+        if (s.flags.statusVerified) return 'SK-02 already matches the signed maintenance report.';
+        return a.skimmer==='out_of_service'&&a.evidence==='maintenance' ? null : 'The signed maintenance report supports out of service only. The failed pump cannot be repaired before handover.';
+      }
+      case 'correct-relief': {
+        if (s.tasks.find(t=>t.id==='relief').status!=='done'||priorDecision(s,'Relief assignment')<0) return 'Record the initial relief disposition before correcting it.';
+        if (hasSourceRelief(s)) return 'Verified relief is already assigned to the source.';
+        const r=resource(s,a.resourceId);
+        if (!r||r.kind!=='relief'||!r.capable||!['awaiting_checkin','staging','assigned'].includes(r.status)) return 'A qualified relief crew must physically arrive before it can take the source assignment.';
+        return a.verified===true&&a.assign==='source'&&a.approval===true ? null : 'Verify the crew and record Operations approval for the source assignment.';
       }
       case 'reconcile': return ['available','assigned','out_of_service'].includes(a.skimmer)&&['staging','maintenance','ops'].includes(a.evidence) ? null : 'Choose a resource status and evidence source.';
       case 'reassign': return ['hold','move','contract'].includes(a.strategy)&&typeof a.approval==='boolean' ? null : 'Choose a reassignment strategy and record its authorization.';
@@ -320,7 +342,7 @@
       case 'checkin': case 'correct-checkin': {
         const r=resource(s,s.flags.monitorId),complete=a.verified.length===4;
         const corrected = a.type === 'correct-checkin';
-        const earlierCheckin = corrected ? s.history.findIndex(h=>h.action==='Resource check-in'&&h.source==='player') : -1;
+        const earlierCheckin = corrected ? priorDecision(s,'Resource check-in') : -1;
         r.verified=complete&&r.capable;
         if(a.assignment==='source'&&r.verified) {r.status='assigned';r.location='Source berth';}
         else {r.status='staging';r.location='East Staging';}
@@ -330,10 +352,7 @@
         traffic(s,'Staging',notice);
         record(s,corrected?'Check-in correction':'Resource check-in',`${r.name}: ${r.status.replaceAll('_',' ')} at ${r.location}.`,notice,s.safetyHold?'Safe source work cannot start from a status label alone.':'Source work can proceed while monitoring and crew coverage remain available.','accountability',complete&&r.capable?(a.assignment==='source'?'strong':'mixed'):'damaging');
         // Append evidence; retain the original decision, time and accountability loss.
-        if (corrected) {
-          s.history.at(-1).correctsHistoryIndex = earlierCheckin;
-          s.events.at(-1).correctsHistoryIndex = earlierCheckin;
-        }
+        if (corrected) linkCorrection(s,earlierCheckin);
         break;
       }
       case 'reconcile': {
@@ -343,6 +362,24 @@
         tick(s,6);
         notice=r.verified?'SK-02 is marked out of service against the signed maintenance report.':'The recorded resource picture is not supported by the maintenance inspection.';
         record(s,'Status reconciliation',`SK-02 recorded ${a.skimmer.replaceAll('_',' ')} using ${a.evidence}.`,notice,'The failed pump seal remains a physical constraint; changing the board does not repair the skimmer.','accountability',r.verified?'strong':'damaging'); break;
+      }
+      case 'correct-status': {
+        const r=resource(s,'SK-02');
+        r.status='out_of_service'; r.location='East Staging'; r.verified=true; s.flags.statusVerified=true;
+        tick(s,6);
+        notice='SK-02 is recorded out of service against the signed maintenance report.';
+        traffic(s,'Resources Unit',notice);
+        record(s,'Status correction',notice,'The resource picture now reflects the failed pump.','No repair or additional recovery capability has been created.','accountability','strong');
+        linkCorrection(s,priorDecision(s,'Status reconciliation')); break;
+      }
+      case 'correct-relief': {
+        const r=resource(s,a.resourceId);
+        r.verified=true; r.status='assigned'; r.location='Source berth';
+        tick(s,7);
+        notice=`${r.name} is verified and assigned to Source berth with Operations approval.`;
+        traffic(s,'Operations',notice);
+        record(s,'Relief correction',notice,s.safetyHold?'Source work still requires qualified monitoring.':'Source monitoring and relief now support continued work.','The earlier gap and its elapsed consequences remain in the record.','accountability','strong');
+        linkCorrection(s,priorDecision(s,'Relief assignment')); break;
       }
       case 'reassign': {
         s.flags.reassignment=a.strategy;
@@ -439,7 +476,7 @@
     const error=validateAction(state,action);
     if(error)return {ok:false,error};
     let next,notice;
-    try { next=copy(state);notice=apply(next,copy(action)); }
+    try { next=copy(state);notice=apply(next,copy(action)); const integrity=validateState(next); if(!integrity.ok)return integrity; }
     catch { return {ok:false,error:'The action could not be applied to this incident record.'}; }
     Object.keys(state).forEach(k=>delete state[k]);Object.assign(state,next);
     return {ok:true,notice};
@@ -459,5 +496,13 @@
     ];
     return {schema:'trg.session-report.v17',sessionId:s.id,incidentName:'Blackwater Reach',incidentType:'oil-spill',roleId:'resources-unit',roleName:'Resources Unit',difficulty:s.difficulty,variant:s.variant,finished:s.finished,operationalPeriods:s.period+1,minute:s.minute,score,ier:score,cost:s.cost,shoreline:s.shoreline,recovery:s.recovery,accountability:s.accountability,objectives,history:copy(s.history),competencies:copy(s.competencies),orders:copy(s.orders),resources:copy(s.resources),constraints:gaps(s),events:copy(s.events),summary:`${objectives.filter(o=>o.status==='Supported').length} of four operational objectives supported. Recovery index ${Math.round(s.recovery)}/100; shoreline impact index ${Math.round(s.shoreline)}/100. ${gaps(s).length} constraint(s) remain for the incoming shift.`,scoring:{judgment:Math.round(judgment),accountability:s.accountability,environment:Math.round(100-s.shoreline),recovery:Math.round(clamp(s.recovery*2)),sustainment,coverage:Math.round(coverage*100),costControl:Math.round(costControl)},fictional:'Fictional scenario. Resource quantities, response times, monetary values and outcome indices are simulation parameters, not operational predictions or professional qualifications.'};
   }
-  root.RR17={createState,act,report,validateState,VENDORS:copy(VENDORS),PERIODS:copy(PERIODS),SCENARIOS:copy(SCENARIOS)};
+  // Restore a detached engine snapshot without replaying actions or changing history.
+  // The controller will own checkpoint envelopes, drafts and migration UI in Item 03.
+  function restoreState(saved) {
+    const integrity=validateState(saved);
+    if(!integrity.ok)return integrity;
+    try { const state=copy(saved); refresh(state); return {ok:true,state}; }
+    catch { return {ok:false,error:'The incident record could not be restored.'}; }
+  }
+  root.RR17={createState,act,report,validateState,restoreState,VENDORS:copy(VENDORS),PERIODS:copy(PERIODS),SCENARIOS:copy(SCENARIOS)};
 })(globalThis);

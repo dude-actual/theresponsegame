@@ -68,7 +68,8 @@
       if (task.id === 'monitor') task.available = task.available && ['validate','route'].every(id => s.tasks.find(t => t.id === id).status === 'done');
       if (task.id === 'arrival') {
         const monitor = resource(s,s.flags.monitorId);
-        task.available = task.available && !!monitor && monitor.status !== 'en_route';
+        // Physical arrival, not the chapter label, makes reception possible.
+        task.available = task.status === 'pending' && !s.finished && !!monitor && monitor.status !== 'en_route';
       }
       if (task.id === 'handover') task.available = task.available && s.tasks.filter(t => t.period === 2 && t.id !== 'handover').every(t => t.status === 'done');
     });
@@ -231,7 +232,7 @@
     const id = ACTION_TASK[a.type];
     if (id) {
         const task = s.tasks.find(t=>t.id===id);
-      if (task.period !== s.period || task.status !== 'pending') return 'This work is not pending in the current operational period.';
+      if ((a.type !== 'checkin' && task.period !== s.period) || task.status !== 'pending') return 'This work is not pending in the current operational period.';
       if (a.type === 'source' && !['validate','route'].every(i=>s.tasks.find(t=>t.id===i).status==='done')) return 'Review and route the request before committing a source.';
       if (a.type === 'checkin' && (!resource(s,s.flags.monitorId) || resource(s,s.flags.monitorId).status === 'en_route')) return 'The monitoring resource has not arrived. Work another item or advance incident time.';
       if (a.type === 'handover' && s.tasks.some(t=>t.period===2&&t.id!=='handover'&&t.status!=='done')) return 'Resolve the other handover work before setting final priorities.';
@@ -242,6 +243,14 @@
       case 'source': return VENDORS.some(v=>v.id===a.vendor) ? null : 'Choose an available source.';
       case 'allocate': return int(a.marsh,6)&&int(a.channel,6)&&a.marsh+a.channel<=6 ? null : 'Allocate whole modules within the six-module inventory.';
       case 'checkin': return arrayChoice(a.verified,['id','leader','capability','comms'])&&['staging','source'].includes(a.assignment) ? null : 'Use valid check-in fields and an assignment.';
+      case 'correct-checkin': {
+        const monitor = resource(s,s.flags.monitorId);
+        if (s.tasks.find(t=>t.id==='arrival').status !== 'done') return 'Record the initial check-in before correcting it.';
+        if (!monitor || monitor.status === 'en_route') return 'The monitoring resource has not arrived.';
+        if (!monitor.capable) return 'This equipment cannot provide atmospheric monitoring. A qualified replacement is required.';
+        if (monitoringReady(s)) return 'Source monitoring is already verified and assigned.';
+        return arrayChoice(a.verified,['id','leader','capability','comms'],true)&&a.assignment==='source' ? null : 'Complete all verification and assign the qualified team to Source berth.';
+      }
       case 'reconcile': return ['available','assigned','out_of_service'].includes(a.skimmer)&&['staging','maintenance','ops'].includes(a.evidence) ? null : 'Choose a resource status and evidence source.';
       case 'reassign': return ['hold','move','contract'].includes(a.strategy)&&typeof a.approval==='boolean' ? null : 'Choose a reassignment strategy and record its authorization.';
       case 'forecast': return int(a.relief,2)&&int(a.waste,2) ? null : 'Order zero, one or two packages of each support resource.';
@@ -308,8 +317,10 @@
         traffic(s,'Operations',notice);
         record(s,'Containment allocation',notice,`Uncovered demand remains: marsh ${Math.max(0,s.intel.marshDemand-a.marsh)}, channel ${Math.max(0,s.intel.channelDemand-a.channel)}.`,s.flags.boom.reserve?'A reserve is available for an equipment failure; current line coverage is lower.':'All six modules are committed; an equipment failure will reduce coverage.','allocation',a.marsh+a.channel<4?'damaging':priorityCovered?'strong':'mixed'); break;
       }
-      case 'checkin': {
+      case 'checkin': case 'correct-checkin': {
         const r=resource(s,s.flags.monitorId),complete=a.verified.length===4;
+        const corrected = a.type === 'correct-checkin';
+        const earlierCheckin = corrected ? s.history.findIndex(h=>h.action==='Resource check-in'&&h.source==='player') : -1;
         r.verified=complete&&r.capable;
         if(a.assignment==='source'&&r.verified) {r.status='assigned';r.location='Source berth';}
         else {r.status='staging';r.location='East Staging';}
@@ -317,7 +328,13 @@
         tick(s,8);
         notice=!r.capable?'The delivered water-quality equipment cannot provide atmospheric clearance. Entry remains on hold.':!complete?'The resource is held at staging until identity, leader, capability and communications are verified.':a.assignment==='source'?'The verified atmospheric team is assigned to Source berth. Entry monitoring is available.':'The verified team remains at staging; source entry still has no assigned monitoring.';
         traffic(s,'Staging',notice);
-        record(s,'Resource check-in',`${r.name}: ${r.status.replaceAll('_',' ')} at ${r.location}.`,notice,s.safetyHold?'Safe source work cannot start from a status label alone.':'Source work can proceed while monitoring and crew coverage remain available.','accountability',complete&&r.capable?(a.assignment==='source'?'strong':'mixed'):'damaging'); break;
+        record(s,corrected?'Check-in correction':'Resource check-in',`${r.name}: ${r.status.replaceAll('_',' ')} at ${r.location}.`,notice,s.safetyHold?'Safe source work cannot start from a status label alone.':'Source work can proceed while monitoring and crew coverage remain available.','accountability',complete&&r.capable?(a.assignment==='source'?'strong':'mixed'):'damaging');
+        // Append evidence; retain the original decision, time and accountability loss.
+        if (corrected) {
+          s.history.at(-1).correctsHistoryIndex = earlierCheckin;
+          s.events.at(-1).correctsHistoryIndex = earlierCheckin;
+        }
+        break;
       }
       case 'reconcile': {
         const r=resource(s,'SK-02'); r.status=a.skimmer; r.verified=a.skimmer==='out_of_service'&&a.evidence==='maintenance';

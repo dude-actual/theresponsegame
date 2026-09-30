@@ -43,7 +43,7 @@ export function boot(seed={}, failWrites=false, endpoint=null, options={}) {
   const context={document,console,Blob,FormData:FormDataDouble,Date,Math,JSON,Set,Map,
     TRG_CONFIG: endpoint ? {analyticsEndpoint:endpoint} : {},
     navigator:{sendBeacon(url,body){beacons.push({url,body});return true;}},location:{protocol:'http:',hostname:'localhost'},
-    localStorage:{getItem(k){if(options.denyReads===true||options.denyReads?.(k))throw new Error('Read denied');return memory.get(k)??null;},setItem(k,v){if(failWrites||options.failWrite?.(k)){const e=new Error('Storage denied');e.name=options.quota?'QuotaExceededError':'SecurityError';throw e;}writes.push(k);memory.set(k,String(v));}},
+    localStorage:{getItem(k){if(options.denyReads===true||(typeof options.denyReads==='function'&&options.denyReads(k)))throw new Error('Read denied');return memory.get(k)??null;},setItem(k,v){if(failWrites||options.failWrite?.(k)){const e=new Error('Storage denied');e.name=options.quota?'QuotaExceededError':'SecurityError';throw e;}writes.push(k);memory.set(k,String(v));}},
     URL:{createObjectURL(blob){blobs.push(blob);return `blob:test-${blobs.length}`;},revokeObjectURL(){}},
     setTimeout(fn){fn();return 0;},addEventListener(type,fn){windowHandlers.set(type,fn);},scrollTo(){}};
   context.window=context;context.globalThis=context;
@@ -62,4 +62,3 @@ export function boot(seed={}, failWrites=false, endpoint=null, options={}) {
     state:()=>JSON.parse(memory.get(sessionKey)||'null')?.state,
     html:()=>node('app').innerHTML,dialog:()=>node('dialog-content').innerHTML};
 }
-

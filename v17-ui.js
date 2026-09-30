@@ -8,6 +8,7 @@
   const titleCase = value => String(value ?? '').replace(/[_-]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
   let storageWarning = '', notice = '', audioOn = false, audioContext;
   const SESSION_KEY='trg-v17-session', storageRecords=new Map(), storageErrors=new Map();
+  let checkpointConflict=false;
   const clone=value=>JSON.parse(JSON.stringify(value));
   const object=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
   function storageStatus() {
@@ -36,6 +37,7 @@
     try {
       const current=localStorage.getItem(key);
       if(known?.kind==='malformed'||known?.kind==='denied'||current!==known?.raw) {
+        if(key===SESSION_KEY&&current!==known?.raw)checkpointConflict=true;
         storageErrors.set(key,'Saving is paused: stored data could not be read or changed in another tab. Retry before replacing it.');storageStatus();return false;
       }
       const raw=JSON.stringify(value);localStorage.setItem(key,raw);
@@ -79,20 +81,21 @@
       return {kind:'current',envelope:clone(v),raw:record.raw};
     }
     // Only the two known schema-17 shapes migrate; never replay their history.
-    const s=v?.schema===17?v:v?.state;
+    const s=v?.schema===17?v:object(v)&&v.schema===undefined?v.state:null;
     if(!E?.validateState(s).ok)return {kind:'malformed',raw:record.raw};
-    return {kind:s.finished?'legacy-completed':'legacy-unfinished',raw:record.raw,envelope:{schema:'trg.checkpoint',version:1,state:clone(s),runtime:defaultRuntime(s,v?.selected),meta:{migratedFrom:v?.schema===17?'schema-17-state':'state-selected',recovery:'ready',savedAt:null,forwardedCount:Number.isInteger(s.forwardedCount)?Math.min(s.forwardedCount,s.events.length):0}}};
+    return {kind:s.finished?'legacy-completed':'legacy-unfinished',raw:record.raw,envelope:{schema:'trg.checkpoint',version:1,state:clone(s),runtime:defaultRuntime(s,v?.selected),meta:{migratedFrom:v?.schema===17?'schema-17-state':'state-selected',recovery:'ready',savedAt:null,forwardedCount:Number.isInteger(s.forwardedCount)?Math.max(0,Math.min(s.forwardedCount,s.events.length)):0}}};
   }
   const legacy = read('trgProfileV12', {});
   const number = (value, max = Number.MAX_SAFE_INTEGER) => typeof value === 'number' && Number.isFinite(value) ? Math.min(max, Math.max(0, Math.round(value))) : 0;
   const savedCareer = read('trg-v17-career', null);
   const sourceCareer = savedCareer && typeof savedCareer === 'object' && !Array.isArray(savedCareer) ? savedCareer : {xp:number(legacy?.xp)};
-  let career = {
+  function normalizeCareer(sourceCareer) { return {
     xp:number(sourceCareer.xp), sessions:number(sourceCareer.sessions), best:number(sourceCareer.best,100),
     completed:[...new Set((Array.isArray(sourceCareer.completed)?sourceCareer.completed:[]).filter(id=>typeof id==='string'))].slice(-500),
     mastery:Object.fromEntries(Object.entries(sourceCareer.mastery && typeof sourceCareer.mastery==='object' && !Array.isArray(sourceCareer.mastery)?sourceCareer.mastery:{}).filter(([,value])=>typeof value==='number'&&Number.isFinite(value)).map(([key,value])=>[key,number(value,100)])),
     motion:sourceCareer.motion===true
-  };
+  }; }
+  let career=normalizeCareer(sourceCareer);
   const validReport = r => r && typeof r==='object' && r.schema==='trg.session-report.v17' && typeof r.sessionId==='string' && typeof r.incidentName==='string' && typeof r.difficulty==='string' && Number.isFinite(r.score) && Number.isFinite(r.cost) && Array.isArray(r.history) && r.history.every(h=>h&&Number.isFinite(h.minute)&&['action','change','consequence','constraint','category'].every(k=>typeof h[k]==='string')) && Array.isArray(r.objectives) && r.objectives.every(o=>o&&typeof o.status==='string'&&typeof o.text==='string') && r.competencies && typeof r.competencies==='object' && !Array.isArray(r.competencies) && Object.values(r.competencies).every(Number.isFinite);
   let reports = read('trg-v17-reports', []);
   if(!Array.isArray(reports)||!reports.every(validReport))storageRecords.set('trg-v17-reports',{...storageRecords.get('trg-v17-reports'),kind:'malformed'});
@@ -151,6 +154,15 @@
     const url=URL.createObjectURL(new Blob([content],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='Response-Game-checkpoint.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
   function retryStorage() {
+    if(checkpointConflict){modal('Another tab changed the checkpoint',`<p>Your current response is still in this tab. Export it before loading the stored checkpoint if you need both. Loading discards this tab's unsaved changes.</p><button data-action='export-checkpoint'>Export this response</button><button data-action='load-stored'>Discard unsaved changes and load stored checkpoint</button><button data-close>Keep this tab</button>`);return;}
+    // Re-read denied historical stores before attempting completion recovery. Never
+    // replace a previously unread profile/archive with the temporary empty view.
+    for(const key of ['trg-v17-career','trg-v17-reports'])if(storageRecords.get(key)?.kind==='denied') {
+      const r=readStorage(key);if(!['loaded','absent'].includes(r.kind))continue;
+      if(key==='trg-v17-career')career=normalizeCareer(object(r.value)?r.value:{});
+      else {const values=r.kind==='absent'?[]:r.value;if(!Array.isArray(values)||!values.every(validReport)){storageRecords.set(key,{...r,kind:'malformed'});continue;}reports=values.slice(0,30);}
+      storageErrors.delete(key);
+    }
     if(checkpointBlocked||!state) {
       checkpoint=classifyCheckpoint(readStorage(SESSION_KEY));
       if(checkpoint.envelope){state=checkpoint.envelope.state;runtime=checkpoint.envelope.runtime;checkpointMeta=checkpoint.envelope.meta;selected=runtime.selected;view=runtime.view;lastForwarded=checkpointMeta.forwardedCount;checkpointBlocked=false;storageErrors.delete(SESSION_KEY);storageStatus();resumeBoundary();}
@@ -165,7 +177,7 @@
   function closeModal() { $('overlay').close(); returnFocus?.isConnected && returnFocus.focus(); }
   $('overlay').addEventListener('click', e => { if (e.target.hasAttribute('data-close')) closeModal(); });
   const branding = `<div class='brand'><div class='brand-mark' aria-label='TRG'>TRG</div><div class='brand-name'>The Response Game<span>Incident-management simulations</span></div></div>`;
-  function topbar(game=false) { return `<header class='topbar ${game?'game-topbar':''}'>${branding}${game?`<div class='session-label'><span class='display'>BLACKWATER REACH</span><span class='sim-clock' aria-label='Incident time'>${clock(state.minute)}</span></div>`:''}<nav aria-label='Session tools'>${game?`<button data-action='screen-guide'>Screen guide</button><button data-action='traffic'>Shift log</button>`:''}<button data-action='guide'>How to play</button><button data-action='settings'>Settings</button><button data-action='reports'>${game?'AAR archive':'Career & AARs'}</button>${game?`<button data-action='home'>Save & leave</button>`:''}</nav></header><p id='save-status' class='save-notice' role='status' ${storageWarning?'':'hidden'}>${esc(storageWarning)}</p><div id='save-recovery' class='button-row' ${storageWarning?'':'hidden'}><button data-action='retry-save'>Retry saving / loading</button><button data-action='export-checkpoint'>Export preserved checkpoint</button></div>`; }
+  function topbar(game=false) { return `<header class='topbar ${game?'game-topbar':''}'>${branding}${game?`<div class='session-label'><span class='display'>BLACKWATER REACH</span><span class='sim-clock' aria-label='Incident time'>${clock(state.minute)}</span></div>`:''}<nav aria-label='Session tools'>${game?`<button data-action='screen-guide'>Screen guide</button><button data-action='traffic'>Shift log</button>`:''}<button data-action='guide'>How to play</button><button data-action='settings'>Settings</button><button data-action='reports'>${game?'AAR archive':'Career & AARs'}</button>${game?`<button data-action='home'>Save & leave</button>`:''}</nav></header><p id='save-status' class='save-notice' role='status' ${storageWarning?'':'hidden'}>${esc(storageWarning)}</p><div id='save-recovery' ${storageWarning?'':'hidden'}><div class='button-row'><button data-action='retry-save'>Retry saving / loading</button><button data-action='export-checkpoint'>Export preserved checkpoint</button></div></div>`; }
   function focusPage() { window.scrollTo({top:0,behavior:'instant'}); $('page-title')?.focus(); }
   function home() {
     screen='home'; document.body.className='';
@@ -333,7 +345,9 @@
     // Keep report recovery independent of the reward marker. An interrupted or failed
     // archive write must not permanently hide an otherwise completed session.
     if(!archived){reports.unshift(r);reports=reports.slice(0,30);}
-    write('trg-v17-career',career);write('trg-v17-reports',reports);persist();aar(r);
+    write('trg-v17-career',career);
+    if(!archived||storageErrors.has('trg-v17-reports'))write('trg-v17-reports',reports);
+    persist();aar(r);
   }
   function aar(r,archivedView=false) { displayedReport=r;screen='aar';if(runtime){if(archivedView){runtime.scene='archive';runtime.archiveId=r.sessionId;}else boundary('aar');}document.body.className='';$('app').innerHTML=`${topbar()}<main class='period-review'><div class='aar-hero'><div><p class='eyebrow'>After-action review / Blackwater Reach</p><h1>The picture you leave.</h1></div><div class='aar-score'>${Math.round(r.score||0)}<small>INCIDENT EFFECTIVENESS</small></div></div><p class='review-lead'>${esc(r.summary||'Review the connection between your actions, resource state and operational outcomes.')}</p><div class='scoreboard'><div><small>Committed cost · $12,000 allowance</small><b>${money(r.cost)}</b></div><div><small>Action & condition records</small><b>${(r.history||[]).length}</b></div><div><small>Working conditions</small><b>${r.difficulty==='advanced'?'Under pressure':'Guided shift'}</b></div></div><div class='review-grid'><section><h2>Incident objectives</h2>${(r.objectives||[]).map(o=>`<div class='objective'><b>${esc(o.status)}</b>${esc(o.text||o.objective)}</div>`).join('')}</section><section><h2>Competency evidence</h2>${Object.entries(r.competencies||{}).map(([k,v])=>`<div class='competency'><div><span>${esc(titleCase(k))}</span><b>${Math.round(v)}</b></div><meter min='0' max='100' value='${Number(v)}' aria-label='${esc(titleCase(k))}'></meter></div>`).join('')}<p class='form-note'>Based on recorded operational actions. These are game practice indicators, not professional qualifications.</p></section></div><h2>Decision → state → consequence</h2><ol class='timeline'>${(r.history||[]).map(h=>`<li><p class='eyebrow'>${clock(h.minute)} / ${h.source === 'condition' ? 'INCIDENT CONDITION' : esc(h.category)}</p><h3>${esc(h.action)}</h3><p><b>State:</b> ${esc(h.change)}</p><p><b>Consequence:</b> ${esc(h.consequence)}</p><p class='constraint'><b>Future constraint:</b> ${esc(h.constraint)}</p></li>`).join('')}</ol><div class='review-actions'><button class='primary' data-action='replay'>Run changed conditions ↗</button><button data-action='export-json' data-id='${esc(r.sessionId)}'>Download session JSON</button><button data-action='export-html' data-id='${esc(r.sessionId)}'>Download printable AAR</button><button data-action='home'>Return to game home</button></div><p class='form-note'>Replay reverses the current pressure and changes the boom demand. The same sequence will not create the same operational result.</p>${state&&!state.finished?`<button data-action='resume'>Return to saved response</button>`:''}${storageWarning?`<p class='save-notice'>${esc(storageWarning)}</p>`:''}</main>`;persist(); }
   function download(r, format) { const content=format==='json'?JSON.stringify(r,null,2):`<!doctype html><html lang='en'><meta charset='utf-8'><title>Blackwater Reach AAR</title><style>body{font:15px Arial,sans-serif;color:#173039;max-width:850px;margin:40px auto;padding:20px}h1{font-size:38px}li{margin:20px 0;break-inside:avoid}p{line-height:1.6}.muted{color:#476068}@media print{body{margin:0}}</style><h1>Blackwater Reach</h1><p>Resource Run · Resources Unit · After-action review</p><p>Effectiveness: ${number(r.score,100)}/100 · Cost: ${money(r.cost)} · ${esc(r.difficulty)}</p><p>${esc(r.summary||'')}</p><h2>Objectives</h2><ul>${(r.objectives||[]).map(o=>`<li><b>${esc(o.status)}</b>: ${esc(o.text||o.objective)}</li>`).join('')}</ul><h2>Decision and outcome ledger</h2><ol>${r.history.map(h=>`<li><b>${clock(h.minute)} — ${esc(h.action)}</b><p>State: ${esc(h.change)}<br>Consequence: ${esc(h.consequence)}<br>Future constraint: ${esc(h.constraint)}</p></li>`).join('')}</ol><p class='muted'>Fictional exercise. This report is training evidence, not a qualification.</p></html>`;const url=URL.createObjectURL(new Blob([content],{type:format==='json'?'application/json':'text/html'}));const a=document.createElement('a');a.href=url;a.download=`Blackwater_Reach_${r.sessionId}.${format}`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);announce('AAR download started.'); }
@@ -348,10 +362,11 @@
   function confirmStart() {
     if(!replacement)return;
     let raw;try{raw=localStorage.getItem(SESSION_KEY);}catch{storageErrors.set(SESSION_KEY,'Browser storage cannot be read. The saved response has not been replaced.');storageStatus();return;}
-    if(raw!==replacement.raw){replacement=null;checkpointBlocked=true;storageErrors.set(SESSION_KEY,'The checkpoint changed in another tab. Retry loading before choosing to replace it.');storageStatus();closeModal();home();return;}
+    if(raw!==replacement.raw){replacement=null;checkpointConflict=true;storageErrors.set(SESSION_KEY,'The checkpoint changed in another tab. Retry loading before choosing to replace it.');storageStatus();closeModal();home();return;}
     const choice=replacement;replacement=null;
     // Only this explicit, raw-value-checked choice unlocks replacement of bad data.
     storageRecords.set(SESSION_KEY,{kind:'loaded',raw});
+    checkpointConflict=false;
     closeModal();startRun(choice.difficulty,choice.variant);
   }
   function startRun(difficulty,variant=0) { state=E.createState({difficulty,variant});runtime=defaultRuntime(state);checkpointMeta={migratedFrom:null,recovery:'ready',savedAt:null,forwardedCount:0};checkpointBlocked=false;selected=state.queue.find(id=>taskById(id)?.period===0)||null;notice='Your first traffic is in. Choose a work item; incident time advances when you submit an action.';lastForwarded=0;view='work';handoverOrder=['monitoring','waste','containment'];forwardEvents();orientation(); }
@@ -365,11 +380,12 @@
     case 'confirm-start':confirmStart();break;
     case 'cancel-start':replacement=null;closeModal();break;
     case 'retry-save':retryStorage();break;
+    case 'load-stored':checkpointConflict=false;checkpointBlocked=true;state=null;runtime=null;selected=null;closeModal();retryStorage();break;
     case 'export-checkpoint':downloadCheckpoint();break;
     case 'resume':if(runtime?.scene==='archive')runtime.scene=runtime.resumeScene;resumeBoundary();break;
     case 'select-task':if(runtime.draft&&runtime.draft.taskId!==id){modal('Keep your unfinished choice?',`<p>Switching requests discards the current uncommitted draft. Incident time will not change.</p><button data-action='confirm-select' data-id='${esc(id)}'>Discard draft and switch</button><button data-close>Keep editing</button>`);}else{acknowledge();selected=id;play();$('active-work')?.focus();}break;
     case 'confirm-select':runtime.draft=null;runtime.focus=null;acknowledge();selected=id;closeModal();play();break;
-    case 'ack-result':acknowledge();persist();play();break;
+    case 'ack-result':acknowledge();persist();if(screen==='play')play();break;
     case 'next-task':acknowledge();selected=nextTask()?.id||null;play();$('active-work')?.focus();break;
     case 'queue-move':moveQueue(id,Number(button.dataset.direction));break;
     case 'handover-move':{const i=handoverOrder.indexOf(id),j=i+Number(button.dataset.direction);[handoverOrder[i],handoverOrder[j]]=[handoverOrder[j],handoverOrder[i]];$('handover-list').innerHTML=handoverRows();document.querySelector(`[data-action='handover-move'][data-id='${id}']:not(:disabled)`)?.focus();runtime.draft={taskId:selected,values:runtime.draft?.values||{},handoverOrder:[...handoverOrder]};persist();announce('Watch list reordered.');break;}

@@ -1,57 +1,9 @@
-import fs from 'node:fs';
-import vm from 'node:vm';
+import {boot} from './helpers/ui-harness.mjs';
 import assert from 'node:assert/strict';
 
 // Exercise the actual controller's event handlers and persistence. This is a
 // lightweight DOM double, not a claim of browser layout or accessibility testing.
-const engineSource=fs.readFileSync('v17-engine.js','utf8');
-const uiSource=fs.readFileSync('v17-ui.js','utf8');
 const sessionKey='trg-v17-session',careerKey='trg-v17-career',reportsKey='trg-v17-reports';
-function boot(seed={}, failWrites=false, endpoint=null) {
-  const memory=new Map(Object.entries(seed).map(([k,v])=>[k,typeof v==='string'?v:JSON.stringify(v)]));
-  const handlers=new Map(),nodes=new Map(),blobs=[],beacons=[];
-  function node(id='') {
-    if(nodes.has(id))return nodes.get(id);
-    const el={id,innerHTML:'',textContent:'',className:'',dataset:{},value:'',open:false,isConnected:true,disabled:false,
-      setAttribute(key,value){this[key]=value;},hasAttribute(key){return key in this;},
-      addEventListener(){},focus(){document.activeElement=this;},scrollIntoView(){},
-      showModal(){this.open=true;},close(){this.open=false;},click(){},
-      closest(){return null;},classList:{add(){},remove(){},toggle(){}}};
-    nodes.set(id,el);return el;
-  }
-  const document={documentElement:{dataset:{}},body:{className:''},activeElement:node('initial-focus'),
-    getElementById:id=>node(id),createElement:tag=>node(`created-${tag}-${nodes.size}`),
-    addEventListener(type,fn){if(!handlers.has(type))handlers.set(type,[]);handlers.get(type).push(fn);},
-    querySelector(selector){return selector==='input[name=difficulty]:checked'?{value:'guided'}:null;},
-    querySelectorAll(){return [];}};
-  class FormDataDouble {
-    constructor(form){this.entries=form.entries;}
-    get(name){return this.entries.find(([key])=>key===name)?.[1]??null;}
-    getAll(name){return this.entries.filter(([key])=>key===name).map(([,value])=>value);}
-    has(name){return this.entries.some(([key])=>key===name);}
-  }
-  const context={document,console,Blob,FormData:FormDataDouble,Date,Math,JSON,Set,Map,
-    TRG_CONFIG: endpoint ? {analyticsEndpoint:endpoint} : {},
-    navigator:{sendBeacon(url,body){beacons.push({url,body});return true;}},location:{protocol:'http:',hostname:'localhost'},
-    localStorage:{getItem:k=>memory.get(k)??null,setItem(k,v){if(failWrites)throw new Error('Storage denied');memory.set(k,String(v));}},
-    URL:{createObjectURL(blob){blobs.push(blob);return `blob:test-${blobs.length}`;},revokeObjectURL(){}},
-    setTimeout(fn){fn();return 0;},addEventListener(){},scrollTo(){}};
-  context.window=context;context.globalThis=context;
-  vm.createContext(context);vm.runInContext(engineSource,context);vm.runInContext(uiSource,context);
-  function emit(type,event){for(const fn of handlers.get(type)||[])fn(event);}
-  function click(action,extra={}) {
-    const target={dataset:{action,...extra},setAttribute(){},textContent:'',closest:selector=>selector==='[data-action]'?target:null};
-    emit('click',{target});
-  }
-  function submit(task,values={}) {
-    const entries=Object.entries(values).flatMap(([key,value])=>(Array.isArray(value)?value:[value]).map(v=>[key,String(v)]));
-    emit('submit',{preventDefault(){},target:{dataset:{task},entries,matches:s=>s==='.task-form'}});
-  }
-  return {memory,nodes,blobs,beacons,click,submit,context,json:key=>JSON.parse(memory.get(key)||'null'),
-    state:()=>JSON.parse(memory.get(sessionKey)||'null')?.state,
-    html:()=>node('app').innerHTML,dialog:()=>node('dialog-content').innerHTML};
-}
-
 // Corrupt JSON and partial profiles must recover to a usable briefing.
 for(const seed of [
   {[careerKey]:'{broken',[sessionKey]:'{broken',[reportsKey]:'{broken'},
@@ -60,7 +12,7 @@ for(const seed of [
   {[sessionKey]:{state:{schema:17,tasks:[],resources:[],history:[],events:[],queue:[],traffic:[],period:0,minute:0}}}
 ]) {
   const app=boot(seed);assert.match(app.html(),/Start oil spill scenario/);assert.doesNotMatch(app.html(),/data-action='resume'/);
-  app.click('start');assert.equal(app.state().period,0);
+  const hadCheckpoint=app.memory.has(sessionKey);app.click('start');if(hadCheckpoint){assert.match(app.dialog(),/Replace current checkpoint/);app.click('confirm-start');}assert.equal(app.state().period,0);
 }
 
 const app=boot();
@@ -110,13 +62,13 @@ app.click('select-task',{id:'validate'});assert.equal(app.state().minute,0);
 app.click('home');assert.match(app.html(),/Resume/);app.click('resume');
 
 app.submit('validate',{fields:['capability','location','neededBy']});
-assert.equal(app.json(sessionKey).selected,'validate','Submission keeps the completed action visible');
+assert.equal(app.json(sessionKey).runtime.selected,'validate','Submission keeps the completed action visible');
 assert.match(app.html(),/What it means for the response/);
 assert.match(app.html(),/Clarification returned/);
 assert.match(app.html(),/Continue: Route the two requests/);
 const heldResult=boot(Object.fromEntries(app.memory));heldResult.click('resume');
 assert.match(heldResult.html(),/What it means for the response/,'Result survives save and resume');
-app.click('next-task');assert.equal(app.json(sessionKey).selected,'route');
+app.click('next-task');assert.equal(app.json(sessionKey).runtime.selected,'route');
 app.submit('route',{tactical:'resources',support:'logistics'});
 app.submit('monitor',{vendor:'harbor'});
 app.submit('boom',{marsh:3,channel:2});
@@ -138,7 +90,7 @@ app.click('enter-incident');
 app.submit('relief',{assign:'source',verified:'yes'});
 app.submit('cop',{items:['monitor','boom','eta','skimmer'],note:'Verified local record.'});
 app.submit('escalation',{recipients:['operations','safety','logistics','command'],concern:'both',note:'Carry constraints forward.'});
-app.click('handover-move',{id:'containment',direction:'-1'});
+app.click('select-task',{id:'handover'});app.click('handover-move',{id:'containment',direction:'-1'});
 app.click('handover-move',{id:'containment',direction:'-1'});
 app.submit('handover');app.click('review');app.click('advance');
 assert.equal(app.state().finished,true);assert.equal(app.state().tasks.filter(t=>t.status==='done').length,12);
@@ -153,7 +105,7 @@ app.click('export-html',{id:app.state().id});assert.match(await app.blobs.at(-1)
 // Reopening a finished checkpoint repairs a missing archive independently of XP.
 const recoverySeed=Object.fromEntries(app.memory);delete recoverySeed[reportsKey];
 const recovered=boot(recoverySeed);assert.equal(recovered.json(careerKey).xp,originalXP);assert.equal(recovered.json(reportsKey).length,1);
-const reloaded=boot(Object.fromEntries(recovered.memory));assert.equal(reloaded.json(careerKey).sessions,1);assert.equal(reloaded.json(reportsKey).length,1);assert.match(reloaded.html(),/Welcome to The Response Game/);
+const reloaded=boot(Object.fromEntries(recovered.memory));assert.equal(reloaded.json(careerKey).sessions,1);assert.equal(reloaded.json(reportsKey).length,1);assert.match(reloaded.html(),/The picture you leave/);
 
 // AAR strings remain text when rendering and when downloaded as HTML.
 const hostile=structuredClone(app.json(reportsKey)[0]);
@@ -167,5 +119,5 @@ const invalidArchive=boot({[reportsKey]:[{...hostile,score:'<script>alert(1)</sc
 // Storage refusal must leave a playable controller with an explicit warning.
 const noStorage=boot({},true);noStorage.click('start');noStorage.submit('validate',{fields:['capability','location']});
 assert.match(noStorage.html(),/Saving is unavailable/);
-app.click('replay');assert.equal(app.state().variant,1);assert.equal(app.state().finished,false);
+app.click('replay');app.click('confirm-start');assert.equal(app.state().variant,1);assert.equal(app.state().finished,false);
 console.log('v17 UI event/persistence contracts passed: complete playthrough, archive recovery, reward deduplication, corrupt saves, exports and presentation controls (mock DOM).');

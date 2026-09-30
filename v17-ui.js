@@ -52,7 +52,7 @@
     selected=s.tasks.some(t=>t.id===selected)?selected:s.queue[0]||null;
     const task=s.tasks.find(t=>t.id===selected),index=task?.status==='done'?s.events.findIndex(e=>e.type==='decision'&&e.minute===task.completedAt):-1;
     return {scene:s.finished?'aar':'play',resumeScene:s.finished?'aar':'play',selected,focus:null,view:'work',draft:null,
-      result:index>=0?{id:`${s.id}:${index}`,eventIndex:index,acknowledged:false,notice:''}:null,archiveId:null};
+      result:index>=0?{id:`${s.id}:${index}`,eventIndex:index,acknowledged:false}:null,archiveId:null};
   }
   function validDraft(d,s) {
     if(d===null)return true;
@@ -69,7 +69,7 @@
     if(r.resumeScene==='archive'||(r.scene==='archive'&&!r.archiveId))return false;
     if(s.finished?!['aar','archive'].includes(r.scene):r.scene==='aar')return false;
     const a=r.result;
-    return a===null||(object(a)&&Number.isInteger(a.eventIndex)&&a.eventIndex>=0&&a.eventIndex<s.events.length&&a.id===`${s.id}:${a.eventIndex}`&&typeof a.acknowledged==='boolean'&&typeof a.notice==='string'&&a.notice.length<=4000);
+    return a===null||(object(a)&&Number.isInteger(a.eventIndex)&&a.eventIndex>=0&&a.eventIndex<s.events.length&&a.id===`${s.id}:${a.eventIndex}`&&typeof a.acknowledged==='boolean');
   }
   function validMeta(m,s) { return object(m)&&[null,'schema-17-state','state-selected'].includes(m.migratedFrom)&&m.recovery==='ready'&&(m.savedAt===null||(typeof m.savedAt==='string'&&m.savedAt.length<=30&&Number.isFinite(Date.parse(m.savedAt))))&&Number.isInteger(m.forwardedCount)&&m.forwardedCount>=0&&m.forwardedCount<=s.events.length; }
   function classifyCheckpoint(record) {
@@ -137,11 +137,12 @@
     handoverOrder=[...d.handoverOrder];if($('handover-list'))$('handover-list').innerHTML=handoverRows();
     if(selected==='boom')allocationTotal();
   }
+  function resultText() { const e=state?.events[runtime?.result?.eventIndex];return e?.consequence||e?.change||'The incident state has been updated.'; }
   function acknowledge() { if(runtime?.result){runtime.result.acknowledged=true;notice='';} }
   function resumeBoundary() {
     if(!state)return;
     selected=runtime.selected;view=runtime.view;handoverOrder=runtime.draft?.handoverOrder||['monitoring','waste','containment'];
-    notice=runtime.result&&!runtime.result.acknowledged?runtime.result.notice:'';
+    notice=runtime.result&&!runtime.result.acknowledged?resultText():'';
     if(runtime.scene==='archive') { const r=reports.find(r=>r.sessionId===runtime.archiveId);if(r){aar(r,true);return;}runtime.scene=runtime.resumeScene; }
     if(state.finished){complete();return;}
     if(runtime.scene==='orientation')orientation();else if(runtime.scene==='period-briefing')periodBriefing();else if(runtime.scene==='review')review();else play();
@@ -325,9 +326,9 @@
     if(!outcome.ok){const target=$('form-error');if(target){target.className='form-error';target.textContent=outcome.error||'This action could not be recorded.';target.scrollIntoView({block:'nearest'});}else modal('Action not recorded',`<p>${esc(outcome.error)}</p>`);persist();announce(outcome.error);return false;}
     if(taskId){selected=taskId;runtime.draft=null;runtime.focus=null;}
     if(action.type!=='reorder') {
-      notice=outcome.notice||state.history.at(-1)?.consequence||'The incident state has been updated.';
       const index=state.events.length-1;
-      runtime.result={id:`${state.id}:${index}`,eventIndex:index,acknowledged:false,notice};
+      runtime.result={id:`${state.id}:${index}`,eventIndex:index,acknowledged:false};
+      notice=resultText();
       boundary(action.type==='advance'?(state.finished?'aar':'period-briefing'):'play');
     }
     sound();forwardEvents();persist();announce(notice);return true;

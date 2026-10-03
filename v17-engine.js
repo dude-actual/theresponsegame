@@ -48,17 +48,84 @@
 
   function traffic(s, from, text) { s.traffic.push({minute:s.minute,from,text}); }
   function resource(s, id) { return s.resources.find(item => item.id === id); }
-  function event(s, type, data = {}) { s.events.push({sessionId:s.id,minute:s.minute,period:s.period,type,...copy(data)}); }
+  function event(s, type, data = {}) {
+    const entry={sessionId:s.id,minute:s.minute,period:s.period,type,...copy(data),id:`${s.id}:event:${s.events.length}`};
+    s.events.push(entry); return entry;
+  }
   function record(s, action, change, consequence, constraint, category, quality = 'mixed', source = 'player') {
-    s.history.push({minute:s.minute,action,change,consequence,constraint,category,quality,source});
+    const entry={id:`${s.id}:history:${s.history.length}`,minute:s.minute,action,change,consequence,constraint,category,quality,source};
+    s.history.push(entry);
     if (source === 'player' && CATEGORIES.includes(category)) {
       const n = s.evidence[category];
       n.count++; n.total += quality === 'strong' ? 100 : quality === 'mixed' ? 70 : 35;
       s.competencies[category] = Math.round(n.total / n.count);
     }
-    event(s,source === 'player' ? 'decision' : 'condition_change',{action,category,quality,change,consequence,constraint,source});
+    const emitted=event(s,source === 'player' ? 'decision' : source === 'team' ? 'team_action' : 'condition_change',{action,category,quality,change,consequence,constraint,source,historyId:entry.id});
+    entry.eventId=emitted.id;
   }
   function taskDone(s, id) { const task = s.tasks.find(item => item.id === id); task.status = 'done'; task.completedAt = s.minute; }
+  function teamRecord(s,key,action,change,consequence,constraint,category,causes=[]) {
+    if(s.history.some(h=>h.teamKey===key))return false;
+    record(s,action,change,consequence,constraint,category,'mixed','team');
+    for(const entry of [s.history.at(-1),s.events.at(-1)])Object.assign(entry,{teamKey:key,causes:[...causes]});
+    return true;
+  }
+  function finishTeamTask(s,id) {
+    if(s.tasks.find(t=>t.id===id).status==='pending')taskDone(s,id);
+    s.queue=s.queue.filter(i=>s.tasks.find(t=>t.id===i).status==='pending');
+  }
+  function routineTeamWork(s) {
+    if(!s.flags.teamWork||s.finished)return;
+    if(s.period===0&&s.tasks.find(t=>t.id==='validate').status==='pending') {
+      s.flags.clarified=['capability','location'];
+      teamRecord(s,'request-041','Team request clarification','Entry Group confirmed atmospheric VOC / oxygen / LEL monitoring and Source berth reporting.','The known request is ready for sourcing.','No resource is committed or available.','documentation');
+      finishTeamTask(s,'validate');
+      traffic(s,'Entry Group','RR-041 confirmed: one atmospheric VOC / oxygen / LEL team, Source berth, tactical channel 3, required by 07:55.');
+    }
+    if(s.period===0&&s.tasks.find(t=>t.id==='route').status==='pending') {
+      s.flags.routeTactical='resources';s.flags.routeSupport='logistics';
+      teamRecord(s,'routing','Team functional routing','RR-041 to Resources Unit; radio support to Logistics.','Known requests reached their functional owners.','Operations retains tactical authorization.','routing');
+      finishTeamTask(s,'route');
+    }
+    for(const o of s.orders)for(const p of o.receiptPlans||(o.receiptPlan?[o.receiptPlan]:[])) {
+      const r=resource(s,p.resourceId);
+      if(!r||r.status!=='awaiting_checkin'||s.history.some(h=>h.teamKey===`receive:${r.id}`))continue;
+      const arrival=s.events.find(e=>e.type==='resource_arrival'&&e.resourceId===r.id);
+      if(!arrival||!r.capable||p.requestId!==o.requestId||p.kind!==r.kind||p.authorization!=='operations'||!arrayChoice(p.verified,['id','leader','capability','comms'],true))continue;
+      r.verified=true;r.status=p.assignment==='reserve'?'staging':'assigned';r.location=p.assignment==='source'?'Source berth':p.assignment==='channel'?'Channel':'East Staging';
+      if(p.assignment==='source'&&r.kind==='monitor')s.flags.monitorId=r.id;
+      if(p.assignment==='channel'&&r.kind==='monitor')s.flags.channelMonitoringGap=false;
+      teamRecord(s,`receive:${r.id}`,'Team resource reception',`${r.id} matched ${o.requestId}; Staging verified identity, leader, capability and communications.`,`${r.name} received at ${r.location}.`,'Operations authorization applies to this assignment only.','accountability',[arrival.id||`${s.id}:event:${s.events.indexOf(arrival)}`]);
+      for(const entry of [s.history.at(-1),s.events.at(-1)])Object.assign(entry,{resourceId:r.id,orderId:o.id,authorization:'operations',manifest:copy(p)});
+      if(r.id===s.flags.monitorId)finishTeamTask(s,'arrival');
+      if(r.kind==='relief'&&s.period===2)finishTeamTask(s,'relief');
+      traffic(s,'Staging',`${r.id} verified against ${o.requestId}; Operations-authorized assignment: ${r.location}.`);
+    }
+    if(s.period===2&&hasSourceRelief(s))finishTeamTask(s,'relief');
+    if(s.period===2&&s.tasks.find(t=>t.id==='cop').status==='pending') {
+      const items=['monitor','boom','eta'];if(s.flags.statusVerified)items.push('skimmer');
+      s.flags.cop=items;s.flags.copNote=gaps(s).join(' ');
+      teamRecord(s,'cop','Team verified resource picture',`Situation Unit published ${items.join(', ')} with current limitations.`,s.flags.copNote||'Current assignments and orders are visible.','Unconfirmed sheen reports remain separate.','situational-awareness');
+      for(const entry of [s.history.at(-1),s.events.at(-1)])entry.picture={minute:s.minute,resources:copy(s.resources),orders:copy(s.orders),constraints:gaps(s)};
+      finishTeamTask(s,'cop');
+    }
+    if(s.period===2&&s.tasks.find(t=>t.id==='escalation').status==='pending') {
+      const recipients=['operations'];
+      if(!monitoringReady(s)||s.flags.channelMonitoringGap||!hasSourceRelief(s))recipients.push('safety');
+      if(!wasteReady(s)||!hasSourceRelief(s)||!monitoringReady(s))recipients.push('logistics');
+      if(s.cost>s.intel.budget||s.flags.boom[s.intel.priorityArea]<s.intel[s.intel.priorityArea==='marsh'?'marshDemand':'channelDemand'])recipients.push('command');
+      s.flags.escalation={recipients,required:[...recipients],concern:'both',note:'Supported resource records and remaining constraints.',covered:true,gaps:gaps(s)};
+      teamRecord(s,'recipients','Team constraint distribution',`Planning sent the resource picture to ${recipients.join(', ')}.`,gaps(s).join(' ')||'No current resource gap reported.','Distribution does not authorize reassignment, create resources or clear unsafe work.','coordination',[s.history.find(h=>h.teamKey==='cop').eventId]);
+      finishTeamTask(s,'escalation');
+    }
+  }
+  function receiptPlan(s,o,r,assignment) {
+    if(s.flags.teamWork) {
+      const plan={resourceId:r.id,requestId:o.requestId,kind:r.kind,assignment,authorization:'operations',verified:['id','leader','capability','comms']};
+      if(!o.receiptPlan)o.receiptPlan=plan;
+      else {o.receiptPlans||=[o.receiptPlan];o.receiptPlans.push(plan);}
+    }
+  }
   function priorDecision(s, action) { return s.history.findIndex(h=>h.source==='player'&&h.action===action); }
   function linkCorrection(s, index) {
     if (index < 0) throw new Error('Original decision is missing.');
@@ -81,6 +148,7 @@
     s.safetyHold = !monitoringReady(s) || (s.minute >= 180 && !hasSourceRelief(s));
   }
   function refresh(s) {
+    routineTeamWork(s);
     updateSafety(s);
     s.tasks.forEach(task => {
       task.available = task.period === s.period && task.status === 'pending' && !s.finished;
@@ -126,6 +194,7 @@
     for (let n = 0; n < minutes; n++) {
       s.minute++;
       processArrivals(s);
+      routineTeamWork(s);
       updateSafety(s);
       const boom = s.flags.boom;
       const marshGap = Math.max(0,s.intel.marshDemand-boom.marsh);
@@ -251,6 +320,39 @@
     if(s.flags.escalation!==null&&(!Array.isArray(s.flags.escalation.recipients)||!Array.isArray(s.flags.escalation.required)||!Array.isArray(s.flags.escalation.gaps)||typeof s.flags.escalation.covered!=='boolean'))return fail('The saved escalation record is invalid.');
     if(s.flags.forecast!==null&&(!int(s.flags.forecast.relief,2)||!int(s.flags.forecast.waste,2)||!Number.isFinite(s.flags.forecast.orderedAt)))return fail('The saved forecast is invalid.');
     if(!['reliefNeededBy','reliefDemand','wasteDemand','reliefLead','wasteLead','reliefCost','wasteCost','budget','sourceCrewDutyLimit','marshCrewDutyLimit'].every(k=>Number.isFinite(s.intel[k])&&s.intel[k]>=0)||!['marsh','channel'].includes(s.intel.priorityArea)||!Array.isArray(s.intel.currentGaps))return fail('The saved operational information is invalid.');
+    if(s.flags.teamWork!==undefined&&typeof s.flags.teamWork!=='boolean')return fail('Invalid routine team setting.');
+    const causalIds=new Set();
+    for(const [kind,entries] of [['event',s.events],['history',s.history]])for(let i=0;i<entries.length;i++) {
+      const entry=entries[i],id=`${s.id}:${kind}:${i}`;
+      if(entry.id!==undefined&&entry.id!==id)return fail('Invalid causal identity.');
+      causalIds.add(id);
+      if(entry.source!==undefined&&!['player','condition','team'].includes(entry.source))return fail('Invalid action provenance.');
+    }
+    const teamKeys=new Set();
+    for(const h of s.history) {
+      if(h.causes!==undefined&&(!Array.isArray(h.causes)||h.causes.some(id=>!causalIds.has(id))))return fail('Missing causal evidence.');
+      if(h.source==='team') {
+        const e=s.events.find(e=>e.id===h.eventId);
+        if(typeof h.teamKey!=='string'||teamKeys.has(h.teamKey)||!Array.isArray(h.causes)||!e||e.type!=='team_action'||e.historyId!==h.id||e.teamKey!==h.teamKey)return fail('Invalid or duplicate team evidence.');
+        if(h.causes.some(id=>{const cause=s.events.find(e=>e.id===id);return !cause||cause.minute>h.minute||s.events.indexOf(cause)>=s.events.indexOf(e);}))return fail('Team evidence must reference an earlier event.');
+        if(h.teamKey.startsWith('receive:')) {
+          const arrival=s.events.find(e=>e.id===h.causes[0]),o=s.orders.find(o=>o.id===h.orderId),r=resource(s,h.resourceId),p=h.manifest;
+          if(h.causes.length!==1||!arrival||arrival.type!=='resource_arrival'||arrival.resourceId!==h.resourceId||!o||arrival.minute<o.eta||!o.resourceIds.includes(h.resourceId)||!r?.capable||h.authorization!=='operations'||!p||p.resourceId!==r.id||p.kind!==r.kind||p.requestId!==o.requestId||p.authorization!=='operations'||!arrayChoice(p.verified,['id','leader','capability','comms'],true))return fail('Team reception lacks matching arrival, verification or authorization.');
+        }
+        teamKeys.add(h.teamKey);
+      }
+    }
+    for(const o of s.orders) {
+      if(o.receiptPlans&&(!Array.isArray(o.receiptPlans)||!o.receiptPlans.length||new Set(o.receiptPlans.map(p=>p.resourceId)).size!==o.receiptPlans.length))return fail('Invalid receipt plan list.');
+      for(const p of o.receiptPlans||(o.receiptPlan?[o.receiptPlan]:[])) {
+      if(!o.resourceIds.includes(p.resourceId)||typeof p.requestId!=='string'||typeof p.kind!=='string'||!['source','channel','reserve'].includes(p.assignment)||!arrayChoice(p.verified,['id','leader','capability','comms']))return fail('Invalid receipt plan.');
+      }
+    }
+    if(s.flags.teamWork)for(const category of CATEGORIES) {
+      const credited=s.history.filter(h=>h.source==='player'&&h.category===category);
+      const total=credited.reduce((n,h)=>n+(h.quality==='strong'?100:h.quality==='mixed'?70:35),0);
+      if(s.evidence[category].count!==credited.length||s.evidence[category].total!==total)return fail('Team work cannot add player competency evidence.');
+    }
     return {ok:true};
     } catch { return fail('The incident save contains malformed records.'); }
   }
@@ -267,6 +369,7 @@
       if (a.type === 'handover' && s.tasks.some(t=>t.period===2&&t.id!=='handover'&&t.status!=='done')) return 'Resolve the other handover work before setting final priorities.';
     }
     switch(a.type) {
+      case 'team-work': return s.flags.teamWork ? 'Routine team work is already enabled.' : s.minute===0&&s.history.length===0 ? null : 'Enable routine team work before the response starts.';
       case 'validate': return arrayChoice(a.fields,['capability','location','contact','quantity','neededBy']) ? null : 'Choose valid request fields once each.';
       case 'route': return ['resources','logistics'].includes(a.tactical)&&['resources','logistics'].includes(a.support) ? null : 'Choose a responsible function for each request.';
       case 'source': return VENDORS.some(v=>v.id===a.vendor) ? null : 'Choose an available source.';
@@ -334,6 +437,7 @@
   function apply(s,a) {
     let notice = '';
     switch(a.type) {
+      case 'team-work': s.flags.teamWork=true;refresh(s);return 'Routine team work enabled; operational decisions remain with Resources Unit.';
       case 'validate': {
         s.flags.clarified = [...a.fields];
         const critical = ['capability','location'].filter(k=>a.fields.includes(k)).length;
@@ -363,6 +467,7 @@
         } else s.resources.push({id:'MON-EXT',name:v.name,kind:'monitor',status:'en_route',location:'To East Staging',eta,capable:v.capable,verified:false});
         order(s,'ORD-MON',v.name,v.cost,eta,[s.flags.monitorId],'RR-041','team / operational period');
         s.orders.at(-1).quotedEta=quotedEta;
+        receiptPlan(s,s.orders.at(-1),resource(s,s.flags.monitorId),'source');
         if(slip){
           s.intel.vendorDelay=slip;
           traffic(s,'Logistics','Regional dispatch update after commitment: transfer at the road closure adds 12 minutes. The accepted quote remains $1,850; the current order and arrival ETA have been revised.');
@@ -431,6 +536,7 @@
         s.resources.push({id:p.resourceId,name:`${v.name} / ${a.assignment} monitoring`,kind:'monitor',status:'en_route',location:'To East Staging',eta,capable:true,verified:false});
         order(s,p.orderId,v.name,v.cost,eta,[p.resourceId],a.assignment==='source'?'RR-041':'Channel monitoring restoration','team / operational period');
         Object.assign(s.orders.at(-1),{quotedEta,recoveryPurpose:p.purpose});
+        receiptPlan(s,s.orders.at(-1),resource(s,p.resourceId),a.assignment);
         if(slip)traffic(s,'Logistics','Regional dispatch reports an additional 12-minute road transfer. The order retains its original quote and revised arrival time.');
         tick(s,6);
         notice=`Logistics ordered ${v.name} for ${p.location}; cost $${v.cost.toLocaleString('en-US')}, ETA ${String(7+Math.floor(eta/60)).padStart(2,'0')}:${String(eta%60).padStart(2,'0')}.`;
@@ -453,6 +559,7 @@
         s.resources.push({id:p.resourceId,name:relief?'Additional relief crew':'Additional waste package',kind:a.kind,status:'en_route',location:'To East Staging',eta,capable:true,verified:false});
         order(s,p.orderId,'Logistics support order',price,eta,[p.resourceId],relief?'RR-061':'RR-062');
         s.orders.at(-1).recoveryPurpose=p.purpose;
+        if(relief)receiptPlan(s,s.orders.at(-1),resource(s,p.resourceId),'source');
         tick(s,8);
         notice=`Logistics ordered one ${a.kind} package with a ${relief?s.intel.reliefLead:s.intel.wasteLead}-minute lead time; cost $${price.toLocaleString('en-US')}.`;
         traffic(s,'Logistics',notice);
@@ -483,6 +590,7 @@
             s.resources.push({id,name:`${kind==='relief'?'Relief crew':'Waste package'} ${n+1}`,kind,status:'en_route',location:'To East Staging',eta:s.minute+lead,capable:true,verified:false});
           }
           order(s,`ORD-${kind.toUpperCase()}`,'Logistics support order',count*price,s.minute+lead,ids,kind==='relief'?'RR-061':'RR-062');
+          if(kind==='relief')ids.forEach((id,index)=>receiptPlan(s,s.orders.at(-1),resource(s,id),index===0?'source':'reserve'));
         }
         tick(s,8);
         notice=`Ordered ${a.relief} relief crew(s) and ${a.waste} waste package(s); cost $${(a.relief*1400+a.waste*1000).toLocaleString('en-US')}.`;

@@ -135,3 +135,7 @@ Branch `feat/team-actions`, based on authorized checkpoint integration `26e80667
 - All 12 top-level test files pass locally, including the unchanged 66 checkpoint cases / 55 exact reload comparisons, 24 legacy completed trajectories and 70 historical incident/role combinations. Production/historical syntax and complete patch whitespace checks pass. GitHub final-head verification is recorded on the separate PR.
 
 Limitations: no new player UI or rendered playthrough in this increment; optional reserve crew disposition retains the existing player path. Item 05 must expose discrepancy recovery, team attribution and arrival outcomes. This engine foundation does not certify enjoyment, accessibility or release readiness.
+
+### PR #5 review repair
+
+Qualified replacement receipt now updates the source monitoring pointer. Multi-unit relief orders retain one manifest per resource; the first crew takes the source assignment and additional verified crews remain at staging as reserve. Regression coverage verifies both findings and exact reload equivalence. The earlier reserve-crew limitation is superseded.

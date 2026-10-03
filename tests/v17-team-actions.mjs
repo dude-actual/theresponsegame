@@ -68,3 +68,14 @@ const duplicate=clone(late);const outcome=E.act(late,{type:'team-work'});assert.
 const spoof=clone(late);spoof.evidence.accountability.count++;assert.equal(E.validateState(spoof).ok,false);
 const corrupt=clone(late);const received=corrupt.history.find(h=>h.teamKey==='receive:RLF-REC1');received.authorization='resources';assert.equal(E.validateState(corrupt).ok,false);
 console.log('Late support receipt, duplicate enable, fabricated credit and authorization corruption checks passed.');
+const replacement=setup('industrial');act(replacement,{type:'allocate',marsh:4,channel:1});act(replacement,{type:'advance'});
+act(replacement,{type:'checkin',verified:['id','leader','capability','comms'],assignment:'source'});
+act(replacement,{type:'order-monitor',assignment:'source',vendor:'harbor'});
+while(replacement.resources.find(r=>r.id==='MON-R1').status==='en_route')act(replacement,{type:'wait'});
+assert.equal(replacement.flags.monitorId,'MON-R1');assert.equal(replacement.safetyHold,false);
+assert.equal(E.report(replacement).resources.find(r=>r.id==='MON-R1').status,'assigned');
+const recovered=E.restoreState(clone(replacement));assert.equal(recovered.ok,true);assert.deepEqual(clone(recovered.state),clone(replacement));
+const two=setup();act(two,{type:'allocate',marsh:4,channel:1});act(two,{type:'advance'});act(two,{type:'reconcile',skimmer:'out_of_service',evidence:'maintenance'});act(two,{type:'reassign',strategy:'hold',approval:false});act(two,{type:'forecast',relief:2,waste:1});act(two,{type:'advance'});
+assert.equal(two.resources.find(r=>r.id==='RLF-1').status,'assigned');assert.equal(two.resources.find(r=>r.id==='RLF-2').status,'staging');assert.equal(two.resources.find(r=>r.id==='RLF-2').verified,true);
+assert.equal(two.history.filter(h=>h.teamKey?.startsWith('receive:RLF-')).length,2);assert.equal(E.restoreState(clone(two)).ok,true);
+console.log('PR #5 regressions: qualified replacement becomes active source monitor; both paid relief crews received once with source/reserve assignments.');

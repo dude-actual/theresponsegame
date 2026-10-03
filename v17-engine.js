@@ -87,13 +87,13 @@
       teamRecord(s,'routing','Team functional routing','RR-041 to Resources Unit; radio support to Logistics.','Known requests reached their functional owners.','Operations retains tactical authorization.','routing');
       finishTeamTask(s,'route');
     }
-    for(const o of s.orders) {
-      const p=o.receiptPlan;if(!p)continue;
+    for(const o of s.orders)for(const p of o.receiptPlans||(o.receiptPlan?[o.receiptPlan]:[])) {
       const r=resource(s,p.resourceId);
       if(!r||r.status!=='awaiting_checkin'||s.history.some(h=>h.teamKey===`receive:${r.id}`))continue;
       const arrival=s.events.find(e=>e.type==='resource_arrival'&&e.resourceId===r.id);
       if(!arrival||!r.capable||p.requestId!==o.requestId||p.kind!==r.kind||p.authorization!=='operations'||!arrayChoice(p.verified,['id','leader','capability','comms'],true))continue;
       r.verified=true;r.status=p.assignment==='reserve'?'staging':'assigned';r.location=p.assignment==='source'?'Source berth':p.assignment==='channel'?'Channel':'East Staging';
+      if(p.assignment==='source'&&r.kind==='monitor')s.flags.monitorId=r.id;
       if(p.assignment==='channel'&&r.kind==='monitor')s.flags.channelMonitoringGap=false;
       teamRecord(s,`receive:${r.id}`,'Team resource reception',`${r.id} matched ${o.requestId}; Staging verified identity, leader, capability and communications.`,`${r.name} received at ${r.location}.`,'Operations authorization applies to this assignment only.','accountability',[arrival.id||`${s.id}:event:${s.events.indexOf(arrival)}`]);
       for(const entry of [s.history.at(-1),s.events.at(-1)])Object.assign(entry,{resourceId:r.id,orderId:o.id,authorization:'operations',manifest:copy(p)});
@@ -120,7 +120,11 @@
     }
   }
   function receiptPlan(s,o,r,assignment) {
-    if(s.flags.teamWork)o.receiptPlan={resourceId:r.id,requestId:o.requestId,kind:r.kind,assignment,authorization:'operations',verified:['id','leader','capability','comms']};
+    if(s.flags.teamWork) {
+      const plan={resourceId:r.id,requestId:o.requestId,kind:r.kind,assignment,authorization:'operations',verified:['id','leader','capability','comms']};
+      if(!o.receiptPlan)o.receiptPlan=plan;
+      else {o.receiptPlans||=[o.receiptPlan];o.receiptPlans.push(plan);}
+    }
   }
   function priorDecision(s, action) { return s.history.findIndex(h=>h.source==='player'&&h.action===action); }
   function linkCorrection(s, index) {
@@ -338,9 +342,11 @@
         teamKeys.add(h.teamKey);
       }
     }
-    for(const o of s.orders)if(o.receiptPlan) {
-      const p=o.receiptPlan;
+    for(const o of s.orders) {
+      if(o.receiptPlans&&(!Array.isArray(o.receiptPlans)||!o.receiptPlans.length||new Set(o.receiptPlans.map(p=>p.resourceId)).size!==o.receiptPlans.length))return fail('Invalid receipt plan list.');
+      for(const p of o.receiptPlans||(o.receiptPlan?[o.receiptPlan]:[])) {
       if(!o.resourceIds.includes(p.resourceId)||typeof p.requestId!=='string'||typeof p.kind!=='string'||!['source','channel','reserve'].includes(p.assignment)||!arrayChoice(p.verified,['id','leader','capability','comms']))return fail('Invalid receipt plan.');
+      }
     }
     if(s.flags.teamWork)for(const category of CATEGORIES) {
       const credited=s.history.filter(h=>h.source==='player'&&h.category===category);
@@ -584,7 +590,7 @@
             s.resources.push({id,name:`${kind==='relief'?'Relief crew':'Waste package'} ${n+1}`,kind,status:'en_route',location:'To East Staging',eta:s.minute+lead,capable:true,verified:false});
           }
           order(s,`ORD-${kind.toUpperCase()}`,'Logistics support order',count*price,s.minute+lead,ids,kind==='relief'?'RR-061':'RR-062');
-          if(kind==='relief')receiptPlan(s,s.orders.at(-1),resource(s,ids[0]),'source');
+          if(kind==='relief')ids.forEach((id,index)=>receiptPlan(s,s.orders.at(-1),resource(s,id),index===0?'source':'reserve'));
         }
         tick(s,8);
         notice=`Ordered ${a.relief} relief crew(s) and ${a.waste} waste package(s); cost $${(a.relief*1400+a.waste*1000).toLocaleString('en-US')}.`;

@@ -1,8 +1,8 @@
 # Oil Spill vertical slice — Phase 4 execution plan
 
-29 September 2026. Integration branch: `v17-rebuild`. Original planning baseline: `a96bf31922e89e922ff5c6842bcf9fdaea91442c`. Verified foundation merge: `6b38eadbdc1bf9efe48dd16259617f6e6b31b009`. This is an implementation backlog and release contract, not another design proposal.
+3 October 2026. Integration branch: `v17-rebuild`. Original planning baseline: `a96bf31922e89e922ff5c6842bcf9fdaea91442c`. Verified foundation merge: `6b38eadbdc1bf9efe48dd16259617f6e6b31b009`. This is an implementation backlog and release contract, not another design proposal.
 
-**Execution update:** PR #2 was reviewed and tested at `4291a6e963d9aa7c08df0a7b14f5a8ea81833145`, passed GitHub QA run 36612155501, and was merged into `v17-rebuild` at the foundation merge above. Item 02 engine work is implemented in [PR #3](https://github.com/dude-actual/theresponsegame/pull/3), `feat/operational-recovery` → `v17-rebuild`; its live PR record is authoritative for review/merge status. All 10 local test files pass, including 22 recovery cases after forensic test refinement. The detached `restoreState` function is the only Item 03 persistence scaffolding delivered here. Controller checkpoint migration, drafts and acknowledgments remain pending. See `V17_QA.md` for exact coverage and limitations.
+**Execution update:** Item 02 / [PR #3](https://github.com/dude-actual/theresponsegame/pull/3) was merged from authorized head `8b2f186c637c136017c1309904b074c535cfaf5c`, after exact-head QA run 36628515117 and the four-file/tree review. Merge commit and verified post-merge `v17-rebuild` head: `ff22897a6bc9f1a86fc3ce262a8b2c850499d4b5`; tree `c157d854f2a18380b8c99b092a917cde4739f0d8`. Item 03 is implemented pending separate integration review in [PR #4](https://github.com/dude-actual/theresponsegame/pull/4), `feat/checkpoint-resume` → `v17-rebuild`. Verified code head: `8fe29bfe89babba619d57403387d530e437aad13`; published/tested code tree: `97c7c1c0e3d6b69d05de350f8a1f5e77a3eef980`. [GitHub QA 36776166039](https://github.com/dude-actual/theresponsegame/actions/runs/36776166039) succeeded for that exact code head. These documentation updates follow it; the PR verification record identifies the final head and its own CI result. Local evidence: 11/11 test files, 11/11 production/historical syntax checks and 12/12 test-source syntax checks; 66 checkpoint cases with 55 exact controller reload comparisons after the 3 October review repair. Failed career/archive writes now retry during unfinished runs; the repaired publication head and CI are recorded on PR #4. See `V17_QA.md` for coverage and limitations. Milestone A is not complete; Items 04 and 05 remain unfinished.
 
 The Player First Redesign, Emotional Engagement Audit, wireframes and narrative storyboard are approved requirements. Their approval does not mean their runtime implementation exists. Where older approved documents propose unlocks, additional variants, analytics systems or progression, the latest production brief takes precedence: no new scenarios, progression, currencies, badges, achievements or metrics. Use the two existing current/demand variants. Preserve existing reports and historical records.
 
@@ -10,10 +10,10 @@ The Player First Redesign, Emotional Engagement Audit, wireframes and narrative 
 
 **Health: viable simulation foundation; not a release candidate for the approved experience.** One DOM-free engine owns incident truth. One controller owns rendering/storage, and one stylesheet serves production. The approved scene flow, automatic routine work, persistent visual consequences and outcome-first replay are not integrated. The controller and stylesheet require replacement of their old compositions, not additional wrappers.
 
-- PR #1 remains the integration-to-`main` release PR; its integration branch now includes the foundation merge. Its description still primarily describes revision 17.4 and must be rewritten around the finished implementation before release. This increment does not merge it.
+- PR #1 remains the integration-to-`main` release PR; its integration branch now includes the foundation and Item 02 merges. Its description still primarily describes revision 17.4 and must be rewritten around the finished implementation before release. This increment does not merge it.
 - Historical planning-baseline GitHub QA runs 36576960657 and 36576972592 succeeded at `a96bf31922e89e922ff5c6842bcf9fdaea91442c`. Those results do not certify subsequent heads or user comprehension/commercial quality.
 - At the original planning baseline, GitHub issues contained only PR #1. PR #2 has since merged. The issue bodies below are implementation contracts, not claims of created implementation tickets.
-- Two review comments are still applicable in code: archived-report replay reads global `state`; QA uses a clean-worktree whitespace check. Both are explicitly assigned below.
+- Item 03 protects an unfinished checkpoint during archived-report replay and reads the displayed report's difficulty/variant. Outcome-first replay presentation remains in 10. QA still uses a clean-worktree whitespace check; the workflow correction remains in 13, with the complete base-to-head range checked locally for this PR.
 - `v17-rebuild` is unprotected. Repository rulesets returned an empty list. Reading `main` protection returned 403, so its protection is **unverified**, not assumed absent.
 - The only checked-in workflow is `.github/workflows/qa.yml`; it runs Node 24 syntax, all `tests/*.mjs`, and whitespace checks. No browser job, RC artifact or branch-preview deployment is checked in.
 - `CNAME` names `theresponsegame.com`. GitHub's dynamic Pages build/deployment last succeeded for `main` at `7244c600`, run 35755409920. That establishes a deployment record, not a fresh origin/offline smoke test. Pages settings and automatic deployment behavior must be checked before merging PR #1.
@@ -21,7 +21,7 @@ The Player First Redesign, Emotional Engagement Audit, wireframes and narrative 
 
 ### Completion estimate
 
-**Original planning estimate: 45% complete, 55% remaining.** The table is retained as that baseline, not a recalculated completion claim after Item 02. This is a weighted engineering judgment against the approved release contract, not elapsed effort, a code-count calculation or a confidence claim about fun. Precision is approximately ±10 percentage points. Human acceptance gates remain unknown and cannot be awarded partial credit merely because automation passes.
+**Original planning estimate: 45% complete, 55% remaining.** The table is retained as that baseline, not a recalculated completion claim after Items 02–03. This is a weighted engineering judgment against the approved release contract, not elapsed effort, a code-count calculation or a confidence claim about fun. Precision is approximately ±10 percentage points. Human acceptance gates remain unknown and cannot be awarded partial credit merely because automation passes.
 
 | Acceptance area | Weight | Earned | Reason |
 | --- | ---: | ---: | --- |
@@ -43,12 +43,12 @@ P0 blocks this approved release. P1 is required for its quality and must also cl
 | --- | --- | --- | --- |
 | State/command ownership | Physical reception and bounded recovery in the single engine | Focused UI exposure and later pacing (P0) | Retain atomic copy/apply/validate and conservation. |
 | Arrivals | Merged foundation enables timely reception and incomplete check-in correction | Focused UI exposure (P0) | Keep actual ETA and capability/verification gates; UI wiring remains pending. |
-| Bad/late plans | Bounded status/relief correction; real replacement/channel/support orders implemented on Item 02 branch | Integration review and focused UI exposure (P0) | Preserve original histories, costs, delays and unique identities; no repair by status change. |
+| Bad/late plans | Bounded status/relief correction; real replacement/channel/support orders merged in PR #3 | Focused UI exposure (P0) | Preserve original histories, costs, delays and unique identities; no repair by status change. |
 | Routine process | Validation/routing/receipt/COP commands | Team automation with provenance, no hidden player score (P0) | Replace quiz prerequisites; preserve resource truth and local functional ownership. |
 | Time/pacing | `tick`, three periods, `advance` | 7–9 meaningful commitments, useful next-arrival action, no twelve-form gate (P0) | Change eligibility/transition orchestration in engine and scene selector. |
 | Opening | `home`, `briefing`, `orientation` | One Start, immediate crew need, three qualified approaches (P0) | Replace mandatory briefing/tour; optional help retains useful facts. |
 | Active play | `play`, `workDesk`, `taskFields` | Approved one-problem stage; bounded allocation/planning; sufficient evidence (P0) | Replace queue/map/metrics/ledger composition; retain optional records. |
-| UI drafts | `persist` stores state and selected task | Scene/draft/result acknowledgment persisted across reload (P0) | Version checkpoint envelope; do not mix draft edits into engine state. |
+| UI drafts | Item 03 versioned envelope retains scene, focus/task, one draft and result acknowledgment | Item 03 integration review; focused-scene wiring in 05 (P0) | Keep draft edits inert and restore validated engine truth directly. |
 | Allocation | Six actual resources plus `flags.boom` | Persistent actual boom segments/reserve/failure trace (P1) | Replace `map()`'s all-asset counts with capability-specific rendering. |
 | Narrative | `traffic`, `history`, report constraints | Recurring voices; state-selected result lines; opening-to-ending callback (P1) | Pure selectors, no parallel narrative simulation. |
 | Handover | `apply` handover/COP/escalation; `report` | One priority action plus automatically generated supported record (P0) | Remove check-all/recipient quizzes from active flow; preserve authority. |
@@ -88,7 +88,7 @@ Each block is a ticket body. Complexity is relative implementation/verification 
 
 **Files:** `v17-engine.js` (`validateAction`, `apply`, `refresh`, `order`, `processArrivals`, `record`, `validateState`); new recovery tests.
 
-**Dependencies:** 01. **Complexity:** L. **Status:** engine implementation and regression coverage complete in PR #3; use its live record for merge status. Includes one bounded additional relief/waste order when the original forecast omitted that support. Read-only recovery eligibility and physical limits support later focused scenes; no new runtime UI is delivered here.
+**Dependencies:** 01. **Complexity:** L. **Status:** merged in PR #3 at `ff22897a6bc9f1a86fc3ce262a8b2c850499d4b5` after exact-head verification. Includes one bounded additional relief/waste order when the original forecast omitted that support. Read-only recovery eligibility and physical limits support later focused scenes; no new runtime UI is delivered here.
 
 **Acceptance:** each recoverable constraint has a finite legal action or an explicit physical limit; IDs/order references remain unique; no spending/score exploit through repeats; late help stays late; SK-02 remains incapable; saved corrections replay identically. Preserve decision-to-correction links across exports.
 
@@ -98,9 +98,9 @@ Each block is a ticket body. Complexity is relative implementation/verification 
 
 **Description:** Define a versioned checkpoint envelope around existing engine state. Persist active scene, pending result acknowledgment and draft selections. Migrate known legacy saves without replaying actions; preserve unsupported saves for export/recovery.
 
-**Files:** `v17-ui.js` (`read`, `write`, startup loader, `persist`, `startRun`); `v17-engine.js` validator/migration seam if needed; controller/fixture tests.
+**Files:** `v17-ui.js`; `tests/v17-checkpoint.mjs`; `tests/helpers/ui-harness.mjs`; adapted `tests/v17-ui-contract.mjs`; these existing QA/implementation documents. Engine and stylesheet unchanged.
 
-**Dependencies:** 02. **Complexity:** M. **Status:** detached schema-17 restore seam supplied by 02; checkpoint envelope, controller migration, drafts and result acknowledgments remain the next blocking implementation work.
+**Dependencies:** 02. **Complexity:** M. **Status:** implemented pending separate exact-head integration review in PR #4 on `feat/checkpoint-resume`. The exact verified code head/CI is recorded above; documentation-only successors are verified on the PR. The six current runtime boundaries, two known legacy save shapes, one inert draft, result identity/acknowledgment and explicit storage recovery are covered. No generic migration framework, new report schema, team automation or focused visual scenes were added.
 
 **Acceptance:** resume returns to the same unresolved scene/draft; acknowledged events do not replay; unapplied choices do not change resources; old completed AARs remain accessible; malformed storage produces useful recovery text; no silent overwrite when migration fails.
 
@@ -345,4 +345,4 @@ The fastest credible path is **engine eligibility/recovery → persistent focuse
 
 The foundation change preserves schema 17 and current twelve-task test paths. Item 02 extends optional `correctsHistoryIndex` links to status/relief and additional orders/reception, with new resource/order identities. All 10 automated test files pass locally, including 24 prior full trajectories and 22 bounded-recovery cases. No new runtime UI, CSS, checkpoint migration, worker version or production deployment is part of Item 02.
 
-Next blocking implementation step after Item 02 integration review: Item 03, checkpoint persistence and migration, before team-action work and the focused opening. Do not report the original 45% estimate as 100% because engine tests or CI pass. Human testing, protected release operation and the accepted player experience are still required.
+Next single blocking implementation step after Item 03 exact-head integration review: Item 04, accountable routine team actions. Item 05 focused opening remains unfinished, so Milestone A is not complete. Do not report the original 45% estimate as 100% because engine tests or CI pass. Human testing, protected release operation and the accepted player experience are still required.

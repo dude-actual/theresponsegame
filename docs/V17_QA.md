@@ -121,3 +121,17 @@ Tested locally over HTTP on Windows with Microsoft Edge 153.0.4234.48. Inspected
 Before merging/releasing, check actual browser zoom, a deployed-origin service-worker upgrade/offline reload, assistive technology and physical mobile devices. The localhost preview intentionally bypasses service-worker registration. A configured external analytics endpoint was not available; mock-controller checks cover event forwarding, not a live organizational analytics integration.
 
 First-time comprehension, professional answer-pattern exploitation, subjective commercial quality, replay interest and the duration target require observed human evaluation. Source review and automated completion cannot answer those questions.
+
+
+## 3 October 2026 — Item 04 accountable routine team work
+
+Branch `feat/team-actions`, based on authorized checkpoint integration `26e80667a76675ae6bbb625cfe84ccf083ec7072`. Engine and regression tests only; approved focused UI remains Item 05. No deployment or browser-quality claim accompanies this change.
+
+- New untouched runs may opt into `team-work`; all prior twelve-task paths remain available. Team actions never invoke legacy player commands and do not advance time merely for routing or report distribution.
+- Event/history identities are deterministic session + immutable ledger position. Old records without IDs remain readable without rewriting historical evidence. Team reception links the actual arrival event and committed order, verified manifest and Operations authorization; causal corruption and fabricated competency credit reject.
+- Source orders retain cost, absolute ETA and capability. The authored scenario supplies the normal Operations-authorized receipt plan; Staging applies it only at actual arrival. Missing authorization, incomplete verification, request/kind mismatch and water-quality equipment leave player-actionable reception pending. External/team monitoring and the primary ordered source-relief crew are covered; this is not a generic dispatch framework.
+- COP records contain a dated resource/order/constraint snapshot. Recipient distribution references that publication and never authorizes a prior unapproved reassignment. Unconfirmed sheen reports and unreconciled SK-02 are excluded from verified items. These records are historical snapshots, not claims that later corrections updated an already published brief.
+- `tests/v17-team-actions.mjs`: 13 matrix cases covering guided/advanced harbor/regional/internal arrivals, four evidence mismatches, unsuitable vendor and both completed variants; additional late support, duplicate enable, fabricated credit and authorization-corruption probes. Exact save/restore comparisons verify no duplicate reception. Both complete team runs retain six player decision events and six competency evidence entries. Routine actions earn zero player credit.
+- All 12 top-level test files pass locally, including the unchanged 66 checkpoint cases / 55 exact reload comparisons, 24 legacy completed trajectories and 70 historical incident/role combinations. Production/historical syntax and complete patch whitespace checks pass. GitHub final-head verification is recorded on the separate PR.
+
+Limitations: no new player UI or rendered playthrough in this increment; optional reserve crew disposition retains the existing player path. Item 05 must expose discrepancy recovery, team attribution and arrival outcomes. This engine foundation does not certify enjoyment, accessibility or release readiness.

@@ -7,7 +7,7 @@
   const clock = minute => { const n = 420 + Math.round(Number(minute) || 0); return `${String(Math.floor(n / 60)).padStart(2,'0')}:${String(n % 60).padStart(2,'0')}`; };
   const titleCase = value => String(value ?? '').replace(/[_-]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
   let storageWarning = '', notice = '', audioOn = false, audioContext;
-  const SESSION_KEY='trg-v17-session', storageRecords=new Map(), storageErrors=new Map();
+  const SESSION_KEY='trg-v17-session', storageRecords=new Map(), storageErrors=new Map(), dirtyStores=new Set();
   let checkpointConflict=false;
   const clone=value=>JSON.parse(JSON.stringify(value));
   const object=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
@@ -41,8 +41,9 @@
         storageErrors.set(key,'Saving is paused: stored data could not be read or changed in another tab. Retry before replacing it.');storageStatus();return false;
       }
       const raw=JSON.stringify(value);localStorage.setItem(key,raw);
-      storageRecords.set(key,{kind:'loaded',raw,value});storageErrors.delete(key);storageStatus();return true;
+      storageRecords.set(key,{kind:'loaded',raw,value});dirtyStores.delete(key);storageErrors.delete(key);storageStatus();return true;
     } catch(error) {
+      dirtyStores.add(key);
       storageErrors.set(key,error?.name==='QuotaExceededError'?'Browser storage is full. Your latest changes are not saved. Export the checkpoint or free space, then retry.':'Saving is unavailable in this browser. Your latest changes are not saved. Keep this tab open and export the checkpoint.');
       storageStatus();return false;
     }
@@ -164,6 +165,9 @@
       else {const values=r.kind==='absent'?[]:r.value;if(!Array.isArray(values)||!values.every(validReport)){storageRecords.set(key,{...r,kind:'malformed'});continue;}reports=values.slice(0,30);}
       storageErrors.delete(key);
     }
+    // Failed writes retain their live value. Retry each store even while the
+    // incident is unfinished; the raw-value guard still protects external edits.
+    if(!state?.finished)for(const key of ['trg-v17-career','trg-v17-reports'])if(dirtyStores.has(key))write(key,key==='trg-v17-career'?career:reports);
     if(checkpointBlocked||!state) {
       checkpoint=classifyCheckpoint(readStorage(SESSION_KEY));
       if(checkpoint.envelope){state=checkpoint.envelope.state;runtime=checkpoint.envelope.runtime;checkpointMeta=checkpoint.envelope.meta;selected=runtime.selected;view=runtime.view;lastForwarded=checkpointMeta.forwardedCount;checkpointBlocked=false;storageErrors.delete(SESSION_KEY);storageStatus();resumeBoundary();}

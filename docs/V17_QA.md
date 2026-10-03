@@ -2,6 +2,12 @@
 
 This record distinguishes verified results from checks still to perform. Static checks and automated playthroughs do not establish player engagement, professional suitability, formal accessibility conformance or a measured 10–15 minute first-time session.
 
+## Checkpoint retry review repair — 2026-10-03
+
+Review of PR #4 at `f5c7112c04532fac270104bfeb658d91832efc25` confirmed the reported P2 defect: an unfinished run retried its checkpoint but omitted a transiently failed career/settings write. The controller now tracks failed writes per store and retries dirty career/archive values as well as the checkpoint. Successful writes clear their dirty/error markers; malformed, denied-read and externally changed data retain the existing write guards.
+
+Local verification: **11/11 test files; 11/11 production/historical syntax checks; 12/12 test-source syntax checks; full integration-base-to-head whitespace check passed.** Checkpoint coverage now totals **66 cases and 55 exact reload comparisons**. Six added cases exercise denied/quota career-setting writes at home and during an unfinished run, an archive write pending after a new response starts, and failed retries/external career edits. They assert no incident-state mutation, no engine calls, warning clearance only on successful saves, persisted reduced motion after reload, protected external raw values and no duplicate report/reward. The earlier 2026-09-30 rendered-browser evidence remains bounded historical evidence; the repair's storage-failure injection uses the controller/storage harness. Exact repaired publication head, tree and CI are recorded on PR #4 after publication. Item 04 remains pending Item 03 integration; Milestone A remains incomplete.
+
 ## Scene checkpoint persistence — 2026-09-30
 
 PR #3 pre-merge verification retained authorized head `8b2f186c637c136017c1309904b074c535cfaf5c`, successful exact-head QA run 36628515117, the same four files/four commits, no review findings or unresolved conversations, and tree `c157d854f2a18380b8c99b092a917cde4739f0d8`. The authorized merge produced `ff22897a6bc9f1a86fc3ce262a8b2c850499d4b5`, fetched and verified as the integration head with that tested tree. PR #1 remains open/unmerged. No deployment was performed.

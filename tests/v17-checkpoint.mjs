@@ -167,6 +167,29 @@ await test('Denied career/archive reads recover their original values before com
   options.denyReads=false;a.click('retry-save');assert.equal(a.memory.get(C),data[C]);assert.equal(a.memory.get(R),data[R]);
   assert.equal(a.nodes.get('save-status').hidden,true);assert.equal(a.actions(),0);
 });
+for(const quota of [false,true])for(const active of [false,true])await test(`Retry failed career setting: ${quota?'quota':'denied write'}, ${active?'unfinished run':'home'}`,()=>{
+  let fail=false;const a=boot({[C]:finishedApp.json(C)},false,null,{quota,failWrite:k=>fail&&k===C});
+  if(active){a.click('start');a.click('enter-incident');}
+  const before=active?a.state():null,original=a.memory.get(C),calls=a.actions();fail=true;a.click('motion');
+  assert.equal(a.memory.get(C),original);assert.equal(a.context.document.documentElement.dataset.motion,'reduce');
+  assert.equal(a.nodes.get('save-status').hidden,false);fail=false;a.click('retry-save');
+  assert.equal(a.json(C).motion,true);assert.equal(a.nodes.get('save-status').hidden,true);
+  assert.equal(a.actions(),calls);if(active)assert.deepEqual(a.state(),before);
+  const b=boot(seed(a));assert.equal(b.context.document.documentElement.dataset.motion,'reduce');assert.equal(b.actions(),0);
+});
+await test('An archive write still retries after starting an unfinished response',()=>{
+  let fail=true;const a=boot({[K]:{state:finished()}},false,null,{failWrite:k=>fail&&k===R});
+  const completedId=a.state().id,xp=a.json(C).xp;a.click('replay');a.click('confirm-start');const before=a.state();
+  assert.equal(a.state().finished,false);assert.equal(a.memory.has(R),false);fail=false;a.click('retry-save');
+  assert.equal(a.json(R).length,1);assert.equal(a.json(R)[0].sessionId,completedId);assert.equal(a.json(C).xp,xp);
+  assert.deepEqual(a.state(),before);assert.equal(a.nodes.get('save-status').hidden,true);reload(a);
+});
+await test('Retry keeps a career warning when storage is still full and protects external profile changes',()=>{
+  let fail=true;const a=boot({[C]:finishedApp.json(C)},false,null,{quota:true,failWrite:k=>fail&&k===C});
+  a.click('start');const before=a.state();a.click('motion');a.click('retry-save');assert.equal(a.nodes.get('save-status').hidden,false);
+  fail=false;const external=JSON.stringify({...finishedApp.json(C),xp:9999});a.memory.set(C,external);a.click('retry-save');
+  assert.equal(a.memory.get(C),external);assert.equal(a.nodes.get('save-status').hidden,false);assert.deepEqual(a.state(),before);assert.equal(a.actions(),0);
+});
 for(const failedKey of [C,R])await test(`Partial completion failure at ${failedKey} remains deduplicated across retry and reload`,()=>{
   let fail=true;const a=boot({[K]:{state:finished()}},false,null,{failWrite:k=>fail&&k===failedKey});
   const before=a.state();assert.equal(a.actions(),0);fail=false;a.click('retry-save');const xp=a.json(C).xp;

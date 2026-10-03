@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="840" viewBox="0 0 1200 840" fill="none">
+  <title>Blackwater Reach — fictional operational chart</title>
+  <desc>An authored estuary chart with an industrial port to the southwest, a deep shipping channel, and a tidal marsh to the northeast. Decorative cartography only; resource positions and incident conditions belong to the interactive overlay.</desc>
+  <defs>
+    <linearGradient id="sea" x1="920" y1="0" x2="360" y2="840" gradientUnits="userSpaceOnUse"><stop stop-color="#264c4d"/><stop offset=".5" stop-color="#17363b"/><stop offset="1" stop-color="#0c232e"/></linearGradient>
+    <linearGradient id="land" x1="1100" y1="0" x2="830" y2="640" gradientUnits="userSpaceOnUse"><stop stop-color="#44534a"/><stop offset=".5" stop-color="#34473e"/><stop offset="1" stop-color="#263f39"/></linearGradient>
+    <linearGradient id="port" x1="0" y1="560" x2="290" y2="840" gradientUnits="userSpaceOnUse"><stop stop-color="#3d4844"/><stop offset="1" stop-color="#252f30"/></linearGradient>
+    <linearGradient id="sheen" x1="340" y1="560" x2="545" y2="470" gradientUnits="userSpaceOnUse"><stop stop-color="#8f713e" stop-opacity=".12"/><stop offset=".3" stop-color="#4d6c73" stop-opacity=".24"/><stop offset=".7" stop-color="#726246" stop-opacity=".08"/><stop offset="1" stop-color="#182c33" stop-opacity="0"/></linearGradient>
+    <radialGradient id="vignette"><stop offset=".4" stop-color="#06131a" stop-opacity="0"/><stop offset="1" stop-color="#06131a" stop-opacity=".48"/></radialGradient>
+    <pattern id="grid" width="120" height="120" patternUnits="userSpaceOnUse"><path d="M120 0H0V120" stroke="#8ca5a4" stroke-width=".6" opacity=".13"/><path d="M60 0V120M0 60H120" stroke="#8ca5a4" stroke-width=".4" opacity=".04"/></pattern>
+    <pattern id="marsh" width="29" height="26" patternUnits="userSpaceOnUse"><path d="M3 19l2-7 2 7M19 8l2-5 2 5M15 26l1-4 2 4" stroke="#9ba083" stroke-width=".8" opacity=".25"/><path d="M7 20h6M19 10h4" stroke="#162d27" stroke-width="1" opacity=".45"/></pattern>
+    <pattern id="water" width="84" height="56" patternUnits="userSpaceOnUse"><path d="M3 21c7-3 11-3 18-2m27 18c6-3 14-2 21-5M25 49l12-3m31-36 8-2" stroke="#8baba7" stroke-width=".5" opacity=".045"/></pattern>
+    <pattern id="yard" width="17" height="17" patternUnits="userSpaceOnUse"><path d="M0 0H17V17" stroke="#b1b7a7" stroke-width=".6" opacity=".09"/></pattern>
+    <filter id="soft"><feGaussianBlur stdDeviation="11"/></filter>
+    <filter id="landShadow" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="-5" dy="7" stdDeviation="7" flood-color="#020d13" flood-opacity=".65"/></filter>
+    <path id="eastShore" d="M774-20C756 32 789 50 765 78S755 111 796 129L799 153 831 167 811 188 831 207 805 229 828 249 815 272 848 298 842 315 879 325 886 349 917 363 901 389 930 411 944 405 956 434 981 449 974 469 995 481 981 501 1009 519 995 543 1029 560 1032 592 1066 608 1058 628 1095 649 1079 668 1108 687 1102 714 1142 738 1133 760 1166 789 1156 817 1192 846H1220V-20Z"/>
+    <path id="westShore" d="M-20-20H270L278 12 249 47 262 76 233 105 243 119 221 142 226 158 211 181 223 204 195 236 201 260 178 294 188 321 158 353 168 380 139 410 145 436 107 468 110 483 73 509 78 532 41 548 44 576 4 595H-20Z"/>
+    <path id="portShore" d="M-20 575L60 575 76 552 125 552 136 530 190 530 190 550 248 550 248 586 280 586 280 619 243 619 243 646 277 646 277 675 328 675 328 696 279 696 279 730 305 730 305 764 346 785 326 808 362 840H-20Z"/>
+    <g id="tank"><ellipse cx="0" cy="3" rx="17" ry="15" fill="#13272c" opacity=".5"/><circle r="14" fill="#5b6660" stroke="#8a9384" stroke-width="1"/><circle r="10" fill="#4c5a55" stroke="#839082" stroke-width=".65"/><path d="M-10-7L10 7M0-11V11" stroke="#9ba292" stroke-width=".65" opacity=".55"/><circle r="2" fill="#a1ab96"/></g>
+    <g id="warehouse"><path d="M3 4h57v23H3z" fill="#132429" opacity=".45"/><path d="M0 0h57v23H0z" fill="#5e6963" stroke="#899284" stroke-width=".6"/><path d="M0 11.5H57M8 0V23M17 0V23M26 0V23M35 0V23M44 0V23M53 0V23" stroke="#293e3c" stroke-width="1" opacity=".5"/></g>
+    <g id="crane"><path d="M0 8V-20H22V-6M-5 7H6M17-6H27M0-18 21-7M0-6 21-18" stroke="#a8a895" stroke-width="1.4"/><path d="M0-20H36v3M29-20v18" stroke="#d0b56f" stroke-width="1.3"/><path d="M-2 10H10" stroke="#162a2c" stroke-width="4"/></g>
+  </defs>
+
+  <path fill="url(#sea)" d="M0 0h1200v840H0z"/>
+  <path fill="url(#water)" d="M0 0h1200v840H0z"/>
+  <!-- Shelf edges follow the authored shoreline. Their contrast is intentionally low. -->
+  <g stroke="#67908b" stroke-width="1" opacity=".13">
+    <path d="M736-20C715 73 745 100 766 147S759 229 798 302 863 366 878 423 946 482 949 551 1021 596 1017 653 1077 730 1116 870"/>
+    <path d="M708-20C675 54 712 99 723 164S723 245 760 321 817 386 835 449 899 514 906 565 970 629 970 680 1032 787 1045 870"/>
+    <path d="M666-20C644 72 672 114 671 186S686 286 713 348 772 418 777 481 844 563 852 614 909 662 915 727 957 803 967 870"/>
+    <path d="M313-20C305 66 331 92 295 157S300 236 266 291 267 368 222 427 222 487 169 531"/>
+    <path d="M350-20C362 73 355 114 335 172S343 252 309 321 310 393 274 458 275 508 313 552 329 603 359 666 374 725 403 840"/>
+    <path d="M394-20C404 74 398 158 379 209S400 286 367 350 382 423 342 478 356 526 380 574 384 668 429 707 436 781 452 840"/>
+    <path d="M433-20C443 64 449 138 436 208S451 291 421 371 442 443 415 487 431 547 454 606 466 700 492 740 493 790 507 840"/>
+  </g>
+  <!-- Dredged channel: no routing mechanics are baked into the image. -->
+  <path d="M380 860C468 732 469 635 522 541S591 367 577 247 558 70 590-20" stroke="#091f2c" stroke-width="126" opacity=".36"/>
+  <path d="M388 860C474 733 476 636 527 542S596 367 585 247 565 67 596-20" stroke="#31535b" stroke-width="1" stroke-dasharray="3 10" opacity=".4"/>
+  <g stroke="#659089" opacity=".17"><path d="M316 853C404 716 415 611 466 515S532 368 519 250 502 68 533-20"/><path d="M446 870C533 741 528 662 585 559S653 364 644 245 625 72 657-20"/></g>
+
+  <!-- Western wooded bank and eastern tidal marsh. -->
+  <use href="#westShore" fill="#34483f" stroke="#738474" stroke-width="1.7" filter="url(#landShadow)"/>
+  <use href="#westShore" fill="url(#marsh)"/>
+  <use href="#eastShore" fill="url(#land)" stroke="#819285" stroke-width="1.8" filter="url(#landShadow)"/>
+  <use href="#eastShore" fill="url(#marsh)"/>
+  <g stroke="#183c3d" stroke-linecap="round">
+    <path d="M821 203C869 175 888 191 918 167S974 139 1003 115 1048 90 1088 75" stroke-width="8"/>
+    <path d="M917 167 917 130 944 101 944 68M970 142 1002 168 1040 164 1075 180M885 184 877 151 894 118" stroke-width="3"/>
+    <path d="M885 348C929 316 960 328 984 302S1017 248 1056 246 1133 268 1210 211" stroke-width="10"/>
+    <path d="M952 324C962 369 1001 357 1020 391S1054 424 1086 431M1022 263 1000 232 1008 204M1056 246 1091 219 1097 185M1118 256 1114 289 1141 309" stroke-width="4"/>
+    <path d="M1002 516C1043 496 1071 507 1091 479S1151 459 1207 430" stroke-width="7"/>
+    <path d="M1093 479 1091 513 1127 539 1125 575M1138 463 1132 420 1166 402M1164 452 1190 485" stroke-width="3"/>
+    <path d="M1070 616C1107 583 1136 610 1161 578S1190 551 1212 558" stroke-width="6"/>
+    <path d="M1140 600 1143 637 1174 671" stroke-width="2.5"/>
+  </g>
+  <!-- Mudflats and detached marsh islands. -->
+  <g fill="#426057" stroke="#7b9584" stroke-width="1">
+    <path d="M760 171 780 161 797 180 791 201 781 210 788 230 775 245 757 227 764 209 754 190Z"/>
+    <path d="M787 300 808 291 820 312 812 330 826 344 817 363 800 352 797 329 781 314Z"/>
+    <path d="M855 384 870 375 883 395 878 408 888 421 879 434 863 425 868 409 852 399Z"/>
+    <path d="M903 482 920 470 930 489 923 510 938 527 927 544 912 528 914 510 898 495Z"/>
+    <path d="M1076 747 1084 725 1100 730 1109 749 1102 765 1115 781 1105 794 1088 781 1092 764Z"/>
+  </g>
+  <g fill="#93a38b" opacity=".1"><ellipse cx="810" cy="277" rx="32" ry="15" transform="rotate(31 810 277)"/><ellipse cx="947" cy="457" rx="42" ry="17" transform="rotate(43 947 457)"/><ellipse cx="853" cy="362" rx="36" ry="13" transform="rotate(28 853 362)"/></g>
+
+  <!-- Industrial quay and secured terminal apron. -->
+  <use href="#portShore" fill="url(#port)" stroke="#879182" stroke-width="2" filter="url(#landShadow)"/>
+  <use href="#portShore" fill="url(#yard)"/>
+  <path d="M18 849V753L70 706V607H138V575H229M72 712H211L254 756V806" stroke="#182d2e" stroke-width="14"/>
+  <path d="M18 849V753L70 706V607H138V575H229M72 712H211L254 756V806" stroke="#728077" stroke-width="1.2" stroke-dasharray="5 7" opacity=".55"/>
+  <path d="M202 548V587H253V603H218V662H255V685H251V741L290 787" stroke="#c0bb95" stroke-width="1" stroke-dasharray="3 4" opacity=".48"/>
+  <g opacity=".92"><use href="#tank" x="103" y="562"/><use href="#tank" x="152" y="552"/><use href="#tank" x="173" y="599"/><use href="#tank" x="126" y="625"/><use href="#tank" x="170" y="642"/></g>
+  <g><use href="#warehouse" x="14" y="618" transform="rotate(90 14 618)"/><use href="#warehouse" x="96" y="673"/><use href="#warehouse" x="94" y="752"/><use href="#warehouse" x="172" y="751"/><use href="#warehouse" x="82" y="789"/><use href="#warehouse" x="162" y="789"/></g>
+  <g opacity=".82"><path d="M192 674h34v10h-34zm0 14h34v10h-34zm-66 42h25v10h-25zm29 0h25v10h-25z" fill="#66817a"/><path d="M192 703h34v10h-34zm-36-17h26v10h-26z" fill="#91764f"/><path d="M240 779h21v10h-21zm0 14h21v10h-21z" fill="#788477"/></g>
+  <use href="#crane" x="236" y="584"/><use href="#crane" x="235" y="644"/><use href="#crane" x="269" y="679"/>
+  <path d="M286 624h11v59h-11z" fill="#9b9c87" stroke="#0d242b" stroke-width="2"/>
+  <path d="M315 684h72v9h-72z" fill="#5f7470" stroke="#8c9b8d"/>
+  <path d="M376 679v18M367 679v18M359 679v18" stroke="#b6b49a" stroke-width="1.2"/>
+  <path d="M42 540 91 533 138 516 166 481 188 444" stroke="#7d8978" stroke-width="4" opacity=".5"/>
+
+  <!-- Two minor aids to navigation, restrained soundings, and a faint residual sheen. -->
+  <path d="M341 562C366 529 393 530 428 508S476 488 499 493C466 508 458 524 424 535S393 567 367 580Z" fill="url(#sheen)"/>
+  <g fill="#819893" font-family="monospace" font-size="10" opacity=".35">
+    <text x="323" y="91">8·2</text><text x="493" y="92">14·1</text><text x="641" y="137">9·6</text><text x="380" y="250">7·4</text><text x="549" y="293">15·6</text><text x="699" y="246">4·8</text><text x="739" y="404">3·2</text><text x="687" y="493">6·4</text><text x="552" y="443">14·8</text><text x="347" y="421">9·1</text><text x="445" y="614">12·5</text><text x="587" y="677">8·7</text><text x="757" y="629">5·3</text><text x="983" y="713">2·1</text><text x="517" y="791">10·2</text><text x="815" y="804">6·7</text><text x="964" y="353">0·4</text><text x="884" y="552">2·8</text>
+  </g>
+  <g stroke-width="1" opacity=".65"><path d="m477 483-4 7h8z" stroke="#84b6a2"/><path d="m617 372-4 7h8z" stroke="#c38b69"/><circle cx="454" cy="714" r="2" stroke="#84b6a2"/><circle cx="554" cy="593" r="2" stroke="#c38b69"/></g>
+  <path fill="url(#grid)" d="M0 0h1200v840H0z"/>
+  <path fill="url(#vignette)" d="M0 0h1200v840H0z"/>
+  <g transform="translate(1090 92)" stroke="#a6b9b0" opacity=".55"><circle r="29" stroke-width=".6"/><path d="M0-38V38M-38 0H38" stroke-width=".6"/><path d="M0-25-6 11 0 6 6 11Z" fill="#a6b9b0" stroke="none"/><text y="-45" fill="#b9c9c1" stroke="none" text-anchor="middle" font-family="sans-serif" font-size="11">N</text></g>
+  <g transform="translate(1017 788)" stroke="#9fb3ad" opacity=".48"><path d="M0-5V0H120V-5M60-5V0"/><text y="18" fill="#9fb3ad" stroke="none" font-family="monospace" font-size="9">0</text><text x="120" y="18" fill="#9fb3ad" stroke="none" font-family="monospace" font-size="9" text-anchor="end">500 m</text></g>
+</svg>

@@ -1,54 +1,27 @@
 name: Resource Run QA
 on:
   push:
-    branches: [ main ]
+    branches: [main, v17-rebuild]
   pull_request:
+permissions:
+  contents: read
 jobs:
-  smoke:
+  simulation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Syntax checks
+      - name: Production and historical JavaScript syntax
         run: |
-          node --check trg-v12-data.js
-          node --check trg-v12-services.js
-          node --check trg-v12-engine.js
-          node --check trg-v13-experience.js
-          node --check trg-v13-audio.js
-          node --check trg-v14-ui.js
-          node --check trg-v15-impact.js
-          node --check trg-v16-planning.js
-          node --check trg-sw.js
-      - name: Production asset guard
+          for file in v17-engine.js v17-ui.js trg-sw.js trg-v12-data.js trg-v12-services.js trg-v12-engine.js trg-v13-experience.js trg-v13-audio.js trg-v14-ui.js trg-v15-impact.js trg-v16-planning.js; do
+            node --check "$file"
+          done
+      - name: Simulation, persistence, production assets and historical contracts
         run: |
-          grep -q 'trg-v14.css?v=14.0.0-rc1' index.html
-          grep -q 'trg-v15.css?v=15.0.0-rc1' index.html
-          grep -q 'trg-v14-ui.js?v=14.0.0-rc1' index.html
-          grep -q 'trg-v15-impact.js?v=15.0.0-rc1' index.html
-          grep -q 'trg-v16.css?v=16.0.0-rc1' index.html
-          grep -q 'trg-v16-planning.js?v=16.0.0-rc1' index.html
-          ! grep -q 'trg-v13-ui-fixed.js' index.html
-          ! grep -q 'trg-v13.css' index.html
-      - name: DOM contract
-        run: node tests/dom-contract.mjs
-      - name: Incident impact contract
-        run: node tests/impact-contract.mjs
-      - name: Planning cycle contract
-        run: node tests/planning-contract.mjs
-      - name: Engine smoke tests
-        run: node tests/smoke.mjs
-      - name: Accessibility guardrails
-        run: |
-          grep -q 'min-height:44px' trg-v14.css
-          grep -q 'prefers-reduced-motion' trg-v14.css
-          grep -q ':focus-visible' trg-v14.css
-          grep -q 'aria-label="Persistent command status"' index.html
-          grep -q 'aria-live="polite"' trg-v15-impact.js
-          grep -q 'min-height:44px' trg-v16.css
-          grep -q 'planningDialog' trg-v16-planning.js
-      - name: Scenario theme guard
-        run: |
-          for id in hurricane wildfire oil-spill chemical refinery pipeline maritime public-event severe-weather transportation; do grep -q "data-incident=\\\"$id\\\"" /dev/null 2>/dev/null || grep -q "html\[data-incident=\\\"$id\\\"\]" trg-v14.css; done
+          for test in tests/*.mjs; do
+            node "$test"
+          done
+      - name: Whitespace and patch integrity
+        run: git diff --check

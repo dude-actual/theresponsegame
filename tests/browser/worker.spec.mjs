@@ -12,6 +12,7 @@ test('worker install, failed update, old tab, offline activation and rollback',a
  const before=await page.evaluate(()=>localStorage.getItem('trg-v17-session'));
  await fixture('qa-broken',true);await page.evaluate(async()=>{const reg=await navigator.serviceWorker.getRegistration();await reg.update();});
  await expect.poll(()=>page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();return !r.installing;})).toBe(true);
+ await expect(page.locator('#update-status')).toContainText('could not finish');
  await page.reload();await expect(page.locator('html')).toHaveAttribute('data-version',release);expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('trg-v17-session')).state.orders.length)).toBe(0);
  await fixture('qa-next');await page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();await r.update();});await expect.poll(()=>page.evaluate(async()=>!!(await navigator.serviceWorker.getRegistration()).waiting)).toBe(true);
  await page.reload();await expect(page.locator('html')).toHaveAttribute('data-version',release);await expect(page.getByRole('radio',{name:/Use the regional team/})).toBeChecked();

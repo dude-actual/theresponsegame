@@ -482,8 +482,13 @@
   let dragged=null;document.addEventListener('dragstart',e=>{const li=e.target.closest('[data-task-id]');if(li){dragged=li.dataset.taskId;e.dataTransfer.setData('text/plain',dragged);e.dataTransfer.effectAllowed='move';}});document.addEventListener('dragover',e=>{if(e.target.closest('[data-task-id]'))e.preventDefault();});document.addEventListener('drop',e=>{const li=e.target.closest('[data-task-id]');if(li&&dragged){e.preventDefault();moveQueue(dragged,0,li.dataset.taskId);dragged=null;}});
   window.addEventListener('pagehide',persist);
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !['localhost','127.0.0.1'].includes(location.hostname)) navigator.serviceWorker.register('./trg-sw.js').then(reg=>{
-    const show=()=>{if(reg.waiting){const el=$('update-status');el.hidden=false;el.textContent='An update is ready. Save your response, close every game tab, then reopen the game to use it.';}};
-    show();reg.addEventListener('updatefound',()=>reg.installing?.addEventListener('statechange',show));
+    const message=text=>{const el=$('update-status');el.hidden=false;el.textContent=text;};
+    const ready=()=>message('An update is ready. Save your response, close every game tab, then reopen the game to use it.');
+    const observe=()=>{const installing=reg.installing;if(!installing)return;const changed=()=>{
+      if(installing.state==='redundant')message(reg.active?'The update could not finish. Your current game is preserved. Keep playing; reconnect and reopen to retry.':'Offline installation could not finish. You can keep playing online; reconnect and reopen to retry.');
+      else if(installing.state==='installed'&&reg.active)ready();
+    };installing.addEventListener('statechange',changed);changed();};
+    if(reg.waiting)ready();observe();reg.addEventListener('updatefound',observe);
   }).catch(()=>{const el=$('update-status');el.hidden=false;el.textContent='Offline installation could not finish. You can keep playing online; reconnect and reopen to try again.';});
   if(!E){$('app').innerHTML='<main class="period-review"><h1>The incident could not load.</h1><p>Reload the page to retrieve the simulation files.</p></main>';return;}
   if(state)resumeBoundary();else home();

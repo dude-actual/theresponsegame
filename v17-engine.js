@@ -132,10 +132,11 @@
     s.history.at(-1).correctsHistoryIndex = index;
     s.events.at(-1).correctsHistoryIndex = index;
   }
+  function priorSupport(s,kind) { return s.history.findIndex(h=>h.source==='player'&&h.action==='Next-period forecast'&&(!h.supportKind||h.supportKind===kind)); }
   function packageOrdered(s, p) { return s.orders.some(o=>o.id===p.orderId)||!!resource(s,p.resourceId); }
   function recoveryRecord(s, action, change, consequence, constraint, category, prior, p) {
     record(s,action,change,consequence,constraint,category,'strong');
-    linkCorrection(s,priorDecision(s,prior));
+    linkCorrection(s,typeof prior==='number'?prior:priorDecision(s,prior));
     for(const entry of [s.history.at(-1),s.events.at(-1)]) Object.assign(entry,{resourceId:p.resourceId,orderId:p.orderId});
   }
   function hasSourceRelief(s) { return s.resources.some(r => r.kind === 'relief' && r.status === 'assigned' && r.location === 'Source berth' && r.verified); }
@@ -148,7 +149,6 @@
     s.safetyHold = !monitoringReady(s) || (s.minute >= 180 && !hasSourceRelief(s));
   }
   function refresh(s) {
-    routineTeamWork(s);
     updateSafety(s);
     s.tasks.forEach(task => {
       task.available = task.period === s.period && task.status === 'pending' && !s.finished;
@@ -251,7 +251,7 @@
       traffic(s,'Logistics',`${wasteReady(s)} additional waste package(s) available. Each ordered package has a 40-minute lead time; absent capacity slows recovery after 09:30.`);
       traffic(s,'Situation Unit','A social-media report of a second offshore sheen is unconfirmed. Do not publish it as verified incident extent.');
     }
-    event(s,'period_start',{period:index,condition:PERIODS[index].condition}); refresh(s);
+    event(s,'period_start',{period:index,condition:PERIODS[index].condition});routineTeamWork(s);refresh(s);
   }
   function createState(options = {}) {
     const difficulty = options.difficulty === 'advanced' ? 'advanced' : 'guided';
@@ -320,6 +320,14 @@
     if(s.flags.escalation!==null&&(!Array.isArray(s.flags.escalation.recipients)||!Array.isArray(s.flags.escalation.required)||!Array.isArray(s.flags.escalation.gaps)||typeof s.flags.escalation.covered!=='boolean'))return fail('The saved escalation record is invalid.');
     if(s.flags.forecast!==null&&(!int(s.flags.forecast.relief,2)||!int(s.flags.forecast.waste,2)||!Number.isFinite(s.flags.forecast.orderedAt)))return fail('The saved forecast is invalid.');
     if(!['reliefNeededBy','reliefDemand','wasteDemand','reliefLead','wasteLead','reliefCost','wasteCost','budget','sourceCrewDutyLimit','marshCrewDutyLimit'].every(k=>Number.isFinite(s.intel[k])&&s.intel[k]>=0)||!['marsh','channel'].includes(s.intel.priorityArea)||!Array.isArray(s.intel.currentGaps))return fail('The saved operational information is invalid.');
+    const actualBoom={marsh:0,channel:0,reserve:0};
+    for(const r of s.resources.filter(r=>r.kind==='boom')) {if(r.status==='available')actualBoom.reserve++;else if(r.status==='assigned'&&r.location==='Marsh inlet')actualBoom.marsh++;else if(r.status==='assigned'&&r.location==='Channel')actualBoom.channel++;}
+    if(Object.keys(actualBoom).some(k=>actualBoom[k]!==s.flags.boom[k]))return fail('Boom coverage does not match actual resources.');
+    if(s.flags.supportPlan!==undefined&&(!s.flags.supportPlan||Array.isArray(s.flags.supportPlan)||Object.entries(s.flags.supportPlan).some(([k,v])=>!['relief','waste'].includes(k)||!int(v,2))))return fail('Invalid separate support commitments.');
+    if(s.flags.supportPlan)for(const [kind,count] of Object.entries(s.flags.supportPlan)) {
+      const o=s.orders.find(o=>o.id===`ORD-${kind.toUpperCase()}`);
+      if((count===0&&o)||(count>0&&(!o||o.resourceIds.length!==count)))return fail('Support commitment does not match its order.');
+    }
     if(s.flags.teamWork!==undefined&&typeof s.flags.teamWork!=='boolean')return fail('Invalid routine team setting.');
     const causalIds=new Set();
     for(const [kind,entries] of [['event',s.events],['history',s.history]])for(let i=0;i<entries.length;i++) {
@@ -415,14 +423,21 @@
       }
       case 'order-support': {
         if(!['relief','waste'].includes(a.kind))return 'Choose relief or waste support.';
-        if(s.tasks.find(t=>t.id==='forecast').status!=='done'||priorDecision(s,'Next-period forecast')<0)return 'Record the initial support forecast first.';
+        if(s.tasks.find(t=>t.id==='forecast').status!=='done'||priorSupport(s,a.kind)<0)return 'Record the initial support forecast first.';
         const p=RECOVERY_PACKAGES[a.kind];
         if(packageOrdered(s,p)||s.resources.some(r=>r.kind===a.kind))return 'This support already has a committed resource. Follow its arrival or correct its assignment.';
         return null;
       }
       case 'reconcile': return ['available','assigned','out_of_service'].includes(a.skimmer)&&['staging','maintenance','ops'].includes(a.evidence) ? null : 'Choose a resource status and evidence source.';
       case 'reassign': return ['hold','move','contract'].includes(a.strategy)&&typeof a.approval==='boolean' ? null : 'Choose a reassignment strategy and record its authorization.';
-      case 'forecast': return int(a.relief,2)&&int(a.waste,2) ? null : 'Order zero, one or two packages of each support resource.';
+      case 'support-plan': {
+        if(!s.flags.teamWork||s.period!==1||s.tasks.find(t=>t.id==='forecast').status!=='pending')return 'Support planning is not pending.';
+        if(!['relief','waste'].includes(a.kind)||!int(a.count,2))return 'Choose zero, one or two relief crews or waste packages.';
+        if(s.flags.supportPlan?.[a.kind]!==undefined)return 'This support commitment is already recorded.';
+        return null;
+      }
+      case 'wait-arrival': return s.resources.some(r=>r.status==='en_route'&&r.eta>s.minute)?null:'No outstanding arrival remains.';
+      case 'forecast': return !s.flags.supportPlan&&int(a.relief,2)&&int(a.waste,2) ? null : 'Order zero, one or two packages of each support resource.';
       case 'relief': return ['source','marsh','reserve'].includes(a.assign)&&typeof a.verified==='boolean' ? null : 'Choose a relief assignment and verification status.';
       case 'cop': return arrayChoice(a.items,['monitor','boom','eta','rumor','skimmer'])&&(a.note===undefined||(typeof a.note==='string'&&a.note.length<=240)) ? null : 'Use valid picture items and a note of no more than 240 characters.';
       case 'escalate': return arrayChoice(a.recipients,['operations','safety','logistics','command'])&&['gap','cost','both'].includes(a.concern)&&(a.note===undefined||(typeof a.note==='string'&&a.note.length<=240)) ? null : 'Choose valid recipients, concern and a note of no more than 240 characters.';
@@ -437,7 +452,7 @@
   function apply(s,a) {
     let notice = '';
     switch(a.type) {
-      case 'team-work': s.flags.teamWork=true;refresh(s);return 'Routine team work enabled; operational decisions remain with Resources Unit.';
+      case 'team-work': s.flags.teamWork=true;routineTeamWork(s);refresh(s);return 'Routine team work enabled; operational decisions remain with Resources Unit.';
       case 'validate': {
         s.flags.clarified = [...a.fields];
         const critical = ['capability','location'].filter(k=>a.fields.includes(k)).length;
@@ -563,7 +578,7 @@
         tick(s,8);
         notice=`Logistics ordered one ${a.kind} package with a ${relief?s.intel.reliefLead:s.intel.wasteLead}-minute lead time; cost $${price.toLocaleString('en-US')}.`;
         traffic(s,'Logistics',notice);
-        recoveryRecord(s,'Additional support order',notice,'The resource is on order, not available at the incident.','The earlier support gap remains in the record. Relief still needs reception and assignment after arrival.','forecasting','Next-period forecast',p);break;
+        recoveryRecord(s,'Additional support order',notice,'The resource is on order, not available at the incident.','The earlier support gap remains in the record. Relief still needs reception and assignment after arrival.','forecasting',priorSupport(s,a.kind),p);break;
       }
       case 'reassign': {
         s.flags.reassignment=a.strategy;
@@ -579,6 +594,32 @@
         } else notice='SK-01 remains in Channel Recovery; the marsh request remains unfilled.';
         tick(s,8); traffic(s,'Operations',notice);
         record(s,'Recovery reassignment',notice,a.strategy==='move'?(a.approval?'Operations approval and the new assignment are recorded.':'The move is not authorized in the record; accountability is degraded.'):a.strategy==='contract'?'A second recovery assignment becomes possible after arrival.':'Channel recovery continues without interruption.',a.strategy==='contract'?'The additional package costs $4,600 and cannot work before arrival.':a.strategy==='move'?'The channel now has no assigned skimmer.':'Marsh recovery waits; containment remains especially important.','coordination',a.strategy==='move'&&!a.approval?'damaging':'mixed'); break;
+      }
+      case 'support-plan': {
+        const relief=a.kind==='relief',lead=relief?s.intel.reliefLead:s.intel.wasteLead,price=relief?s.intel.reliefCost:s.intel.wasteCost;
+        s.flags.supportPlan||={};s.flags.supportPlan[a.kind]=a.count;
+        const orderedAt=s.minute,eta=orderedAt+lead,ids=[];
+        for(let n=0;n<a.count;n++) {
+          const id=`${relief?'RLF':'WST'}-${n+1}`;ids.push(id);
+          s.resources.push({id,name:`${relief?'Relief crew':'Waste package'} ${n+1}`,kind:a.kind,status:'en_route',location:'To East Staging',eta,capable:true,verified:false});
+        }
+        if(ids.length) {
+          order(s,`ORD-${a.kind.toUpperCase()}`,'Logistics support order',a.count*price,eta,ids,relief?'RR-061':'RR-062');
+          if(relief)ids.forEach((id,i)=>receiptPlan(s,s.orders.at(-1),resource(s,id),i?'reserve':'source'));
+        }
+        tick(s,4);
+        notice=a.count?`Ordered ${a.count} ${relief?'relief crew(s)':'waste package(s)'}; cost $${a.count*price}, ETA ${String(7+Math.floor(eta/60)).padStart(2,'0')}:${String(eta%60).padStart(2,'0')}.`:`No ${a.kind} support ordered.`;
+        record(s,'Next-period forecast',notice,a.count?(relief?'Source relief has a real order; the crew must arrive before it can take over.':'Recovery has a waste-capacity order; it remains unavailable until arrival.'):(relief?'Source work will pause at the crew duty limit without relief.':'Recovery will slow without additional waste capacity.'),a.count>1?'The additional package preserves reserve capacity at added cost.':'This commitment leaves no additional contingency package.','forecasting',a.count?'strong':'damaging');
+        for(const entry of [s.history.at(-1),s.events.at(-1)])Object.assign(entry,{supportKind:a.kind,count:a.count,orderedAt});
+        if(['relief','waste'].every(k=>s.flags.supportPlan[k]!==undefined)) {
+          s.flags.forecast={...s.flags.supportPlan,orderedAt:s.history.find(h=>h.supportKind)?.orderedAt??orderedAt};taskDone(s,'forecast');
+        }
+        break;
+      }
+      case 'wait-arrival': {
+        const eta=Math.min(...s.resources.filter(r=>r.status==='en_route').map(r=>r.eta)),minutes=eta-s.minute;
+        tick(s,minutes);notice=`Incident time advanced to the next arrival. ${gaps(s)[0]||'Current assignments remain supported.'}`;
+        event(s,'time_advanced',{minutes,consequence:notice});return notice;
       }
       case 'forecast': {
         s.flags.forecast={relief:a.relief,waste:a.waste,orderedAt:s.minute};
@@ -635,9 +676,19 @@
         record(s,'Escalation and coordination',notice,covered&&concernCovers?'The functions responsible for the remaining constraints have the information.':'At least one unresolved constraint lacks its responsible recipient or was omitted from the concern.','A briefing does not create resources, repair equipment or clear an unsafe assignment.','coordination',covered&&concernCovers?'strong':'damaging'); break;
       }
       case 'handover': {
-        const expected=s.safetyHold||s.flags.channelMonitoringGap?'monitoring':!wasteReady(s)?'waste':'containment';
         s.flags.handover=[...a.priorities];
         tick(s,8);
+        const expected=s.safetyHold||s.flags.channelMonitoringGap?'monitoring':!wasteReady(s)?'waste':'containment';
+        if(s.flags.teamWork) {
+          const items=['monitor','boom','eta'];if(s.flags.statusVerified)items.push('skimmer');
+          const recipients=['operations'];
+          if(s.safetyHold||s.flags.channelMonitoringGap||!hasSourceRelief(s))recipients.push('safety');
+          if(!wasteReady(s)||!hasSourceRelief(s)||!monitoringReady(s))recipients.push('logistics');
+          if(s.cost>s.intel.budget||s.flags.boom[s.intel.priorityArea]<s.intel[s.intel.priorityArea==='marsh'?'marshDemand':'channelDemand'])recipients.push('command');
+          s.flags.cop=items;s.flags.copNote=gaps(s).join(' ');s.flags.escalation={recipients,required:[...recipients],concern:'both',note:'Final handover resource picture',covered:true,gaps:gaps(s)};
+          teamRecord(s,'final-picture','Team final handover picture',`Situation Unit verified current resources and orders; Planning distributed to ${recipients.join(', ')}.`,s.flags.copNote||'Current assignments are supported.','Outstanding orders remain future availability, and earlier decisions remain in the record.','situational-awareness');
+          for(const entry of [s.history.at(-1),s.events.at(-1)])entry.picture={minute:s.minute,resources:copy(s.resources),orders:copy(s.orders),constraints:gaps(s)};
+        }
         notice=`Incoming priority order: ${a.priorities.join(' → ')}.`;
         record(s,'Incoming-shift priorities',notice,a.priorities[0]===expected?'The first priority addresses the current limiting condition.':'The first priority leaves the current limiting condition for later in the handover.',`Resources, orders and unresolved ${expected} limitations carry forward.`, 'coordination',a.priorities[0]===expected?'strong':'mixed');break;
       }

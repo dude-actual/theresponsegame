@@ -5,6 +5,6 @@ let b=boot({},false,null,options);assert.match(b.html(),/Play Oil Spill/);assert
 assert.equal((b.html().match(/name='vendor'/g)||[]).length,3);
 b.edit({vendor:'regional'});const draft=b.json(key);b=boot({[key]:draft},false,null,options);assert.equal(b.form().elements.find(c=>c.value==='regional').checked,true);assert.equal(b.state().orders.length,0);
 b.submit('monitor',{vendor:'regional'});assert.equal(b.state().orders.length,1);assert.equal(b.state().minute,6);assert.match(b.html(),/Continue response/);
-const result=b.json(key);b=boot({[key]:result},false,null,options);assert.equal(b.state().orders.length,1);assert.match(b.html(),/Continue response/);b.click('focused-continue');assert.match(b.html(),/Build the containment/);
+const result=b.json(key);b=boot({[key]:result},false,null,options);assert.equal(b.state().orders.length,1);assert.match(b.html(),/Continue response/);b.click('focused-continue');assert.match(b.html(),/Six sections/);
 const S=b.context.RR17Scenes;const before=JSON.stringify(b.state());const scene=S.scene(b.state(),'boom');assert.equal(scene.areas.find(a=>a.location==='Channel').boom.length,0,'skimmer does not draw boom');assert.equal(scene.areas.find(a=>a.location==='Channel').skimmers.length,1);assert.equal(JSON.stringify(b.state()),before);
 console.log('Focused opening: home → sourcing → inert draft reload → one commitment → persistent result → containment; map capabilities are independent.');

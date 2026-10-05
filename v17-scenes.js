@@ -35,7 +35,7 @@
     const [title,detail]=choices[a.type]||[a.type,'Records a correction against the actual resource picture.'];return {title,detail};
   }
   function ending(r){
-    if(!r.finalState&&!Array.isArray(r.resources))return {title:'Your earlier response is preserved.',line:r.summary||'This archive contains the original decision record, without a final spatial snapshot.',areas:[],ready:null,callbacks:(r.history||[]).slice(-2).map(h=>({title:h.action,text:h.consequence})),constraints:r.constraints||[],question:'What would you change on another watch?',changed:r.variant===1?'Marsh demand becomes four sections; channel demand becomes three.':'Channel demand becomes four sections; marsh demand becomes three.'};
+    if(!root.RR17.validateState(r.finalState).ok)return {title:'Your earlier response is preserved.',line:r.summary||'This archive contains the original decision record, without a final spatial snapshot.',areas:[],ready:null,callbacks:(r.history||[]).slice(-2).map(h=>({title:h.action,text:h.consequence})),constraints:r.constraints||[],question:'What would you change on another watch?',changed:r.variant===1?'Marsh demand becomes four sections; channel demand becomes three.':'Channel demand becomes four sections; marsh demand becomes three.'};
     const s=r.finalState,resources=s?.resources||r.resources||[],variant=r.variant===1?1:0;
     const intel=s?.intel||root.RR17.SCENARIOS[variant];
     const picture={resources,intel};const areas=containment(picture);

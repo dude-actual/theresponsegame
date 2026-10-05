@@ -63,14 +63,24 @@ On PowerShell:
 Get-ChildItem tests/*.mjs | ForEach-Object { node $_.FullName; if ($LASTEXITCODE) { throw "Test failed: $($_.Name)" } }
 ```
 
-GitHub Actions performs syntax and automated tests on pushes to `main`/`v17-rebuild` and pull requests. Mock-DOM controller checks do not substitute for rendered browser, assistive-technology or player testing.
+GitHub Actions checks the committed change range, simulation/persistence, complete browser journeys, keyboard/reflow and real offline upgrade/rollback. It retains exact-head screenshots and traces. These checks run on pushes to `main`/`v17-rebuild` and pull requests. Mock-DOM controller checks do not substitute for rendered browser, assistive-technology or player testing.
 
 See [the audit and experience design](docs/V17_GAMEPLAY_AUDIT.md) for source-backed findings, preservation decisions and the full slice; [the QA record](docs/V17_QA.md) distinguishes completed checks from evaluation still required. Earlier architecture and release documents remain historical references.
 
 ## Approved design and Phase 4 implementation
 
-The player-first redesign and emotional engagement treatment below are approved source requirements. The [Phase 4 execution plan](docs/PHASE4_IMPLEMENTATION.md) maps the remaining work to ordered GitHub-ready issues, milestones, code locations and release gates. The initial arrival/recovery engine patch is a foundation change; the focused player-facing flow still requires implementation.
+The player-first redesign and emotional engagement treatment below are approved source requirements. The [Phase 4 execution plan](docs/PHASE4_IMPLEMENTATION.md) maps the remaining work to ordered GitHub-ready issues, milestones, code locations and release gates. The complete focused mission is integrated through PR #7. Release checks and deployment evidence are recorded in the QA document. Human novice, professional and assistive-technology acceptance remains unmeasured.
 
-The [28 September player-first review and implementation plan](docs/PLAYER_FIRST_REDESIGN.md) audits revision 17.4 against the new onboarding, simplicity and replay goals. [Screen wireframes](docs/PLAYER_FIRST_WIREFRAMES.html) illustrate the proposed opening, decision, allocation and outcome hierarchy. These are design deliverables; the playable runtime has not yet been changed to this proposed flow.
+The [28 September player-first review and implementation plan](docs/PLAYER_FIRST_REDESIGN.md) audits revision 17.4 against the new onboarding, simplicity and replay goals. [Screen wireframes](docs/PLAYER_FIRST_WIREFRAMES.html) illustrate the proposed opening, decision, allocation and outcome hierarchy. The runtime now implements the focused scene flow; these files remain the design references.
 
 The follow-on [emotional engagement review](docs/EMOTIONAL_ENGAGEMENT_AUDIT.md) contains five ranked top-20 lists, scene and tension audits, state-based visual storytelling recommendations and a retention plan. Its [consequence storyboard](docs/EMOTIONAL_STORYBOARD.html) compares two scripted runs through the unchanged engine to illustrate how an earlier allocation can become a memorable consequence. It is a presentation study, not a playable mission or a change to saved games.
+
+## Full mission playtest release
+
+The 17.5 release candidate contains the whole Oil Spill mission: source monitoring, review a scarce boom allocation, reconcile equipment evidence, recommend recovery coverage, order relief and waste support, and hand over the actual resource picture. Seven normal commitments span three operational periods. Results carry forward, corrections retain their history, and the ending offers the same conditions or the alternate current pattern. Detailed AAR and downloads remain available.
+
+Run browser checks with `pnpm install --frozen-lockfile`, `pnpm exec playwright install chromium`, then `pnpm test:browser`. The included test server is for local/CI verification only. Production remains a static GitHub Pages site.
+
+Offline releases are precached as a unit. An update waits until every existing game tab closes; reopening preserves compatible checkpoints and reports. Avoid clearing site storage to update. Rollback: publish a known prior artifact with a fresh asset/worker release identifier, retaining schema-compatible saves. The original main commit `7244c600cd53801158924557709031dc3e3dfc70` remains the pre-rebuild recovery reference.
+
+This is a playable evaluation release, not a claim that novice timing, voluntary replay, professional review or actual screen-reader/physical-device acceptance has passed.

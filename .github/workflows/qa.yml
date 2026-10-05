@@ -10,12 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - name: Production and historical JavaScript syntax
         run: |
-          for file in v17-engine.js v17-ui.js trg-sw.js trg-v12-data.js trg-v12-services.js trg-v12-engine.js trg-v13-experience.js trg-v13-audio.js trg-v14-ui.js trg-v15-impact.js trg-v16-planning.js; do
+          for file in v17-engine.js v17-scenes.js v17-ui.js trg-sw.js trg-v12-data.js trg-v12-services.js trg-v12-engine.js trg-v13-experience.js trg-v13-audio.js trg-v14-ui.js trg-v15-impact.js trg-v16-planning.js; do
             node --check "$file"
           done
       - name: Simulation, persistence, production assets and historical contracts
@@ -24,4 +27,32 @@ jobs:
             node "$test"
           done
       - name: Whitespace and patch integrity
-        run: git diff --check
+        run: node scripts/check-change.mjs
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '11.19.0'
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Prove browser assertions block failures
+        run: node scripts/probe-browser-gate.mjs
+      - name: Complete missions, reflow, keyboard and real worker upgrade
+        run: pnpm test:browser
+      - name: Retain exact-head browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+            browser-evidence/
+          retention-days: 30

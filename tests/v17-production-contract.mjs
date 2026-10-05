@@ -5,6 +5,9 @@ import assert from 'node:assert/strict';
 const html = fs.readFileSync('index.html', 'utf8');
 const css = fs.readFileSync('v17.css', 'utf8');
 const worker = fs.readFileSync('trg-sw.js', 'utf8');
+const release=JSON.parse(fs.readFileSync('package.json','utf8')).version;
+assert.ok(html.includes(`data-version="${release}"`));assert.ok(worker.includes(`const RELEASE = '${release}'`));
+for(const match of html.matchAll(/(?:src|href)="([^"?]+\.(?:js|css))\?v=([^"]+)"/g)){assert.equal(match[2],release);assert.ok(worker.includes('./'+match[1]+'?v='+release));}
 const scripts = [...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/g)].map(m => m[1].split('?')[0]);
 const styles = [...html.matchAll(/<link\b[^>]*\brel=["']stylesheet["'][^>]*\bhref=["']([^"']+)["'][^>]*>/g)].map(m => m[1].split('?')[0]);
 

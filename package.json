@@ -1,0 +1,7 @@
+{
+  "name": "the-response-game",
+  "private": true,
+  "version": "17.5.0-rc.1",
+  "scripts": {"test:browser": "playwright test"},
+  "devDependencies": {"@playwright/test": "1.63.0"}
+}

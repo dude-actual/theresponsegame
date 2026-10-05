@@ -139,3 +139,17 @@ Limitations: no new player UI or rendered playthrough in this increment; optiona
 ### PR #5 review repair
 
 Qualified replacement receipt now updates the source monitoring pointer. Multi-unit relief orders retain one manifest per resource; the first crew takes the source assignment and additional verified crews remain at staging as reserve. Regression coverage verifies both findings and exact reload equivalence. The earlier reserve-crew limitation is superseded.
+
+## Item 05 focused opening — 3 October 2026
+
+Based on merged Item 04 integration `aaa86f68bd83b8fe3aacfafc0b011da2cf925c99`. PR #5 review repairs passed exact-head GitHub QA 37118791580 at `7eebb2ef6312b5895fe6a61df2630fdfa7f97573` before merge; both review threads were resolved.
+
+The production opening now uses one Start, identifies The Response Game / Oil Spill / Resources Unit, and goes directly to three qualified sourcing approaches with actual cost, absolute ETA, six-minute action time and sacrificed assignment. New runs opt into accountable team work. Legacy checkpoints retain their original route. `v17-scenes.js` is pure presentation; it owns no time, resources, storage or commands. The controller remains the sole runtime/storage owner.
+
+A result persists until acknowledgment. Sourcing drafts restore without ordering; submission commits once. Optional resources/orders expose the bounded correction/replacement actions from Items 01–02, with fresh engine validation at commitment. The new incident picture independently counts actual boom sections, skimmers and verified monitoring. It does not use total asset counts as boom coverage.
+
+Rendered Edge checks on an isolated localhost:8771 origin: opening at 1366×768 has page height 768 and submit bottom 678; at 390×844 page height 844 and submit bottom 718. At 320×844 it reflows vertically with no horizontal overflow. A selected regional radio draft survives reload without creating an order. Harbor sourcing can be submitted with Space/Enter; result shows one $3,200 order at 07:06, ETA 07:24, source crew still holding. No captured console errors/warnings. Screenshot evidence is outside the repository under work/evidence/item05-opening-laptop.jpg.
+
+Automated focused-opening contract exercises home → sourcing → draft reload → single commitment → result reload → containment and verifies that an assigned skimmer cannot create boom. All 13 top-level tests pass, preserving 66 checkpoint cases/55 reload comparisons. All 12 production/historical JS sources and 14 test sources pass syntax; full patch whitespace checks pass. Required offline install assets include the new selector.
+
+Scope limits: containment, later decisions and the ending still use their existing compositions; complete focused pacing, emotional ending, full keyboard mission, real assistive technology/physical-device acceptance and worker-enabled upgrade/rollback remain open. Localhost bypasses the worker and is not a production/offline deployment test. This is an opening implementation and review increment, not release acceptance.

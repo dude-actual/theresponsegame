@@ -9,7 +9,7 @@ const scripts = [...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/g)
 const styles = [...html.matchAll(/<link\b[^>]*\brel=["']stylesheet["'][^>]*\bhref=["']([^"']+)["'][^>]*>/g)].map(m => m[1].split('?')[0]);
 
 assert.match(html, /data-release=["']v17["']/);
-assert.deepEqual(scripts, ['v17-engine.js', 'v17-ui.js'], 'v17 must own its runtime rather than load legacy wrappers');
+assert.deepEqual(scripts, ['v17-engine.js', 'v17-scenes.js', 'v17-ui.js'], 'v17 must own its runtime rather than load legacy wrappers');
 assert.deepEqual(styles, ['v17.css'], 'v17 must use a consolidated visual system');
 for (const path of [...scripts, ...styles]) assert.ok(fs.existsSync(path), `production asset exists: ${path}`);
 assert.doesNotMatch(css, /@import[^;]*trg-v1[2-6]/, 'legacy CSS must not be reintroduced through imports');

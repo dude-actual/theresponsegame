@@ -47,7 +47,7 @@ export function boot(seed={}, failWrites=false, endpoint=null, options={}) {
     URL:{createObjectURL(blob){blobs.push(blob);return `blob:test-${blobs.length}`;},revokeObjectURL(){}},
     setTimeout(fn){fn();return 0;},addEventListener(type,fn){windowHandlers.set(type,fn);},scrollTo(){}};
   context.window=context;context.globalThis=context;
-  vm.createContext(context);vm.runInContext(engineSource,context);let actionCalls=0;const original=context.RR17.act;context.RR17.act=(...args)=>{actionCalls++;return original(...args);};vm.runInContext(uiSource,context);
+  vm.createContext(context);vm.runInContext(engineSource,context);if(options.scenes)vm.runInContext(fs.readFileSync('v17-scenes.js','utf8'),context);let actionCalls=0;const original=context.RR17.act;context.RR17.act=(...args)=>{actionCalls++;return original(...args);};vm.runInContext(uiSource,context);
   function emit(type,event){for(const fn of handlers.get(type)||[])fn(event);}
   function click(action,extra={}) {
     const target={dataset:{action,...extra},setAttribute(){},textContent:'',closest:selector=>selector==='[data-action]'?target:null};

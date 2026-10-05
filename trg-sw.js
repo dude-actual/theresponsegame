@@ -1,5 +1,5 @@
-const VERSION = 'trg-v17-4';
-const CORE = ['./','./index.html','./v17-engine.js?v=17.4','./v17-ui.js?v=17.4','./v17.css?v=17.4','./assets/v17/harbor.svg','./assets/v17/harbor-dawn.svg','./assets/v17/fonts/barlow-condensed-semibold-latin.woff2','./assets/v17/fonts/ibm-plex-sans-latin-variable.woff2','./trg-mark.svg','./manifest.webmanifest'];
+const VERSION = 'trg-v17-5-opening';
+const CORE = ['./','./index.html','./v17-engine.js?v=17.5-opening','./v17-scenes.js?v=17.5-opening','./v17-ui.js?v=17.5-opening','./v17.css?v=17.5-opening','./assets/v17/harbor.svg','./assets/v17/harbor-dawn.svg','./assets/v17/fonts/barlow-condensed-semibold-latin.woff2','./assets/v17/fonts/ibm-plex-sans-latin-variable.woff2','./trg-mark.svg','./manifest.webmanifest'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(VERSION).then(cache => cache.addAll(CORE)));
   self.skipWaiting();

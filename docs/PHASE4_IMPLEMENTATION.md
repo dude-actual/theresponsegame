@@ -122,6 +122,8 @@ Each block is a ticket body. Complexity is relative implementation/verification 
 
 ### 05 · [P0] Replace onboarding and desk with the approved playable beginning
 
+**Implementation update:** `feat/focused-opening` implements the new home, direct sourcing and persistent result over the Item 04 merged team engine. Qualified choices show cost/absolute ETA/action time/assignment sacrifice; optional resources expose Items 01–02 corrections. Pure scenes derive real capability counts. Rendered Edge opening fits 1366×768 and 390×844; 320 px reflows. Thirteen test files pass. Separate GitHub review/CI is pending. This does not close Items 06–15 or Milestone A human acceptance; see the current QA evidence.
+
 **Description:** Introduce the focused scene selector and implement the approved hook→sourcing→result sequence. Show three qualified approaches, absolute ETA, action time, cost and sacrificed assignment. Expose received-resource corrections from 01–02 through actual controls.
 
 **Files:** new `v17-scenes.js` pure selectors; replace `home`, `briefing`, `orientation`, `play`, `workDesk`, affected handlers in `v17-ui.js`; consolidate `v17.css`; `index.html`, `trg-sw.js`; production/controller tests.

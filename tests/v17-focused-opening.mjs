@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {boot} from './helpers/ui-harness.mjs';
+const key='trg-v17-session';const options={scenes:true};
+let b=boot({},false,null,options);assert.match(b.html(),/Play Oil Spill/);assert.equal(b.state(),undefined);b.click('start');assert.equal(b.state().minute,0);assert.equal(b.state().flags.teamWork,true);assert.match(b.html(),/Get the crew what they need to begin/);assert.doesNotMatch(b.html(),/Industrial Water Services|queue-panel|state-strip/);
+assert.equal((b.html().match(/name='vendor'/g)||[]).length,3);
+b.edit({vendor:'regional'});const draft=b.json(key);b=boot({[key]:draft},false,null,options);assert.equal(b.form().elements.find(c=>c.value==='regional').checked,true);assert.equal(b.state().orders.length,0);
+b.submit('monitor',{vendor:'regional'});assert.equal(b.state().orders.length,1);assert.equal(b.state().minute,6);assert.match(b.html(),/Continue response/);
+const result=b.json(key);b=boot({[key]:result},false,null,options);assert.equal(b.state().orders.length,1);assert.match(b.html(),/Continue response/);b.click('focused-continue');assert.match(b.html(),/Build the containment/);
+const S=b.context.RR17Scenes;const before=JSON.stringify(b.state());const scene=S.scene(b.state(),'boom');assert.equal(scene.areas.find(a=>a.location==='Channel').boom.length,0,'skimmer does not draw boom');assert.equal(scene.areas.find(a=>a.location==='Channel').skimmers.length,1);assert.equal(JSON.stringify(b.state()),before);
+console.log('Focused opening: home → sourcing → inert draft reload → one commitment → persistent result → containment; map capabilities are independent.');

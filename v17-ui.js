@@ -473,7 +473,7 @@
     case 'export-json':case 'export-html':{const r=reports.find(r=>r.sessionId===id)||(state?.finished?makeReport():null);if(r)download(r,action==='export-json'?'json':'html');break;}
     case 'replay':requestStart(displayedReport?.difficulty||state?.difficulty||'guided',(displayedReport?.variant??state?.variant)===1?0:1);window.scrollTo({top:0,behavior:'instant'});break;
   }});
-  function allocationTotal(){const reserve=6-Number($('marsh').value)-Number($('channel').value);$('allocation-total').textContent=reserve>=0?`${reserve} section${reserve===1?'':'s'} held at staging`:`Over allocation by ${-reserve} section${reserve===-1?'':'s'}`;}
+  function allocationTotal(){const marsh=$('marsh'),channel=$('channel'),total=$('allocation-total');if(!marsh||!channel||!total)return;const reserve=6-Number(marsh.value)-Number(channel.value);total.textContent=reserve>=0?`${reserve} section${reserve===1?'':'s'} held at staging`:`Over allocation by ${-reserve} section${reserve===-1?'':'s'}`;}
   function draftInput(e){const form=e.target.closest?.('.task-form');if(!form)return;captureDraft(form);if(e.target.id==='marsh'||e.target.id==='channel')allocationTotal();}
   document.addEventListener('input',draftInput);document.addEventListener('change',draftInput);
   document.addEventListener('focusin',e=>{if(!runtime||!e.target.name||!e.target.closest?.('.task-form'))return;runtime.focus={name:e.target.name,value:String(e.target.value||'')};persist();});

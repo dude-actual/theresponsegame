@@ -1,14 +1,14 @@
 {
-  "name": "The Response Game — Resource Run",
+  "name": "Blackwater Reach — The Response Game",
   "short_name": "Resource Run",
-  "description": "An ICS-aligned operational incident simulation.",
-  "start_url": "/?source=app",
-  "scope": "/",
+  "description": "Run the Resources Unit desk through a fictional oil-spill incident with scarce resources, changing conditions and consequences.",
+  "start_url": "./?source=app",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#050b12",
-  "theme_color": "#071522",
+  "background_color": "#0b171c",
+  "theme_color": "#0b171c",
   "orientation": "any",
   "icons": [
-    {"src":"/trg-mark.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+    {"src":"./trg-mark.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
   ]
 }

@@ -22,7 +22,9 @@ def skip_to_content(page,label):
  def work_snapshot(s):return [{k:r[k] for k in ['id','status','step','drafts','evidence']} for r in s['sessions']]
  check(work_snapshot(before)==work_snapshot(after),label+' skip link preserves task status, draft and submitted work')
 def persona(page,id):
+ if page.locator('#pilot-role-preview').get_attribute('open') is None:page.locator('#pilot-role-preview summary').click()
  page.locator('#pilot-persona').select_option(id);page.wait_for_timeout(170)
+ if page.locator('#pilot-role-preview').get_attribute('open') is not None:page.locator('#pilot-role-preview summary').click()
 def fill_task(page):
  s=state(page);r=s['sessions'][-1]; step=r['snapshot']['steps'][r['step']];rank=0
  for f in step['fields']:
@@ -47,6 +49,7 @@ def review(page,rid,met):
   check('Select at least one evidence reference' in choices.first.evaluate('(input)=>input.validationMessage'),'Missing citation explains the required selection: '+c['id'])
   for index in ([1] if i==0 else [0] if i==1 else [0,1]):choices.nth(index).check()
   page.locator('[name="rationale_'+c['id']+'"]').fill('Synthetic evaluator entry for software acceptance; not professional validation.')
+ snap(page,'evaluator-review');page.set_viewport_size({'width':390,'height':844});snap(page,'evaluator-mobile-review');page.set_viewport_size({'width':1440,'height':1050})
  page.locator('#pilot-review-form button[type=submit]').click();page.wait_for_timeout(200)
 def load(page):
  if BASE:page.goto(BASE,wait_until='networkidle')
@@ -55,18 +58,20 @@ def load(page):
   page.evaluate('''()=>{window._testStorage={};Object.defineProperty(window,'localStorage',{value:{getItem:k=>window._testStorage[k]??null,setItem:(k,v)=>window._testStorage[k]=String(v),removeItem:k=>delete window._testStorage[k]}});}''')
   for name in ['styles.css','pilot/pilot.css']:page.add_style_tag(content=(ROOT/name).read_text())
   for name in ['catalog.js','engine.js','pilot/pack.js','pilot/domain.js','pilot/store.js','pilot/ui.js','app.js']:page.add_script_tag(content=(ROOT/name).read_text())
- page.locator('[data-page="pilot"]').first.click();page.wait_for_selector('#pilot-assign-form')
+ page.locator('[data-page="pilot"]').first.click();page.wait_for_selector('.pilot-queue');page.get_by_role('link',name='Create assignment',exact=True).last.click();page.wait_for_selector('#pilot-assign-form')
 with sync_playwright() as p:
  browser=getattr(p,BROWSER)
  kwargs={'args':['--no-sandbox']} if BROWSER=='chromium' else {}
  if BROWSER=='chromium' and not os.getenv('GITHUB_ACTIONS'):kwargs['executable_path']=shutil.which('chromium') or browser.executable_path
  b=browser.launch(**kwargs);ctx=b.new_context(viewport={'width':1440,'height':1050},reduced_motion='reduce',accept_downloads=True);page=ctx.new_page();page.on('pageerror',lambda e:errors.append(str(e))); page.set_default_timeout(12000)
  try:
-  load(page);check(len(state(page)['assignments'])==0,'Clean profile has no fabricated activity');check('FICTIONAL REHEARSAL' in page.locator('#pilot-root').inner_text(),'Exercise boundary remains visible');snap(page,'prepare')
+  load(page);check(len(state(page)['assignments'])==0,'Clean profile has no fabricated activity');check(('Sample workspace · Public · Browser-only' if BASE else 'Sample workspace · Public · Temporary tab storage') in page.locator('.pilot-environment').inner_text(),'Compact public sample-workspace boundary remains visible');check(page.locator('.sidebar,.pilot-banner,.hero').count()==0,'Workflow shell removes legacy navigation and repeated exhibit banners');snap(page,'prepare')
+  page.locator('#pilot-role-preview summary').focus();page.keyboard.press('Enter');check(page.locator('#pilot-persona').is_visible(),'Keyboard opens the internal role preview');check('not sign-in or access control' in page.locator('.pilot-preview-panel').inner_text(),'Role preview clearly identifies its unauthenticated control');page.locator('#pilot-persona').select_option('evaluator');page.wait_for_timeout(170);check('Awaiting evaluation or response' in page.locator('#main').inner_text(),'Evaluator lands on actionable review queue');page.locator('[data-pilot="return-role"]').click();page.wait_for_timeout(170);check(page.locator('#pilot-persona').input_value()=='admin' and page.locator('.pilot-queue').count()==1,'Return to starting role restores administrator queue');page.locator('#pilot-role-preview summary').click();nav(page,'prepare')
   page.locator('#pilot-assign-form [value="p3"]').check();check('1 eligible / 2 selected' in page.locator('#pilot-audience').inner_text(),'Inactive participant excluded before assignment')
   page.locator('[name="sourceReviewed"]').check();page.locator('[name="boundaryAccepted"]').check();page.locator('#pilot-assign-form button[type=submit]').click();page.wait_for_timeout(250)
   check(len(state(page)['assignments'])==1,'Campaign creates one eligible assignment');check(len(state(page)['campaigns'][0]['audience']['excluded'])==1,'Exclusion is attributable in campaign')
-  persona(page,'p1');page.locator('[data-pilot="start"]').click();page.wait_for_selector('#pilot-task-form');r=state(page)['sessions'][-1];rid=r['id'];snap(page,'task')
+  persona(page,'p1');check(page.evaluate('location.hash').endswith('/home'),'Participant role enters own actionable queue');check(page.locator('nav[aria-label="Work navigation"] a').count()==2,'Participant navigation contains only Home and My assignments');check(not page.locator('a[href^="#/pilot/trace"]').count(),'Participant assignments contain no report or trace links');page.locator('[data-pilot="start"]').click();page.wait_for_selector('#pilot-task-form');r=state(page)['sessions'][-1];rid=r['id'];snap(page,'task');page.set_viewport_size({'width':390,'height':844});snap(page,'participant-mobile-task');page.set_viewport_size({'width':1440,'height':1050})
+  check(page.locator('.pilot-pagehead h1').inner_text()=='Practice','Participant task has a concise operational header');check('rubric' not in page.locator('#main').inner_text().lower(),'Participant task hides rubric metadata');check(page.locator('#pilot-role-preview').get_attribute('open') is None,'Internal role control can stay collapsed while practicing');page.emulate_media(media='print');check(page.locator('.pilot-environment').is_visible() and not page.locator('.pilot-role-preview').is_visible(),'Printed work retains sample provenance without role controls');page.emulate_media(media='screen');
   first_text=page.locator('#pilot-task-form textarea').first;first_text.fill('A saved draft that must survive pause and interruption.');page.wait_for_timeout(400)
   check(bool(state(page)['sessions'][-1]['drafts']),'Written draft saves before submission');skip_to_content(page,'Active session')
   page.locator('[data-pilot="pause"]').click();page.wait_for_timeout(180);ms=state(page)['sessions'][-1]['activeMs'];page.wait_for_timeout(250)
@@ -82,6 +87,12 @@ with sync_playwright() as p:
   check(label in context.inner_text(),'Submitted selections display authored labels instead of machine IDs')
   check('Inspect rule checks' not in context.inner_text(),'Earlier-work context does not expose evaluator rule checks mid-task')
   completed=finish(page);original=json.dumps(completed,sort_keys=True);check(len(completed['evidence'])==2,'Two work products stored as evidence');check(not state(page)['reviews'],'Submission does not imply evaluated success');check(page.evaluate('window.TRG_XSS!==1'),'Participant HTML is displayed as text, not executed')
+  check('Inspect rule checks' not in page.locator('#main').inner_text(),'Submitted participant work hides evaluator rule checks');check(page.locator('a[href^="#/pilot/review/"]').count()==0,'Unreviewed participant work does not offer evaluator forms')
+  before_guard=json.dumps(state(page),sort_keys=True)
+  for blocked in ['prepare','reviews','improve','trace','finding','newaction']:
+   nav(page,blocked,'unknown' if blocked in ['finding','newaction'] else '');check(page.locator('[data-participant-boundary]').count()==1,'Participant direct route stays within own-work view: '+blocked)
+  check(json.dumps(state(page),sort_keys=True)==before_guard,'Blocked participant navigation never changes stored records')
+  persona(page,'p2');nav(page,'session',rid);check(page.locator('[data-participant-boundary]').count()==1 and page.locator('#pilot-task-form,.pilot-work').count()==0,'Another participant cannot render this work through a direct session URL');nav(page,'assignments');check('No assignments yet' in page.locator('#main').inner_text() and page.locator('[data-pilot="start"]').count()==0,'Participant without work has an honest own-assignment empty state');persona(page,'p1')
   for legacy in ['overview','reports','library']:
    page.evaluate('v=>location.hash="#/"+v',legacy);page.wait_for_timeout(150)
    check('legacy starter practice only' in page.locator('[data-legacy-boundary]').inner_text(),legacy+' explicitly separates legacy and pilot records')
@@ -96,11 +107,12 @@ with sync_playwright() as p:
   after_review=state(page)['reviews'][-1]
   check([d['evidenceIds'] for d in after_review['decisions']]==[d['evidenceIds'] for d in first_review['decisions']],'Rationale-only amendment preserves per-criterion and multiple citations')
   check(state(page)['reviews'][0]==first_review,'Review amendment leaves the historical review unchanged')
+  persona(page,'p1');nav(page,'review',rid);check(page.locator('[data-participant-review]').count()==1 and page.locator('#pilot-review-form').count()==0,'Own review direct route is read-only, not an evaluator form');check(page.locator('#pilot-appeal-form').count()==1,'Participant keeps ability to question the latest review');snap(page,'participant-review');check(all(c['text'] not in page.locator('#main').inner_text() for c in completed['snapshot']['rubric']['criteria']),'Participant review hides authored evaluator answer criteria');persona(page,'p2');nav(page,'reviewed',after_review['id']);check(page.locator('[data-participant-boundary]').count()==1,'Other participant cannot render a review by its direct ID');persona(page,'evaluator');nav(page,'finding',after_review['id'])
   for name in ['observation','impact','causeRationale']:page.locator('#pilot-finding-form [name="'+name+'"]').fill('Synthetic acceptance finding: the authority boundary needs clarification, with source and produced work retained.')
   page.locator('#pilot-finding-form button[type=submit]').click();page.wait_for_timeout(200);check(len(state(page)['findings'])==1,'Evaluator finding retains criterion and cause');page.locator('a[href*="/newaction/"]').first.click();page.wait_for_selector('#pilot-action-form')
   page.locator('[name="title"]').fill('Revise the fictional escalation card and rehearse a missing alternate.');page.locator('[name="completionCriteria"]').fill('Authority scope, owner and next update are explicit and the different transfer condition is reviewed.');page.locator('[name="due"]').fill('2026-11-13');page.locator('#pilot-action-form button[type=submit]').click();page.wait_for_timeout(250);aid=state(page)['actions'][-1]['id']
   check(state(page)['actions'][-1]['status']=='open','Action is not closed by creation');persona(page,'owner');nav(page,'action',aid);page.locator('[name="evidence"]').fill('Synthetic owner evidence: escalation card now separates coordination from command delegation and records the next update.');page.locator('#pilot-completion-form button[type=submit]').click();page.wait_for_timeout(200)
-  check(state(page)['actions'][-1]['status']=='ready' and not state(page)['verifications'],'Completion evidence does not imply verification');check('Ready for retest' in page.locator('#pilot-root').inner_text() and 'Demo administrator creates' in page.locator('#pilot-root').inner_text(),'Owner completion names the next administrator retest step');persona(page,'admin');check(page.evaluate('location.hash').endswith('/action/'+aid),'Manual persona switch keeps the current action open');nav(page,'action',aid);page.locator('[data-pilot="retest"]').click();page.wait_for_timeout(200)
+  check(state(page)['actions'][-1]['status']=='ready' and not state(page)['verifications'],'Completion evidence does not imply verification');check('Ready for retest' in page.locator('#pilot-root').inner_text() and 'Administrator creates' in page.locator('#pilot-root').inner_text(),'Owner completion names the next administrator retest step');persona(page,'admin');check(page.evaluate('location.hash').endswith('/action/'+aid),'Manual persona switch keeps the current action open');nav(page,'action',aid);page.locator('[data-pilot="retest"]').click();page.wait_for_timeout(200)
   check(len(state(page)['assignments'])==2,'Action creates a linked transfer assignment');persona(page,'p1');page.get_by_role('link',name='Launch from participant assignments').click();page.wait_for_selector('[data-pilot="start"]');page.locator('[data-pilot="start"]').click();page.wait_for_selector('#pilot-task-form');retest=finish(page);retestid=retest['id'];check(retest['snapshot']['id']!='PILOT-ESC-A' and retest['originalSessionId']==rid,'Retest changes condition and retains original session')
   persona(page,'verifier');nav(page,'action',aid);check(page.locator('[data-pilot-form="verify"]').count()==0,'Verifier cannot skip evaluator review')
   review(page,retestid,True);check('Evaluator review recorded' in page.locator('#pilot-root').inner_text() and 'All rubric criteria marked met' in page.locator('#pilot-root').inner_text(),'All-met review has a truthful recorded-success screen');check(page.locator('a[href="#/pilot/action/'+aid+'"]').count()==1,'All-met transfer review links back to its verification action');persona(page,'verifier');nav(page,'action',aid);page.locator('[data-pilot-form="verify"] [name="rationale"]').fill('Synthetic verification entry: inspected owner evidence, original finding and linked transfer review. No professional acceptance inferred.');page.locator('[data-pilot-form="verify"] button[type=submit]').click();page.wait_for_timeout(200)
@@ -114,6 +126,7 @@ with sync_playwright() as p:
    for v in ['prepare','assignments','reviews','improve','trace','release']:
     nav(page,v);check(page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'),f'{v} reflows at {w}px')
    snap(page,'reflow-'+str(w))
+  nav(page,'home');page.get_by_role('link',name='System status',exact=False).focus();page.keyboard.press('Enter');page.wait_for_selector('.pilot-system-list');check(page.evaluate('document.activeElement.id')=='main','Keyboard route navigation focuses rendered main after async mount');check('no sign-in or authenticated access control' in page.locator('#main').inner_text(),'System status explicitly discloses public unauthenticated access');check('No live calls, texts, emails' in page.locator('#main').inner_text(),'Unavailable external delivery is disclosed in System status');check('IndexedDB' in page.locator('#main').inner_text() if BASE else 'Temporary tab memory' in page.locator('#main').inner_text(),'System status reports the actual persistence mode')
   nav(page,'prepare');page.keyboard.press('Tab');check(page.evaluate('document.activeElement!==document.body'),'Keyboard focus enters an interactive element')
   for _ in range(8):page.keyboard.press('Tab')
   check(page.evaluate('document.activeElement.tagName in {"A":1,"BUTTON":1,"INPUT":1,"SELECT":1,"TEXTAREA":1,"SUMMARY":1}'),'Keyboard tab order reaches named controls')
@@ -129,11 +142,11 @@ with sync_playwright() as p:
   for sid in ['PILOT-SIT-A','PILOT-RES-A','PILOT-HO-A']:
    persona(page,'admin');nav(page,'prepare');page.locator('[data-pilot="select"][data-id="'+sid+'"]').click();page.locator('[name="sourceReviewed"]').check();page.locator('[name="boundaryAccepted"]').check();page.locator('#pilot-assign-form button[type=submit]').click();page.wait_for_timeout(160);persona(page,'p1');page.locator('[data-pilot="start"]').first.click();page.wait_for_selector('#pilot-task-form');done=finish(page);check(done['snapshot']['id']==sid and len(done['evidence'])==2,sid+' produces two work products through actual controls')
   if BASE:
-   nav(page,'release');page.wait_for_selector('#pilot-release-record');page.wait_for_timeout(250)
+   nav(page,'release');page.get_by_text('Build identity and technical limits',exact=True).click();page.wait_for_selector('#pilot-release-record');page.wait_for_timeout(250)
    metadata=page.evaluate("async()=>await (await fetch('release.json')).json()")
    check(metadata['version']=='2.0.0-eval' and not metadata['liveCommunications'],'Machine-readable release matches the evaluation build')
-   ctx.set_offline(True);nav(page,'trace');check('Event ledger' in page.locator('#pilot-root').inner_text(),'Loaded local workflow remains inspectable during network interruption');ctx.set_offline(False)
-   second=ctx.new_page();second.goto(BASE+'/#/pilot/prepare');second.wait_for_selector('#pilot-persona');persona(second,'admin');nav(second,'prepare');second.locator('[name="sourceReviewed"]').check();second.locator('[name="boundaryAccepted"]').check();second.locator('#pilot-assign-form button[type=submit]').click();page.wait_for_timeout(350)
+   persona(page,'executive');ctx.set_offline(True);nav(page,'trace');check('Event ledger' in page.locator('#pilot-root').inner_text(),'Loaded local workflow remains inspectable during network interruption');ctx.set_offline(False)
+   second=ctx.new_page();second.goto(BASE+'/#/pilot/prepare');second.wait_for_selector('#pilot-role-preview summary');persona(second,'admin');nav(second,'prepare');second.locator('[name="sourceReviewed"]').check();second.locator('[name="boundaryAccepted"]').check();second.locator('#pilot-assign-form button[type=submit]').click();page.wait_for_timeout(350)
    check('Another view changed' in page.locator('#pilot-error').inner_text(),'Separate tab change exposes conflict recovery instead of overwriting');second.close();page.locator('[data-pilot="reload"]').first.click();page.wait_for_timeout(200)
   if BASE:
    # Transaction conflict through the real IndexedDB store, not a mock.

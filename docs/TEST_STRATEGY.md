@@ -30,3 +30,7 @@ Performance measurements cover synthetic 1/10/25 correction loops and their repl
 
 ## Environment limits and acceptance
 Container navigation to localhost is blocked by managed policy. Local injection tests are labeled volatile/DOM-only. Hosted native-origin tests are the persistence evidence. Failures are not silently retried; correct the cause, preserve the earlier result and rerun on the changed source. Human practitioner, assistive-technology, security and real-participant acceptance remain separate gates. No independent reviewer is fabricated.
+
+
+## Review regression additions
+The aggregate runner includes the content-audit unit tests and deterministic store snapshot tests. Browser regression fixtures deliberately cite the second work product and multiple work products, then amend only the rationale. They exercise real rendered controls instead of assuming reducer tests establish form behavior. Existing legacy histories remain replayable through a pre-fix synthetic fixture. Browser launch or native-origin access failures are reported separately from passed source/domain/HTTP checks.

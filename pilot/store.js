@@ -11,7 +11,22 @@ class PilotStore{
   return this;
  }
  async rawRead(){if(this.mode==='volatile')return D.copy(this.memory);if(!this.db)throw Error('Database unavailable. Reload before working.');return await new Promise((resolve,reject)=>{const req=this.db.transaction('states').objectStore('states').get(this.org);req.onsuccess=()=>resolve(req.result||D.initial(this.org));req.onerror=()=>reject(req.error);});}
- async load(){this.raw=await this.rawRead();D.validate(this.raw);if(this.db){const events=await new Promise((resolve,reject)=>{const tx=this.db.transaction('events');const req=tx.objectStore('events').getAll(IDBKeyRange.bound([this.org,0],[this.org,Number.MAX_SAFE_INTEGER]));req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});if(D.stable(events)!==D.stable(this.raw.events))throw Object.assign(Error('Event store and current state disagree. Export recovery data; do not overwrite it.'),{code:'CORRUPT'});}
+ async load(){
+  if(this.mode==='volatile'){this.raw=await this.rawRead();D.validate(this.raw);return D.copy(this.raw);}
+  if(!this.db)throw Error('Database unavailable. Reload before working.');
+  // Both projections must come from one IndexedDB transaction snapshot.
+  const snapshot=await new Promise((resolve,reject)=>{
+   const tx=this.db.transaction(['states','events'],'readonly');let state,events;
+   const stateRequest=tx.objectStore('states').get(this.org);
+   const eventRequest=tx.objectStore('events').getAll(IDBKeyRange.bound([this.org,0],[this.org,Number.MAX_SAFE_INTEGER]));
+   stateRequest.onsuccess=()=>{state=stateRequest.result||D.initial(this.org);};
+   eventRequest.onsuccess=()=>{events=eventRequest.result;};
+   tx.oncomplete=()=>resolve({state,events});
+   tx.onerror=()=>reject(tx.error||Error('Could not read stored history.'));
+   tx.onabort=()=>reject(tx.error||Error('Stored-history read was interrupted.'));
+  });
+  this.raw=snapshot.state;D.validate(this.raw);
+  if(D.stable(snapshot.events)!==D.stable(this.raw.events))throw Object.assign(Error('Event store and current state disagree. Export recovery data; do not overwrite it.'),{code:'CORRUPT'});
   return D.copy(this.raw);
  }
  async execute(command){

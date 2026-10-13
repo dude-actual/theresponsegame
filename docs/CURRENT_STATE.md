@@ -14,3 +14,7 @@ The old demonstration is retained for comparison. Its verification shortcut is d
 
 ## Control records
 `BACKLOG.json` is the single defect/risk/development register. `ASSUMPTIONS_AND_DECISIONS.md` is the decision log. `RELEASE_EVIDENCE.md` is the evidence index. Earlier v1 QA records are historical; do not substitute them for current results. The v1 Word/workbook artifacts remain unchanged as inspected inputs, not parallel live backlogs.
+
+
+### Review correction candidate
+The controlled pilot and legacy starter workspace still use separate stores; their counts must not be combined. Observed and Coached are session labels only, with identical application behavior; facilitator coaching is external. Citation, atomic-storage-read and original-appeal fixes are tracked in the canonical backlog. Historical verifications remain inspectable even when current appeal/retest conditions require reassessment. A formal workflow for amended original reviews remains open.

@@ -210,7 +210,8 @@
       "acceptanceCriteria": "Named reviewer validates sources/authority/alternatives/consequences; two reviewers calibrate evidence criteria.",
       "evidence": [
         "docs/CONTENT_STANDARD.md"
-      ]
+      ],
+      "reviewFocus": "Validate branch-dependent facts across later tasks, including waiting/no-acknowledgment paths that later ask for an acknowledged recipient; explicitly allow evidence-supported unknowns."
     },
     {
       "id": "TRG-012",
@@ -348,7 +349,8 @@
       "recommendedCorrection": "Review flags by field; add a validated semantic comparison only with reproducible thresholds and human decisions.",
       "acceptanceCriteria": "Review flags by field; add a validated semantic comparison only with reproducible thresholds and human decisions.",
       "evidence": [
-        "qa/pilot/content-repetition.json"
+        "qa/pilot/content-repetition.json",
+        "tests/pilot/test_content_audit.py"
       ]
     },
     {
@@ -390,6 +392,162 @@
       "acceptanceCriteria": "Add only after trusted single-role cycle: approved media rights/accessibility and measured inter-role dependencies.",
       "evidence": [
         "docs/PILOT_PLAN.md"
+      ]
+    },
+    {
+      "id": "TRG-021",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Preserve explicit review citations through amendments",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Amendment form rehydrated status and rationale but silently selected the first evidence record. Multiple references were reduced to one.",
+      "status": "candidate implemented; exact-commit CI required",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Require explicit evidence selection on new reviews; restore every criterion citation and preserve the historical review on rationale-only amendments.",
+      "acceptanceCriteria": "Require explicit evidence selection on new reviews; restore every criterion citation and preserve the historical review on rationale-only amendments.",
+      "evidence": [
+        "pilot/ui.js",
+        "tests/pilot/test_browser.py"
+      ]
+    },
+    {
+      "id": "TRG-022",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Screen actual consequence and debrief content",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Audit read nonexistent consequences/debrief properties; empty objects appeared 100% similar. Follow-up review found the artifact text join bypassed per-artifact validation, allowing blank evidence to be masked by populated neighboring artifacts.",
+      "status": "candidate implemented; exact-commit CI required",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Extract branches, defaultConsequence and debriefIntent; fail visibly on missing required authored fields and report empty comparisons as unavailable. Validate every artifact text before joining, identifying the scenario, step and artifact when text is missing, blank, whitespace-only or not a string.",
+      "acceptanceCriteria": "Extract branches, defaultConsequence and debriefIntent; fail visibly on missing required authored fields and report empty comparisons as unavailable. Validate every artifact text before joining, identifying the scenario, step and artifact when text is missing, blank, whitespace-only or not a string.",
+      "evidence": [
+        "scripts/content_audit.py",
+        "tests/pilot/test_content_audit.py",
+        "qa/pilot/review-before/blank-artifacts.log",
+        "https://github.com/dude-actual/theresponsegame/pull/10#discussion_r4263560579"
+      ]
+    },
+    {
+      "id": "TRG-023",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Block verification while original review is disputed",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Verification considered unresolved transfer-review appeals but ignored original-session appeals.",
+      "status": "candidate implemented; exact-commit CI required",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Reject new verification until both original and retest appeals are resolved. Replay pre-fix historical verifications unchanged and show current reassessment blockers.",
+      "acceptanceCriteria": "Reject new verification until both original and retest appeals are resolved. Replay pre-fix historical verifications unchanged and show current reassessment blockers.",
+      "evidence": [
+        "pilot/domain.js",
+        "tests/pilot/test_domain.cjs",
+        "tests/pilot/fixtures/legacy-original-appeal.json"
+      ]
+    },
+    {
+      "id": "TRG-024",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Read stored projections and event ledger atomically",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Separate readonly transactions could compare state before a concurrent write with events after it, falsely reporting corruption.",
+      "status": "candidate implemented; exact-commit CI required",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Read both stores in one readonly transaction. A deterministic concurrent write cannot create a false corruption error; genuine ledger mismatch still blocks writes.",
+      "acceptanceCriteria": "Read both stores in one readonly transaction. A deterministic concurrent write cannot create a false corruption error; genuine ledger mismatch still blocks writes.",
+      "evidence": [
+        "pilot/store.js",
+        "tests/pilot/test_store.cjs"
+      ]
+    },
+    {
+      "id": "TRG-025",
+      "priority": "P2",
+      "kind": "defect",
+      "title": "Retain participant context and clear next steps",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Later tasks hid earlier artifacts/work, all-met review led to an empty findings prompt, and persona changes lost the current action.",
+      "status": "candidate implemented; exact-commit CI required",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Expose prior artifacts and work read-only, use readable option labels, confirm recorded all-met reviews, name the next responsible persona, preserve action context, and distinguish recorded verification from current blockers.",
+      "acceptanceCriteria": "Expose prior artifacts and work read-only, use readable option labels, confirm recorded all-met reviews, name the next responsible persona, preserve action context, and distinguish recorded verification from current blockers.",
+      "evidence": [
+        "pilot/ui.js",
+        "tests/pilot/test_browser.py"
+      ]
+    },
+    {
+      "id": "TRG-026",
+      "priority": "P2",
+      "kind": "defect",
+      "title": "Distinguish legacy workspace from controlled pilot",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Overview/reports/library displayed legacy-only data without explaining that pilot evidence lived in a separate store. Observed/Coached appeared functionally distinct.",
+      "status": "candidate implemented; exact-commit CI required",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Label legacy-only counts and link to pilot evidence; label Observed/Coached as session labels with identical application behavior and facilitator-provided coaching.",
+      "acceptanceCriteria": "Label legacy-only counts and link to pilot evidence; label Observed/Coached as session labels with identical application behavior and facilitator-provided coaching.",
+      "evidence": [
+        "app.js",
+        "pilot/ui.js",
+        "tests/pilot/test_browser.py"
+      ]
+    },
+    {
+      "id": "TRG-027",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Reassess findings after original review amendment",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "An original review can be amended from unmet to met while the earlier finding/action remains historical; no formal reassessment workflow exists.",
+      "status": "open; workflow design and reviewer acceptance required",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Design explicit evaluator/owner reassessment after supporting-review changes, preserving all findings and verifications. Do not silently revoke, erase or close prior records.",
+      "acceptanceCriteria": "Design explicit evaluator/owner reassessment after supporting-review changes, preserving all findings and verifications. Do not silently revoke, erase or close prior records.",
+      "evidence": [
+        "pilot/domain.js",
+        "docs/PRODUCT_INVARIANTS.md"
+      ]
+    },
+    {
+      "id": "TRG-028",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Preserve pilot route when keyboard users skip navigation",
+      "affectedWorkflow": "keyboard access to pilot content",
+      "rootCause": "The global skip link used #main, which the hash router treated as an unknown page and rendered the legacy overview.",
+      "status": "candidate implemented; native browser regression required",
+      "ownerRole": "Engineering/accessibility",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Prevent skip-link hash navigation; focus and scroll main without changing the current route or task state.",
+      "acceptanceCriteria": "Keyboard Enter on Skip to content in an active pilot session and evidence trace retains route and draft/evidence state and focuses main.",
+      "evidence": [
+        "app.js",
+        "tests/pilot/test_browser.py"
       ]
     }
   ]

@@ -14,14 +14,14 @@ layout: null
   "sourceHashes": {
     "index.html": "c744c82f4578e0f5ac05194cf04e1b2acc3e33cb5654074c6eef2a52034b1fa0",
     "styles.css": "e50f0c70adcca807a7ea7b4647837253bf770fc6382ca92ffa9b0ad73a27562a",
-    "app.js": "3bd24503a2e1e178de0600447f90db15f4af93f6e7640386995bd3aaa1c5593c",
+    "app.js": "68990a5efb5abb10bc99e475f861c77a239ccbd321e528aa37fa90d0625996fc",
     "engine.js": "a4f419920b59fe5c94c1a75563057c8c4601d2d29e3c032e7ce8830ce280fc5f",
     "catalog.js": "6a40a8c5389494b910d5f0e9627ab4e37844ee16a51330d83ebccc1f56d01775",
     "trg-sw.js": "d0a91302489ee46c42234a2aad45659adea0da86a1792591b26016289b61eb8f",
-    "pilot/domain.js": "11a453b57399eebab51fff91b96fca486461f4fb6f11cf0de180f4225377f0a0",
+    "pilot/domain.js": "94fcf60176e2d4964f41701a31cbadc754ece73904863af8629db3598b476447",
     "pilot/pack.js": "ba12efc3660423704a4240dfb8180b91f378a3fce2831682c023305eb4f90403",
     "pilot/pilot.css": "3c0d2a5a1323f13bec4c72434ecae4cdecbc27947fc8ac240b2ec7326a68b1d8",
-    "pilot/store.js": "21cb5015445ec288e9b84c295bd01d45573647a52b94116f1b4c610ea91bed44",
-    "pilot/ui.js": "9e0df389be8a3c3873332c3d59283a7ada190cc5660e9a8694d3ace678ecb526"
+    "pilot/store.js": "23daee8da8ee75f96fca9bc79d33fbb6b0c77dc74e808a618ab26f8270c5f7e1",
+    "pilot/ui.js": "469492b4c27bc3daa2639b69204a2059dabd1d7a40e928acadaafe442e5dba7e"
   }
 }

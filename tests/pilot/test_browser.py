@@ -13,6 +13,14 @@ def snap(page,name): page.screenshot(path=str(OUT/(BROWSER+'-'+name+'.png')),ful
 def state(page):return page.evaluate('TRG_PILOT.getState()')
 def nav(page,v,id=''):
  page.evaluate('x=>location.hash="#/pilot/"+x',v+('/'+id if id else ''));page.wait_for_timeout(120)
+def skip_to_content(page,label):
+ before=state(page);route_before=page.evaluate('location.hash')
+ page.locator('a.skip').focus();page.keyboard.press('Enter');page.wait_for_timeout(120)
+ check(page.evaluate('location.hash')==route_before,label+' skip link preserves the pilot route')
+ check(page.evaluate('document.activeElement.id')=='main',label+' skip link moves keyboard focus to main')
+ after=state(page)
+ def work_snapshot(s):return [{k:r[k] for k in ['id','status','step','drafts','evidence']} for r in s['sessions']]
+ check(work_snapshot(before)==work_snapshot(after),label+' skip link preserves task status, draft and submitted work')
 def persona(page,id):
  page.locator('#pilot-persona').select_option(id);page.wait_for_timeout(170)
 def fill_task(page):
@@ -34,12 +42,16 @@ def review(page,rid,met):
  r=next(r for r in state(page)['sessions'] if r['id']==rid)
  for i,c in enumerate(r['snapshot']['rubric']['criteria']):
   page.locator('[name="status_'+c['id']+'"]').select_option('met' if met or i else 'unmet')
+  choices=page.locator('[name="evidence_'+c['id']+'"]')
+  check(page.locator('[name="evidence_'+c['id']+'"]:checked').count()==0,'New review requires explicit evidence selection: '+c['id'])
+  check('Select at least one evidence reference' in choices.first.evaluate('(input)=>input.validationMessage'),'Missing citation explains the required selection: '+c['id'])
+  for index in ([1] if i==0 else [0] if i==1 else [0,1]):choices.nth(index).check()
   page.locator('[name="rationale_'+c['id']+'"]').fill('Synthetic evaluator entry for software acceptance; not professional validation.')
  page.locator('#pilot-review-form button[type=submit]').click();page.wait_for_timeout(200)
 def load(page):
  if BASE:page.goto(BASE,wait_until='networkidle')
  else:
-  page.set_content('<!doctype html><html lang="en"><head><title>Response Game test</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="app"></div><div id="toast" role="status"></div><dialog id="drawer" aria-labelledby="drawer-title"></dialog></body></html>')
+  page.set_content('<!doctype html><html lang="en"><head><title>Response Game test</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><a class="skip" href="#main">Skip to content</a><div id="app"></div><div id="toast" role="status"></div><dialog id="drawer" aria-labelledby="drawer-title"></dialog></body></html>')
   page.evaluate('''()=>{window._testStorage={};Object.defineProperty(window,'localStorage',{value:{getItem:k=>window._testStorage[k]??null,setItem:(k,v)=>window._testStorage[k]=String(v),removeItem:k=>delete window._testStorage[k]}});}''')
   for name in ['styles.css','pilot/pilot.css']:page.add_style_tag(content=(ROOT/name).read_text())
   for name in ['catalog.js','engine.js','pilot/pack.js','pilot/domain.js','pilot/store.js','pilot/ui.js','app.js']:page.add_script_tag(content=(ROOT/name).read_text())
@@ -56,23 +68,43 @@ with sync_playwright() as p:
   check(len(state(page)['assignments'])==1,'Campaign creates one eligible assignment');check(len(state(page)['campaigns'][0]['audience']['excluded'])==1,'Exclusion is attributable in campaign')
   persona(page,'p1');page.locator('[data-pilot="start"]').click();page.wait_for_selector('#pilot-task-form');r=state(page)['sessions'][-1];rid=r['id'];snap(page,'task')
   first_text=page.locator('#pilot-task-form textarea').first;first_text.fill('A saved draft that must survive pause and interruption.');page.wait_for_timeout(400)
-  check(bool(state(page)['sessions'][-1]['drafts']),'Written draft saves before submission')
+  check(bool(state(page)['sessions'][-1]['drafts']),'Written draft saves before submission');skip_to_content(page,'Active session')
   page.locator('[data-pilot="pause"]').click();page.wait_for_timeout(180);ms=state(page)['sessions'][-1]['activeMs'];page.wait_for_timeout(250)
   check(state(page)['sessions'][-1]['status']=='paused' and state(page)['sessions'][-1]['activeMs']==ms,'Pause freezes active time');page.locator('[data-pilot="resume"]').click();page.wait_for_selector('#pilot-task-form');check('saved draft' in page.locator('#pilot-task-form textarea').first.input_value(),'Resume restores saved task')
   if BASE:
    page.reload(wait_until='networkidle');page.wait_for_selector('#pilot-root');page.wait_for_selector('[data-pilot="resume"]');check('paused'==state(page)['sessions'][-1]['status'],'Refresh interrupts active session without erasing work');page.locator('[data-pilot="resume"]').click();page.wait_for_selector('#pilot-task-form');check('saved draft' in page.locator('#pilot-task-form textarea').first.input_value(),'Native IndexedDB retains draft after reload')
   else:skips.extend(['Native IndexedDB reload','Two-view transaction conflict','Corrupt native-cache recovery'])
+  fill_task(page);context=page.locator('#pilot-previous-context');check(context.count()==1,'Later task offers earlier information and submitted work');context.locator('summary').click()
+  prior=state(page)['sessions'][-1]
+  for artifact in prior['snapshot']['steps'][0]['artifacts']:check(artifact['text'] in context.inner_text(),'Prior source artifact remains available: '+artifact['id'])
+  check(prior['evidence'][0]['answers']['message'] in context.inner_text(),'Own submitted message remains available during later task')
+  selected=prior['snapshot']['steps'][0]['fields'][0]['options'];label=next(o['label'] for o in selected if o['id']==prior['evidence'][0]['answers']['route'])
+  check(label in context.inner_text(),'Submitted selections display authored labels instead of machine IDs')
+  check('Inspect rule checks' not in context.inner_text(),'Earlier-work context does not expose evaluator rule checks mid-task')
   completed=finish(page);original=json.dumps(completed,sort_keys=True);check(len(completed['evidence'])==2,'Two work products stored as evidence');check(not state(page)['reviews'],'Submission does not imply evaluated success');check(page.evaluate('window.TRG_XSS!==1'),'Participant HTML is displayed as text, not executed')
+  for legacy in ['overview','reports','library']:
+   page.evaluate('v=>location.hash="#/"+v',legacy);page.wait_for_timeout(150)
+   check('legacy starter practice only' in page.locator('[data-legacy-boundary]').inner_text(),legacy+' explicitly separates legacy and pilot records')
+   page.locator('[data-legacy-boundary] a').click();page.wait_for_selector('#pilot-root');check(rid in json.dumps(state(page)),legacy+' links back to retained pilot evidence')
   review(page,rid,False);page.wait_for_selector('#pilot-finding-form')
+  first_review=state(page)['reviews'][-1];nav(page,'review',rid)
+  for decision in first_review['decisions']:
+   selected=page.locator('[name="evidence_'+decision['criterionId']+'"]:checked').evaluate_all('(inputs)=>inputs.map(input=>input.value)')
+   check(selected==decision['evidenceIds'],'Amendment restores every original citation: '+decision['criterionId'])
+  page.locator('[name="rationale_authority"]').fill('Revised synthetic rationale only; the selected original evidence must not change.')
+  page.locator('#pilot-review-form button[type=submit]').click();page.wait_for_selector('#pilot-finding-form')
+  after_review=state(page)['reviews'][-1]
+  check([d['evidenceIds'] for d in after_review['decisions']]==[d['evidenceIds'] for d in first_review['decisions']],'Rationale-only amendment preserves per-criterion and multiple citations')
+  check(state(page)['reviews'][0]==first_review,'Review amendment leaves the historical review unchanged')
   for name in ['observation','impact','causeRationale']:page.locator('#pilot-finding-form [name="'+name+'"]').fill('Synthetic acceptance finding: the authority boundary needs clarification, with source and produced work retained.')
   page.locator('#pilot-finding-form button[type=submit]').click();page.wait_for_timeout(200);check(len(state(page)['findings'])==1,'Evaluator finding retains criterion and cause');page.locator('a[href*="/newaction/"]').first.click();page.wait_for_selector('#pilot-action-form')
   page.locator('[name="title"]').fill('Revise the fictional escalation card and rehearse a missing alternate.');page.locator('[name="completionCriteria"]').fill('Authority scope, owner and next update are explicit and the different transfer condition is reviewed.');page.locator('[name="due"]').fill('2026-11-13');page.locator('#pilot-action-form button[type=submit]').click();page.wait_for_timeout(250);aid=state(page)['actions'][-1]['id']
   check(state(page)['actions'][-1]['status']=='open','Action is not closed by creation');persona(page,'owner');nav(page,'action',aid);page.locator('[name="evidence"]').fill('Synthetic owner evidence: escalation card now separates coordination from command delegation and records the next update.');page.locator('#pilot-completion-form button[type=submit]').click();page.wait_for_timeout(200)
-  check(state(page)['actions'][-1]['status']=='ready' and not state(page)['verifications'],'Completion evidence does not imply verification');persona(page,'admin');nav(page,'action',aid);page.locator('[data-pilot="retest"]').click();page.wait_for_timeout(200)
-  check(len(state(page)['assignments'])==2,'Action creates a linked transfer assignment');persona(page,'p1');page.locator('[data-pilot="start"]').click();page.wait_for_selector('#pilot-task-form');retest=finish(page);retestid=retest['id'];check(retest['snapshot']['id']!='PILOT-ESC-A' and retest['originalSessionId']==rid,'Retest changes condition and retains original session')
+  check(state(page)['actions'][-1]['status']=='ready' and not state(page)['verifications'],'Completion evidence does not imply verification');check('Ready for retest' in page.locator('#pilot-root').inner_text() and 'Demo administrator creates' in page.locator('#pilot-root').inner_text(),'Owner completion names the next administrator retest step');persona(page,'admin');check(page.evaluate('location.hash').endswith('/action/'+aid),'Manual persona switch keeps the current action open');nav(page,'action',aid);page.locator('[data-pilot="retest"]').click();page.wait_for_timeout(200)
+  check(len(state(page)['assignments'])==2,'Action creates a linked transfer assignment');persona(page,'p1');page.get_by_role('link',name='Launch from participant assignments').click();page.wait_for_selector('[data-pilot="start"]');page.locator('[data-pilot="start"]').click();page.wait_for_selector('#pilot-task-form');retest=finish(page);retestid=retest['id'];check(retest['snapshot']['id']!='PILOT-ESC-A' and retest['originalSessionId']==rid,'Retest changes condition and retains original session')
   persona(page,'verifier');nav(page,'action',aid);check(page.locator('[data-pilot-form="verify"]').count()==0,'Verifier cannot skip evaluator review')
-  review(page,retestid,True);persona(page,'verifier');nav(page,'action',aid);page.locator('[data-pilot-form="verify"] [name="rationale"]').fill('Synthetic verification entry: inspected owner evidence, original finding and linked transfer review. No professional acceptance inferred.');page.locator('[data-pilot-form="verify"] button[type=submit]').click();page.wait_for_timeout(200)
-  check(len(state(page)['verifications'])==1,'Separate verifier records linked verification');check(json.dumps(state(page)['sessions'][0],sort_keys=True)==original,'Review and retest never rewrite original session');snap(page,'verification');persona(page,'executive');nav(page,'trace');snap(page,'trace')
+  review(page,retestid,True);check('Evaluator review recorded' in page.locator('#pilot-root').inner_text() and 'All rubric criteria marked met' in page.locator('#pilot-root').inner_text(),'All-met review has a truthful recorded-success screen');check(page.locator('a[href="#/pilot/action/'+aid+'"]').count()==1,'All-met transfer review links back to its verification action');persona(page,'verifier');nav(page,'action',aid);page.locator('[data-pilot-form="verify"] [name="rationale"]').fill('Synthetic verification entry: inspected owner evidence, original finding and linked transfer review. No professional acceptance inferred.');page.locator('[data-pilot-form="verify"] button[type=submit]').click();page.wait_for_timeout(200)
+  check(len(state(page)['verifications'])==1,'Separate verifier records linked verification');check(json.dumps(state(page)['sessions'][0],sort_keys=True)==original,'Review and retest never rewrite original session');snap(page,'verification');persona(page,'executive');nav(page,'trace');skip_to_content(page,'Evidence trace');snap(page,'trace')
   for m in page.evaluate('TRG_PILOT_DOMAIN.metrics(TRG_PILOT.getState())'):
    check(len(m['numerator'])<=len(m['denominator']) and all(x in m['denominator'] for x in m['numerator']),m['id']+' metric reconciles to underlying records')
   with page.expect_download() as download:page.locator('[data-pilot="export"]').first.click()

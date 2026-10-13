@@ -17,3 +17,4 @@ exclude:
   - build_catalog.py
   - node_modules
   - .transfer
+  - pilot-source.zip

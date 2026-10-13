@@ -22,3 +22,8 @@ Recovery: pre-pilot baseline remains available in Git history and the archived p
 
 ## Unaccepted gates
 Independent practitioner approval, authenticated tenancy/authorization, protected cloud storage, live delivery, comprehensive security assessment, whole-product accessibility acceptance, actual participant usability and learning transfer are not established by these tests. Open work and authority gates are maintained only in `BACKLOG.json`.
+
+## Corrections exposed by hosted verification
+Initial import run 38452295462 was rejected because an Actions content token cannot change workflow files. The source import was limited to non-workflow files; workflow changes used the connected repository action and the temporary importer was removed. No permission was expanded.
+
+PR run 38452844102 passed source/engine/database checks but its exact-build assertion caught the Pages action defaulting to the pull-request merge SHA rather than the checked-out source SHA. The action now receives an explicit `build_revision` input matching the checkout. The assertion remains intact; failed artifacts are retained. The generated source archive is excluded from publication. Subsequent exact-source runs, not this correction note, establish whether the fix passed.

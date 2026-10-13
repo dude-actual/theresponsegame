@@ -39,6 +39,7 @@ jobs:
         with:
           source: ./
           destination: ./_site
+          build_revision: ${{ env.TRG_SOURCE_SHA }}
       - name: Check built manifest and runtime hashes
         run: |
           python - <<'PY'

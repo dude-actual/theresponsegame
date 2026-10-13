@@ -1,0 +1,31 @@
+FF.F
+======================================================================
+FAIL: test_absent_or_empty_authored_fields_fail_visibly (__main__.ContentAuditTests.test_absent_or_empty_authored_fields_fail_visibly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 35, in test_absent_or_empty_authored_fields_fail_visibly
+    with self.assertRaisesRegex(ValueError, key):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_empty_text_is_unavailable_not_identical (__main__.ContentAuditTests.test_empty_text_is_unavailable_not_identical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 44, in test_empty_text_is_unavailable_not_identical
+    self.assertIsNone(audit.similarity('', ''))
+AssertionError: 1 is not None
+
+======================================================================
+FAIL: test_uses_authored_consequences_and_debrief (__main__.ContentAuditTests.test_uses_authored_consequences_and_debrief)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 22, in test_uses_authored_consequences_and_debrief
+    self.assertIn(step['defaultConsequence'], extracted['consequences'])
+AssertionError: 'The work product is recorded. Its operational meaning still requires evaluator review.' not found in '[{}, {}]'
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+FAILED (failures=3)
+{"packRecords": 6, "flaggedPairs": 15, "humanReview": "pending"}

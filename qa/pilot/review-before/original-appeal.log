@@ -1,0 +1,90 @@
+✔ no seeded activity and separate metric denominators (1.802389ms)
+✔ four responsibilities plus two transfer conditions have produced work (0.696952ms)
+✔ assignment records source, bounded config and inactive exclusions (2.990198ms)
+✔ unreviewed source and unsupported authority configuration rejected (1.695501ms)
+✔ duplicate IDs and zero eligible cohort rejected (2.204994ms)
+✔ same command key has one effect; different payload reuse rejected (1.456286ms)
+✔ expected revision protects stale writes (0.777491ms)
+✔ org mismatch and foreign object references rejected (0.949476ms)
+✔ rehearsal role matrix rejects participant administration and wrong participant (1.655851ms)
+✔ one assignment launches only one session (1.7763ms)
+✔ snapshot not changed by source object edits (5.193835ms)
+✔ draft persistence, strict fields and malformed answers (2.963999ms)
+✔ lease prevents second-tab time and answer duplication (1.14838ms)
+✔ pause, resume and active-clock boundary (2.970509ms)
+✔ returning same view records interruption without estimating offline time (1.218604ms)
+✔ STOP and expiry preserve history without completion or success (3.965912ms)
+✔ rank interaction rejects duplicates (1.946482ms)
+✔ all six experiences complete with attributable work and no auto judgment (12.745421ms)
+✔ completed session cannot be resubmitted stopped or expired (3.218946ms)
+✔ late commands cannot rewind the stream (0.927273ms)
+✔ reviews require complete rubric, rationale and matching evidence (3.160349ms)
+✔ review amendments append and keep original (1.645306ms)
+✔ gap requires an unmet observed criterion and explicit cause basis (3.027012ms)
+✔ action requires owner distinct verifier valid date and criteria (2.950639ms)
+✔ owner completion is separate from verification (2.725886ms)
+✔ retest rejects same or unrelated scenario, and duplicate active assignment (7.008177ms)
+✔ verification requires reviewed linked retest rather than rule check count (8.295052ms)
+✔ appeal blocks verification until evaluator resolution (6.669315ms)
+✔ full loop retains original session finding action and retest chain (8.898705ms)
+✔ invalidation adds a record without mutating completed session (12.682288ms)
+✔ export roundtrip and accidental projection corruption detected (18.101402ms)
+✔ event sequence corruption detected (0.537706ms)
+✔ unsafe key and unsupported provider callback rejected (0.746445ms)
+✔ deterministic invariant exploration: 60 command streams (114.895102ms)
+✔ same-capability retest with a wrong transferFrom cannot attach to an action (2.785875ms)
+✔ invalidated active session retains history but accepts no new work (1.776991ms)
+✖ original-session appeal blocks new verification until resolved (12.250428ms)
+✖ legacy verification history remains replayable while current appeal blocker is visible (10.257027ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 36
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 381.644902
+
+✖ failing tests:
+
+test at tests/pilot/test_domain.cjs:39:1
+✖ original-session appeal blocks new verification until resolved (12.250428ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(D.verificationBlockers(h.state,h.state.actions[0],rid).some(x=>x.includes('original-session appeal')))
+
+      at TestContext.<anonymous> (/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_domain.cjs:46:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/pilot/test_domain.cjs:51:1
+✖ legacy verification history remains replayable while current appeal blocker is visible (10.257027ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(D.verificationBlockers(s,s.actions[0],s.verifications[0].retestSessionId).some(x=>x.includes('original-session appeal')))
+
+      at TestContext.<anonymous> (/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_domain.cjs:54:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

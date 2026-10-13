@@ -36,3 +36,31 @@ test('unsafe key and unsupported provider callback rejected',()=>{const h=harnes
 test('deterministic invariant exploration: 60 command streams',()=>{for(let i=0;i<60;i++){const h=harness('property-'+i);h.assign(pack[i%pack.length].id);const id=h.start();if(i%3===0){h.send('pause',{sessionId:id,lease:'test-view'},'p1');h.send('resume',{sessionId:id,lease:'test-view'},'p1');}if(i%5===0)h.send('stop',{sessionId:id,reason:'Synthetic property path',lease:'test-view'},'p1');else h.finish(id);assert.ok(h.state.events.every((e,j)=>e.sequence===j+1));D.validate(h.state);for(const m of D.metrics(h.state))assert.ok(m.numerator.every(id=>m.denominator.includes(id)));}});
 test('same-capability retest with a wrong transferFrom cannot attach to an action',()=>{const h=harness(),g=h.gap();h.send('complete_action',{actionId:g.actionId,evidence:'Synthetic correction evidence exists for this action.'},'owner');const altered=D.copy(pack.find(x=>x.id==='PILOT-ESC-B'));altered.retest.transferFrom='PILOT-ESC-UNRELATED';throws(()=>h.send('retest',{actionId:g.actionId,scenario:altered}));});
 test('invalidated active session retains history but accepts no new work',()=>{const h=harness();h.assign();const id=h.start();h.send('invalidate',{sessionId:id,reason:'Synthetic source conflict requires stopping this attempt.'});throws(()=>h.send('draft',{sessionId:id,step:0,lease:'test-view',answers:{message:'new work'}},'p1'),'STATE');D.validate(h.state);});
+test('original-session appeal blocks new verification until resolved',()=>{
+ const h=harness(),g=h.gap();
+ h.send('complete_action',{actionId:g.actionId,evidence:'Synthetic completion evidence for original appeal regression.'},'owner');
+ const aid=h.send('retest',{actionId:g.actionId,scenario:pack.find(x=>x.id==='PILOT-ESC-B')});
+ const rid=h.start(h.state.assignments.find(x=>x.id===aid));h.finish(rid);h.review(rid);
+ const appeal=h.send('appeal',{sessionId:g.id,reason:'Synthetic participant question about the original evidence interpretation.'},'p1');
+ const verify=()=>h.send('verify',{actionId:g.actionId,retestId:rid,rationale:'Synthetic verifier explanation for original appeal regression.'},'verifier',{verificationPolicy:undefined});
+ assert.ok(D.verificationBlockers(h.state,h.state.actions[0],rid).some(x=>x.includes('original-session appeal')));
+ throws(verify,'VERIFY');assert.equal(h.state.verifications.length,0);
+ h.send('resolve_appeal',{appealId:appeal,rationale:'Synthetic evaluator resolution of the original evidence question.'},'evaluator');
+ verify();D.validate(h.state);assert.equal(h.state.verifications.length,1);
+});
+test('legacy verification history remains replayable while current appeal blocker is visible',()=>{
+ const fixture=require('./fixtures/legacy-original-appeal.json'),s=D.copy(fixture.state),before=D.stable(s);
+ D.validate(s);assert.equal(D.stable(D.exportTrace(s).state),before);
+ assert.ok(D.verificationBlockers(s,s.actions[0],s.verifications[0].retestSessionId).some(x=>x.includes('original-session appeal')));
+ assert.equal(s.verifications.length,1);assert.equal(s.actions[0].status,'verified');
+});
+
+test('later original or retest appeal preserves historical verification and exposes reassessment',()=>{
+ for(const target of ['id','retestId']){
+  const h=harness(),ids=h.completeLoop(),before=D.stable(h.state.verifications);
+  h.send('appeal',{sessionId:ids[target],reason:'Synthetic later question requires reassessment without changing the earlier record.'},'p1');
+  D.validate(h.state);assert.equal(D.stable(h.state.verifications),before);
+  assert.ok(D.verificationBlockers(h.state,h.state.actions[0],ids.retestId).some(x=>x.includes('appeal')));
+  assert.equal(D.metrics(h.state).find(m=>m.id==='verify').numerator.length,1);
+ }
+});

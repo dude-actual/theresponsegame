@@ -35,7 +35,7 @@ function eligible(s,ids){need(Array.isArray(ids)&&ids.length>0&&ids.length<=50,'
 function active(s,p,actor){const r=get(s,'sessions',p.sessionId);need(actor.id===r.participantId,'This participant is not the assigned actor.','ROLE');need(r.status==='active','The session must be active.','STATE');need(!s.invalidations.some(i=>i.sessionId===r.id),'Invalidated session cannot accept more participant work.','STATE');need(p.lease===r.lease,'Session is active in a different view.','LEASE');return r;}
 function dueDate(d){need(typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d),'Use an ISO due date.');const x=new Date(d+'T00:00:00Z');need(Number.isFinite(x.getTime())&&x.toISOString().slice(0,10)===d,'Invalid calendar date.');return d;}
 function transferCandidates(s,action,pack){const original=get(s,'sessions',action.sessionId);return pack.filter(t=>t.retest.transferFrom===original.snapshot.id&&t.capability===original.snapshot.capability&&t.id!==original.snapshot.id);}
-function verificationBlockers(s,action,retestId){
+function verificationBlockers(s,action,retestId,policy){
  const reasons=[];const r=s.sessions.find(x=>x.id===retestId&&x.org===s.org),f=s.findings.find(x=>x.id===action.findingId),original=s.sessions.find(x=>x.id===action.sessionId);
  if(!['ready','verified'].includes(action.status))reasons.push('Completion evidence must be submitted by the assigned owner.');
  if(!action.completion?.evidence)reasons.push('Completion evidence is missing.');
@@ -46,6 +46,7 @@ function verificationBlockers(s,action,retestId){
  if(!review)reasons.push('An evaluator must review the retest.');
  if(review&&r.snapshot.rubric.criteria.filter(c=>c.required).some(c=>review.decisions.find(x=>x.criterionId===c.id)?.status!=='met'))reasons.push('Required retest criteria are not all met in the latest review.');
  if(review&&s.appeals.some(a=>a.sessionId===r.id&&!a.resolution))reasons.push('An unresolved retest appeal blocks verification.');
+ if(policy!==REPLAY_ONLY&&original&&s.appeals.some(a=>a.sessionId===original.id&&!a.resolution))reasons.push('An unresolved original-session appeal blocks verification.');
  if(!f||!original)reasons.push('Original finding or evidence missing.');
  if(original&&s.invalidations.some(i=>i.sessionId===original.id))reasons.push('Original session has been invalidated; retain history and reassess this finding.');
  return reasons;
@@ -125,7 +126,10 @@ function apply(input,command,mode){
   const assignment={org:s.org,id:id('assignment'),campaignId:campaign.id,participantId:original.participantId,status:'assigned',createdAt:now,sessionId:null,originalSessionId:original.id,actionId:a.id};s.campaigns.push(campaign);s.assignments.push(assignment);a.retestAssignmentIds.push(assignment.id);resultId=assignment.id;
  }else if(c.type==='verify'){
   const a=owned('actions',p.actionId);need(actor.id===a.verifierId&&actor.id!==a.ownerId,'Verification requires the assigned distinct verifier.','ROLE');
-  const blocks=verificationBlockers(s,a,p.retestId);need(blocks.length===0,blocks.join(' '),'VERIFY');text(p.rationale,'Verification rationale',12,3000);
+  // Preserve accepted pre-fix history. Only internal replay may use the old policy.
+  const legacy=mode===REPLAY_ONLY&&c.verificationPolicy===undefined;
+  if(mode===REPLAY_ONLY)need(legacy||c.verificationPolicy==='original-appeal-v1','Unknown verification policy.','CORRUPT');
+  const blocks=verificationBlockers(s,a,p.retestId,legacy?REPLAY_ONLY:undefined);need(blocks.length===0,blocks.join(' '),'VERIFY');text(p.rationale,'Verification rationale',12,3000);
   need(a.status==='ready','Verification already recorded.','STATE');const review=lastReview(s,p.retestId);const v={org:s.org,id:id('verification'),actionId:a.id,findingId:a.findingId,originalSessionId:a.sessionId,retestSessionId:p.retestId,retestReviewId:review.id,rationale:p.rationale,verifierId:actor.id,at:now,evidenceClass:'verifier-entered / demo identity unverified'};s.verifications.push(v);a.status='verified';a.verificationId=v.id;resultId=v.id;
  }else if(c.type==='appeal'){
   const r=owned('sessions',p.sessionId),review=lastReview(s,r.id);need(r.participantId===actor.id&&review,'Only the participant can question an existing review.','ROLE');text(p.reason,'Review question',12);
@@ -135,11 +139,11 @@ function apply(input,command,mode){
  }else if(c.type==='invalidate'){
   const r=owned('sessions',p.sessionId);text(p.reason,'Invalidation reason',12);need(!s.invalidations.some(i=>i.sessionId===r.id),'Already invalidated.');const v={org:s.org,id:id('invalidation'),sessionId:r.id,at:now,actorId:actor.id,reason:p.reason};s.invalidations.push(v);resultId=v.id;
  }
- s.revision=n;s.keys[c.key]={signature,resultId,sequence:n};s.events.push({org:s.org,id:id('event'),sequence:n,at:now,actorId:actor.id,type:c.type,key:c.key,resultId,payload:copy(p)});return s;
+ s.revision=n;s.keys[c.key]={signature,resultId,sequence:n};s.events.push({org:s.org,id:id('event'),sequence:n,at:now,actorId:actor.id,type:c.type,key:c.key,resultId,payload:copy(p),...(c.type==='verify'&&(mode!==REPLAY_ONLY||c.verificationPolicy!==undefined)?{verificationPolicy:'original-appeal-v1'}:{})});return s;
 }
 function validate(s){
  need(s&&s.schema===V&&Array.isArray(s.events)&&s.events.length<=12000,'Unrecognized or over-limit state. Recovery export is available.','CORRUPT');
- let rebuilt=initial(s.org);for(const e of s.events){need(e.org===s.org&&e.sequence===rebuilt.revision+1,'Event sequence or workspace is corrupt.','CORRUPT');rebuilt=apply(rebuilt,{org:s.org,type:e.type,key:e.key,actorId:e.actorId,at:e.at,expectedRevision:rebuilt.revision,payload:e.payload},REPLAY_ONLY);}
+ let rebuilt=initial(s.org);for(const e of s.events){need(e.org===s.org&&e.sequence===rebuilt.revision+1,'Event sequence or workspace is corrupt.','CORRUPT');rebuilt=apply(rebuilt,{org:s.org,type:e.type,key:e.key,actorId:e.actorId,at:e.at,expectedRevision:rebuilt.revision,payload:e.payload,verificationPolicy:e.verificationPolicy},REPLAY_ONLY);}
  need(stable(rebuilt)===stable(s),'Stored projection does not match its event history. Preserve it for recovery.','CORRUPT');return s;
 }
 function metrics(s){

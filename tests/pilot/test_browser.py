@@ -34,6 +34,10 @@ def review(page,rid,met):
  r=next(r for r in state(page)['sessions'] if r['id']==rid)
  for i,c in enumerate(r['snapshot']['rubric']['criteria']):
   page.locator('[name="status_'+c['id']+'"]').select_option('met' if met or i else 'unmet')
+  choices=page.locator('[name="evidence_'+c['id']+'"]')
+  check(page.locator('[name="evidence_'+c['id']+'"]:checked').count()==0,'New review requires explicit evidence selection: '+c['id'])
+  check('Select at least one evidence reference' in choices.first.evaluate('(input)=>input.validationMessage'),'Missing citation explains the required selection: '+c['id'])
+  for index in ([1] if i==0 else [0] if i==1 else [0,1]):choices.nth(index).check()
   page.locator('[name="rationale_'+c['id']+'"]').fill('Synthetic evaluator entry for software acceptance; not professional validation.')
  page.locator('#pilot-review-form button[type=submit]').click();page.wait_for_timeout(200)
 def load(page):
@@ -62,16 +66,36 @@ with sync_playwright() as p:
   if BASE:
    page.reload(wait_until='networkidle');page.wait_for_selector('#pilot-root');page.wait_for_selector('[data-pilot="resume"]');check('paused'==state(page)['sessions'][-1]['status'],'Refresh interrupts active session without erasing work');page.locator('[data-pilot="resume"]').click();page.wait_for_selector('#pilot-task-form');check('saved draft' in page.locator('#pilot-task-form textarea').first.input_value(),'Native IndexedDB retains draft after reload')
   else:skips.extend(['Native IndexedDB reload','Two-view transaction conflict','Corrupt native-cache recovery'])
+  fill_task(page);context=page.locator('#pilot-previous-context');check(context.count()==1,'Later task offers earlier information and submitted work');context.locator('summary').click()
+  prior=state(page)['sessions'][-1]
+  for artifact in prior['snapshot']['steps'][0]['artifacts']:check(artifact['text'] in context.inner_text(),'Prior source artifact remains available: '+artifact['id'])
+  check(prior['evidence'][0]['answers']['message'] in context.inner_text(),'Own submitted message remains available during later task')
+  selected=prior['snapshot']['steps'][0]['fields'][0]['options'];label=next(o['label'] for o in selected if o['id']==prior['evidence'][0]['answers']['route'])
+  check(label in context.inner_text(),'Submitted selections display authored labels instead of machine IDs')
+  check('Inspect rule checks' not in context.inner_text(),'Earlier-work context does not expose evaluator rule checks mid-task')
   completed=finish(page);original=json.dumps(completed,sort_keys=True);check(len(completed['evidence'])==2,'Two work products stored as evidence');check(not state(page)['reviews'],'Submission does not imply evaluated success');check(page.evaluate('window.TRG_XSS!==1'),'Participant HTML is displayed as text, not executed')
+  for legacy in ['overview','reports','library']:
+   page.evaluate('v=>location.hash="#/"+v',legacy);page.wait_for_timeout(150)
+   check('legacy starter practice only' in page.locator('[data-legacy-boundary]').inner_text(),legacy+' explicitly separates legacy and pilot records')
+   page.locator('[data-legacy-boundary] a').click();page.wait_for_selector('#pilot-root');check(rid in json.dumps(state(page)),legacy+' links back to retained pilot evidence')
   review(page,rid,False);page.wait_for_selector('#pilot-finding-form')
+  first_review=state(page)['reviews'][-1];nav(page,'review',rid)
+  for decision in first_review['decisions']:
+   selected=page.locator('[name="evidence_'+decision['criterionId']+'"]:checked').evaluate_all('(inputs)=>inputs.map(input=>input.value)')
+   check(selected==decision['evidenceIds'],'Amendment restores every original citation: '+decision['criterionId'])
+  page.locator('[name="rationale_authority"]').fill('Revised synthetic rationale only; the selected original evidence must not change.')
+  page.locator('#pilot-review-form button[type=submit]').click();page.wait_for_selector('#pilot-finding-form')
+  after_review=state(page)['reviews'][-1]
+  check([d['evidenceIds'] for d in after_review['decisions']]==[d['evidenceIds'] for d in first_review['decisions']],'Rationale-only amendment preserves per-criterion and multiple citations')
+  check(state(page)['reviews'][0]==first_review,'Review amendment leaves the historical review unchanged')
   for name in ['observation','impact','causeRationale']:page.locator('#pilot-finding-form [name="'+name+'"]').fill('Synthetic acceptance finding: the authority boundary needs clarification, with source and produced work retained.')
   page.locator('#pilot-finding-form button[type=submit]').click();page.wait_for_timeout(200);check(len(state(page)['findings'])==1,'Evaluator finding retains criterion and cause');page.locator('a[href*="/newaction/"]').first.click();page.wait_for_selector('#pilot-action-form')
   page.locator('[name="title"]').fill('Revise the fictional escalation card and rehearse a missing alternate.');page.locator('[name="completionCriteria"]').fill('Authority scope, owner and next update are explicit and the different transfer condition is reviewed.');page.locator('[name="due"]').fill('2026-11-13');page.locator('#pilot-action-form button[type=submit]').click();page.wait_for_timeout(250);aid=state(page)['actions'][-1]['id']
   check(state(page)['actions'][-1]['status']=='open','Action is not closed by creation');persona(page,'owner');nav(page,'action',aid);page.locator('[name="evidence"]').fill('Synthetic owner evidence: escalation card now separates coordination from command delegation and records the next update.');page.locator('#pilot-completion-form button[type=submit]').click();page.wait_for_timeout(200)
-  check(state(page)['actions'][-1]['status']=='ready' and not state(page)['verifications'],'Completion evidence does not imply verification');persona(page,'admin');nav(page,'action',aid);page.locator('[data-pilot="retest"]').click();page.wait_for_timeout(200)
+  check(state(page)['actions'][-1]['status']=='ready' and not state(page)['verifications'],'Completion evidence does not imply verification');check('Ready for retest' in page.locator('#pilot-root').inner_text() and 'Demo administrator creates' in page.locator('#pilot-root').inner_text(),'Owner completion names the next administrator retest step');persona(page,'admin');check(page.evaluate('location.hash').endswith('/action/'+aid),'Manual persona switch keeps the current action open');nav(page,'action',aid);page.locator('[data-pilot="retest"]').click();page.wait_for_timeout(200)
   check(len(state(page)['assignments'])==2,'Action creates a linked transfer assignment');persona(page,'p1');page.locator('[data-pilot="start"]').click();page.wait_for_selector('#pilot-task-form');retest=finish(page);retestid=retest['id'];check(retest['snapshot']['id']!='PILOT-ESC-A' and retest['originalSessionId']==rid,'Retest changes condition and retains original session')
   persona(page,'verifier');nav(page,'action',aid);check(page.locator('[data-pilot-form="verify"]').count()==0,'Verifier cannot skip evaluator review')
-  review(page,retestid,True);persona(page,'verifier');nav(page,'action',aid);page.locator('[data-pilot-form="verify"] [name="rationale"]').fill('Synthetic verification entry: inspected owner evidence, original finding and linked transfer review. No professional acceptance inferred.');page.locator('[data-pilot-form="verify"] button[type=submit]').click();page.wait_for_timeout(200)
+  review(page,retestid,True);check('Evaluator review recorded' in page.locator('#pilot-root').inner_text() and 'All rubric criteria marked met' in page.locator('#pilot-root').inner_text(),'All-met review has a truthful recorded-success screen');check(page.locator('a[href="#/pilot/action/'+aid+'"]').count()==1,'All-met transfer review links back to its verification action');persona(page,'verifier');nav(page,'action',aid);page.locator('[data-pilot-form="verify"] [name="rationale"]').fill('Synthetic verification entry: inspected owner evidence, original finding and linked transfer review. No professional acceptance inferred.');page.locator('[data-pilot-form="verify"] button[type=submit]').click();page.wait_for_timeout(200)
   check(len(state(page)['verifications'])==1,'Separate verifier records linked verification');check(json.dumps(state(page)['sessions'][0],sort_keys=True)==original,'Review and retest never rewrite original session');snap(page,'verification');persona(page,'executive');nav(page,'trace');snap(page,'trace')
   for m in page.evaluate('TRG_PILOT_DOMAIN.metrics(TRG_PILOT.getState())'):
    check(len(m['numerator'])<=len(m['denominator']) and all(x in m['denominator'] for x in m['numerator']),m['id']+' metric reconciles to underlying records')

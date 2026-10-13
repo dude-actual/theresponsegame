@@ -27,3 +27,21 @@ Independent practitioner approval, authenticated tenancy/authorization, protecte
 Initial import run 38452295462 was rejected because an Actions content token cannot change workflow files. The source import was limited to non-workflow files; workflow changes used the connected repository action and the temporary importer was removed. No permission was expanded.
 
 PR run 38452844102 passed source/engine/database checks but its exact-build assertion caught the Pages action defaulting to the pull-request merge SHA rather than the checked-out source SHA. The action now receives an explicit `build_revision` input matching the checkout. The assertion remains intact; failed artifacts are retained. The generated source archive is excluded from publication. Subsequent exact-source runs, not this correction note, establish whether the fix passed.
+
+
+## Independent review correction candidate (2026-10-13)
+Base: `0126360bc53c1afe613caa17e4801dc438baa78e`. This is a focused reliability/clarity correction, not content approval or production readiness.
+
+- `tests/pilot/test_browser.py` now covers explicit citation selection, multi-reference and rationale-only amendments, earlier source/work context, readable selection labels, all-met review confirmation, action persona continuity, and legacy/pilot boundaries.
+- `tests/pilot/test_content_audit.py` reproduces the previous missing-field/false-similarity failure and verifies extraction of real authored text.
+- `tests/pilot/test_store.cjs` uses deterministic transaction snapshots to reproduce the load-versus-write race. Its five tests are a fake-IDB reliability seam, not native-browser persistence evidence.
+- Domain tests block unresolved original appeals, preserve later-appeal history, and replay the genuine pre-fix synthetic fixture in `tests/pilot/fixtures/legacy-original-appeal.json`. The fixture was produced by the base commit; it is not real participant data.
+- The parent review's unmodified public-origin export (three sessions, one verification) was also replayed successfully against the candidate. It remains separate from committed synthetic tests.
+- All aggregate commands and the limited source scan passed locally. Chromium process launch was blocked by the execution environment's socket permission restriction, including the approved retry. No local browser pass is claimed. Use the draft PR's exact-commit hosted browser artifacts for native persistence, UI, accessibility and reflow results; any parent-rendered checks have their own scope.
+
+`qa/pilot/review-before/` retains failing-before regression output. Generated current command/browser reports are CI artifacts, not a fabricated independent acceptance certificate.
+
+### Compatibility and rollback
+New verification events record the reducer's `original-appeal-v1` policy. Old accepted histories replay without being rewritten; new commands cannot opt into the old policy. Original or retest appeals after verification expose reassessment while the historical verification count remains a count of records.
+
+A pre-correction runtime cannot interpret the new policy-tagged verification events. Export the complete trace/recovery record before reverting code, preserve browser storage, and restore the corrected runtime if the older runtime reports recovery required. Do not clear storage to make a downgrade appear successful. Original-review amendment reassessment remains open in TRG-027.

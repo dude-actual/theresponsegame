@@ -1,0 +1,86 @@
+name: Readiness platform verification
+on:
+  push:
+    branches: [main, readiness-platform-v1]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Reconstruct checksum-verified source on work branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/readiness-platform-v1'
+        shell: bash
+        run: |
+          if [ -d .bootstrap ]; then
+            python - <<'PY'
+          import hashlib, io, lzma, pathlib, shutil, tarfile
+          root = pathlib.Path('.bootstrap')
+          parts = sorted(root.glob('part-*.bin'))
+          assert len(parts) == 7, 'Unexpected transfer part count'
+          payload = b''.join(p.read_bytes() for p in parts)
+          assert hashlib.sha256(payload).hexdigest() == '17038fc73dd475549be6690fa8f7627cd78604be36d4ac72371fecc377262d8c', 'Transfer checksum mismatch'
+          with tarfile.open(fileobj=io.BytesIO(lzma.decompress(payload)), mode='r:') as archive:
+              members = archive.getmembers()
+              for member in members:
+                  p = pathlib.PurePosixPath(member.name)
+                  assert member.isfile() and not p.is_absolute() and '..' not in p.parts and p.parts[0] not in ('.git', '.github'), 'Unsafe archive entry'
+              for member in members:
+                  p = pathlib.Path(member.name)
+                  p.parent.mkdir(parents=True, exist_ok=True)
+                  p.write_bytes(archive.extractfile(member).read())
+          shutil.rmtree(root)
+          PY
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -A
+            git commit -m 'Rebuild The Response Game as organizational readiness platform [skip ci]'
+            git push origin HEAD:readiness-platform-v1
+          fi
+      - name: Verify syntax, scenario engine and database
+        run: |
+          node --check app.js
+          node --check engine.js
+          node --check catalog.js
+          node --check trg-sw.js
+          node tests/test_engine.cjs
+          python tests/test_database.py
+          python tests/test_http.py
+      - name: Install pinned browser test dependency
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Test hosted browser and native storage
+        shell: bash
+        run: |
+          python backend/server.py --port 8765 --db "$RUNNER_TEMP/trg-demo.sqlite3" > "$RUNNER_TEMP/trg-server.log" 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          python - <<'PY'
+          import time, urllib.request
+          for i in range(50):
+              try:
+                  urllib.request.urlopen('http://127.0.0.1:8765/api/health', timeout=1).read()
+                  break
+              except Exception:
+                  time.sleep(.2)
+          else:
+              raise SystemExit('Local server did not become ready')
+          PY
+          TRG_BASE_URL=http://127.0.0.1:8765 python tests/test_browser.py
+      - name: Record verified hosted-browser evidence on work branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/readiness-platform-v1'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add qa/*.json qa/*.png
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record hosted-browser QA evidence [skip ci]'
+            git push origin HEAD:readiness-platform-v1
+          fi

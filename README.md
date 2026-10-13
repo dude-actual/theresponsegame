@@ -2,7 +2,7 @@
 
 A complete requirement-to-retest rehearsal: **plan requirement → objective → assignment → work → evidence → evaluator finding → corrective action → transfer retest → verification**.
 
-Open the public evaluation at **theresponsegame.com**, then **Run the complete pilot**. This is fictional, single-device browser practice, not an authenticated multi-tenant service. Do not enter confidential plans, real rosters or operational information. No real calls, texts or emails are sent.
+Open the public evaluation at **theresponsegame.com**, then **Open workspace**. This is fictional, single-device browser practice, not an authenticated multi-tenant service. Do not enter confidential plans, real rosters or operational information. No real calls, texts or emails are sent.
 
 ## Local execution
 
@@ -10,7 +10,7 @@ Open the public evaluation at **theresponsegame.com**, then **Run the complete p
 python backend/server.py --port 8765 --db /tmp/trg-fictional.sqlite3
 ```
 
-Open `http://127.0.0.1:8765/#/pilot`. The pilot uses browser IndexedDB; the loopback SQLite database remains a separate legacy demonstration. Without IndexedDB, volatile mode is explicitly identified. Browser data is not secure organizational tenancy.
+Open `http://127.0.0.1:8765/#/pilot` for the role-specific Home queue. Use **Internal role preview** to switch local rehearsal roles; **System status** contains storage, build and recovery details. The pilot uses browser IndexedDB; the loopback SQLite database remains a separate legacy demonstration. Without IndexedDB, volatile mode is explicitly identified. Browser data is not secure organizational tenancy.
 
 ## Contents
 

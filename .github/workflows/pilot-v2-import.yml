@@ -1,0 +1,56 @@
+name: Import checksum-verified pilot source
+on:
+  push:
+    branches: [pilot/requirement-to-retest-v2]
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: pilot/requirement-to-retest-v2
+      - name: Reconstruct and verify source delta
+        run: |
+          python - <<'PY'
+          import base64, hashlib, json, lzma, pathlib, shutil
+          root=pathlib.Path.cwd()
+          chunks=sorted(pathlib.Path('.transfer').glob('part*.b64'))
+          assert len(chunks)==11
+          data=base64.b64decode(''.join(p.read_text() for p in chunks),validate=True)
+          assert hashlib.sha256(data).hexdigest()=='ddb1a6c91d7bac3d084dbd3b15a33ab4b1a8c19b2ec72c3fb8c4caf90f56d6a2'
+          bundle=json.loads(lzma.decompress(data))
+          assert bundle['schema']=='trg-source-transfer/1' and len(bundle['files'])==46
+          for item in bundle['files']:
+              path=pathlib.Path(item['path'])
+              assert not path.is_absolute() and '..' not in path.parts and '.git' not in path.parts
+              if 'ops' in item:
+                  old=path.read_text()
+                  assert hashlib.sha256(old.encode()).hexdigest()==item['baseSha256'], str(path)
+                  text=''.join(old[x[0]:x[1]] if isinstance(x,list) else x for x in item['ops'])
+              else:
+                  text=item['text']
+              assert hashlib.sha256(text.encode()).hexdigest()==item['sha256'], str(path)
+              path.parent.mkdir(parents=True,exist_ok=True)
+              path.write_text(text)
+          assert bundle['delete']==['.nojekyll']
+          pathlib.Path('.nojekyll').unlink(missing_ok=True)
+          shutil.rmtree('.transfer')
+          pathlib.Path('.github/workflows/pilot-v2-import.yml').unlink()
+          print('46 source files verified; temporary transfer removed.')
+          PY
+      - name: Lock test-only dependency and check syntax
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit
+          node --check pilot/domain.js
+          node --check pilot/store.js
+          node --check pilot/ui.js
+      - name: Record editable source on review branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Implement fictional requirement-to-retest pilot and locked verification suite'
+          git push origin HEAD:pilot/requirement-to-retest-v2

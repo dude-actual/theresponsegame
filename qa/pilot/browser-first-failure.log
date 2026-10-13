@@ -1,0 +1,25 @@
+{
+  "commit": "local-working-tree",
+  "browser": "chromium",
+  "environment": "injected-rendered-DOM/volatile-store",
+  "dataClass": "fictional acceptance fixtures",
+  "passed": 4,
+  "failed": 1,
+  "skipped": 0,
+  "quarantined": 0,
+  "checks": [
+    "Clean profile has no fabricated activity",
+    "Exercise boundary remains visible",
+    "Inactive participant excluded before assignment",
+    "Campaign creates one eligible assignment"
+  ],
+  "skips": [],
+  "pageErrors": [],
+  "durationSeconds": 1.52,
+  "humanAcceptance": false
+}
+Traceback (most recent call last):
+  File "/mnt/data/trg-pilot/tests/pilot/test_browser.py", line 56, in <module>
+    check(len(state(page)['assignments'])==1,'Campaign creates one eligible assignment');check(len(state(page)['campaigns'][0]['excluded'])==1,'Exclusion is attributable in campaign')
+                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'excluded'

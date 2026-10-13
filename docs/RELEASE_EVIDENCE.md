@@ -1,0 +1,24 @@
+# Release evidence — canonical index
+
+This file indexes reproducible evidence; it is not an independent acceptance certificate. Refer to the exact run/commit in machine-readable results, not a historical total.
+
+## Baseline
+Baseline commit: `ca51c7379e4d09a6a8d6af6fdd338e753879ae2e`. `qa/pilot/baseline/tests.json` captures exact commands/environment/durations and reproduces the 5,776 legacy engine assertions, five SQLite tests and eight HTTP tests. The 1,440 combinations are rule-coverage combinations, not authored experiences. Local native browser navigation failed with `ERR_BLOCKED_BY_ADMINISTRATOR`; rendered injection regression passed 40 checks. Those scopes are separate.
+
+## Candidate evidence
+Run `python scripts/verify.py` and `python scripts/check_source.py`. The command report and per-command logs retain pass/fail results and timings. Current Node suites include 36 pilot state tests and six regression tests; legacy SQLite/HTTP suites remain separate from four terminal-history/restore tests. Do not add unit-test counts and assertion totals into a single misleading measure.
+
+`qa/pilot/mutation.json` records eight targeted mutations. The initial same-capability transfer-link survivor is retained in `mutation-before-strengthening.json`; a dedicated test corrected the gap. Performance and content-repetition reports are also generated from actual source. Lexical repetition flags still require human adjudication.
+
+`qa/pilot/<browser>-browser.json` records the browser, exact CI commit, environment, passed/failed/skipped/quarantined counts, individual checks and duration. Native hosted results must be used for IndexedDB/reload/concurrency claims. Locally injected results cannot establish those properties. Browser screenshots and the complete fictional trace are retained alongside results. The CI job uploads source and QA artifacts even on failure.
+
+## Visual and independent review boundary
+Agent-directed rendered journey and visual inspection cover preparation, task, verification and trace screens at the captured widths. This is not a recorded human usability study, an independent professional scenario review or assistive-technology acceptance. Automated axe coverage is limited to the identified core surface. Real participant learning, reviewer agreement and delayed retention remain unmeasured.
+
+## Deployment verification
+Public `release.json` identifies the exact Pages build commit/time and runtime hashes. `DEPLOYMENT_TRUTH.md` explains the mechanism. A source push alone is not deployment evidence. Verify the latest Pages run, fresh public metadata and pilot route after merge. The authoritative final publication SHA is the one returned by the deployed manifest, not this file's last edit.
+
+Recovery: pre-pilot baseline remains available in Git history and the archived pre-rebuild branch. Revert the feature PR without deleting browser storage. Export pilot records first; v1 cannot display the new database but must not erase it.
+
+## Unaccepted gates
+Independent practitioner approval, authenticated tenancy/authorization, protected cloud storage, live delivery, comprehensive security assessment, whole-product accessibility acceptance, actual participant usability and learning transfer are not established by these tests. Open work and authority gates are maintained only in `BACKLOG.json`.

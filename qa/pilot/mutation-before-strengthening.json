@@ -1,0 +1,49 @@
+{
+  "scope": "Eight targeted state-engine guard mutations. Not exhaustive or independent review.",
+  "commit": "local-working-tree",
+  "results": [
+    {
+      "name": "expected_revision",
+      "status": "killed",
+      "exitCode": 1
+    },
+    {
+      "name": "assigned_participant",
+      "status": "killed",
+      "exitCode": 1
+    },
+    {
+      "name": "persona_roles",
+      "status": "killed",
+      "exitCode": 1
+    },
+    {
+      "name": "valid_retest_link",
+      "status": "survived",
+      "exitCode": 0
+    },
+    {
+      "name": "verified_review",
+      "status": "killed",
+      "exitCode": 1
+    },
+    {
+      "name": "idempotency_signature",
+      "status": "killed",
+      "exitCode": 1
+    },
+    {
+      "name": "terminal_session",
+      "status": "killed",
+      "exitCode": 1
+    },
+    {
+      "name": "event_replay",
+      "status": "killed",
+      "exitCode": 1
+    }
+  ],
+  "killed": 7,
+  "survived": 1,
+  "notApplied": 0
+}

@@ -20,7 +20,7 @@ layout: null
     "trg-sw.js": "d0a91302489ee46c42234a2aad45659adea0da86a1792591b26016289b61eb8f",
     "pilot/domain.js": "94fcf60176e2d4964f41701a31cbadc754ece73904863af8629db3598b476447",
     "pilot/pack.js": "ba12efc3660423704a4240dfb8180b91f378a3fce2831682c023305eb4f90403",
-    "pilot/pilot.css": "96554d769c73ff90154f1b3cebde62387a6f127a4e8775cd74a41667ab296e69",
+    "pilot/pilot.css": "5960b6ae4aaf613bb4c8cc1924054ece6b3f891baebf0c36dbd152ad7c126f56",
     "pilot/store.js": "23daee8da8ee75f96fca9bc79d33fbb6b0c77dc74e808a618ab26f8270c5f7e1",
     "pilot/ui.js": "8bb60be0ace7579f4435e850df70697bdc90f2a46e0782eb6c901e612904654f"
   }

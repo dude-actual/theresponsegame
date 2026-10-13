@@ -13,3 +13,5 @@
 @media(max-width:440px){.pilot-brandbar{align-items:start;flex-direction:column;gap:5px;padding:12px 0}.pilot-main{padding:16px 12px 28px}.pilot-chrome{padding:0 12px}.pilot-pagehead{margin-bottom:15px}.pilot-pagehead h1{font-size:22px}.pilot-shell .pilot-card{padding:15px}.pilot-shell .pilot-artifact{padding:12px}.pilot-system-list{display:block}.pilot-system-list dd{margin:4px 0 16px}.pilot-entry header{padding:16px}.pilot-entry main{margin:36px auto;padding:0 20px}.pilot-queue>a{gap:12px}.pilot-queue>a>span:last-child{font-size:12px}}
 @media print{.pilot-chrome{display:none}.pilot-main{padding:0}.pilot-pagehead>span{display:none}.pilot-shell{background:white}}
 @media print{.pilot-chrome{display:block;padding:0;border-bottom:1px solid #555}.pilot-brandbar{display:flex;min-height:36px}.pilot-toolbar{display:none}.pilot-environment a{color:#222;text-decoration:none}}
+/* Narrow-screen reading takes priority over persistent secondary controls. */
+@media(max-width:850px){.pilot-sticky{position:static;background:transparent;backdrop-filter:none}}

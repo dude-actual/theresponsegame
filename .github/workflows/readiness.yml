@@ -12,6 +12,14 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Package reproducible source
+        run: git archive --format=zip --output=readiness-source.zip HEAD
+      - name: Retain source archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-source-${{ github.sha }}
+          path: readiness-source.zip
+          retention-days: 30
       - name: Verify syntax, scenario engine and database
         run: |
           node --check app.js

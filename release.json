@@ -14,7 +14,7 @@ layout: null
   "sourceHashes": {
     "index.html": "c744c82f4578e0f5ac05194cf04e1b2acc3e33cb5654074c6eef2a52034b1fa0",
     "styles.css": "e50f0c70adcca807a7ea7b4647837253bf770fc6382ca92ffa9b0ad73a27562a",
-    "app.js": "fab9da6f821a0648a041d14dc6df073a85cde03dd4e1c54cbdcbce68c67077a0",
+    "app.js": "68990a5efb5abb10bc99e475f861c77a239ccbd321e528aa37fa90d0625996fc",
     "engine.js": "a4f419920b59fe5c94c1a75563057c8c4601d2d29e3c032e7ce8830ce280fc5f",
     "catalog.js": "6a40a8c5389494b910d5f0e9627ab4e37844ee16a51330d83ebccc1f56d01775",
     "trg-sw.js": "d0a91302489ee46c42234a2aad45659adea0da86a1792591b26016289b61eb8f",

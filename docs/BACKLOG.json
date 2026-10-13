@@ -528,6 +528,25 @@
         "pilot/domain.js",
         "docs/PRODUCT_INVARIANTS.md"
       ]
+    },
+    {
+      "id": "TRG-028",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Preserve pilot route when keyboard users skip navigation",
+      "affectedWorkflow": "keyboard access to pilot content",
+      "rootCause": "The global skip link used #main, which the hash router treated as an unknown page and rendered the legacy overview.",
+      "status": "candidate implemented; native browser regression required",
+      "ownerRole": "Engineering/accessibility",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Prevent skip-link hash navigation; focus and scroll main without changing the current route or task state.",
+      "acceptanceCriteria": "Keyboard Enter on Skip to content in an active pilot session and evidence trace retains route and draft/evidence state and focuses main.",
+      "evidence": [
+        "app.js",
+        "tests/pilot/test_browser.py"
+      ]
     }
   ]
 }

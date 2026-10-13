@@ -32,7 +32,7 @@ PR run 38452844102 passed source/engine/database checks but its exact-build asse
 ## Independent review correction candidate (2026-10-13)
 Base: `0126360bc53c1afe613caa17e4801dc438baa78e`. This is a focused reliability/clarity correction, not content approval or production readiness.
 
-- `tests/pilot/test_browser.py` now covers explicit citation selection, multi-reference and rationale-only amendments, earlier source/work context, readable selection labels, all-met review confirmation, action persona continuity, and legacy/pilot boundaries.
+- `tests/pilot/test_browser.py` now covers explicit citation selection, multi-reference and rationale-only amendments, earlier source/work context, readable selection labels, all-met review confirmation, action persona continuity, legacy/pilot boundaries, and keyboard skip-link activation that preserves the pilot route and work.
 - `tests/pilot/test_content_audit.py` reproduces the previous missing-field/false-similarity failure and verifies extraction of real authored text.
 - `tests/pilot/test_store.cjs` uses deterministic transaction snapshots to reproduce the load-versus-write race. Its five tests are a fake-IDB reliability seam, not native-browser persistence evidence.
 - Domain tests block unresolved original appeals, preserve later-appeal history, and replay the genuine pre-fix synthetic fixture in `tests/pilot/fixtures/legacy-original-appeal.json`. The fixture was produced by the base commit; it is not real participant data.

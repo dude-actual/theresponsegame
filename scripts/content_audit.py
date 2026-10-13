@@ -40,7 +40,9 @@ def parts(scenario):
         'prompts': ' '.join(authored_text(step, 'instruction', context) for step in scenario['steps']),
         'choices': ' '.join(option['label'] for step in scenario['steps'] for field in step['fields']
                             for option in field.get('options', [])),
-        'artifacts': ' '.join(artifact['text'] for step in scenario['steps'] for artifact in step['artifacts']),
+        'artifacts': ' '.join(
+            authored_text(artifact, 'text', f"{context}/{step['id']}/{artifact.get('id', 'artifact')}")
+            for step in scenario['steps'] for artifact in step['artifacts']),
         'consequences': ' '.join(consequences),
         'debrief': authored_text(scenario, 'debriefIntent', context),
         'structure': [(step['id'], [(field['type'], field.get('expected')) for field in step['fields']])

@@ -1,0 +1,120 @@
+.FFFEEFFFEE.E...
+======================================================================
+ERROR: test_each_artifact_requires_text_even_when_neighbor_is_populated (__main__.ContentAuditTests.test_each_artifact_requires_text_even_when_neighbor_is_populated) (index=0, value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 56, in test_each_artifact_requires_text_even_when_neighbor_is_populated
+    audit.parts(scenario)
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/scripts/content_audit.py", line 43, in parts
+    'artifacts': ' '.join(artifact['text'] for step in scenario['steps'] for artifact in step['artifacts']),
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: sequence item 0: expected str instance, NoneType found
+
+======================================================================
+ERROR: test_each_artifact_requires_text_even_when_neighbor_is_populated (__main__.ContentAuditTests.test_each_artifact_requires_text_even_when_neighbor_is_populated) (index=0, value=42)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 56, in test_each_artifact_requires_text_even_when_neighbor_is_populated
+    audit.parts(scenario)
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/scripts/content_audit.py", line 43, in parts
+    'artifacts': ' '.join(artifact['text'] for step in scenario['steps'] for artifact in step['artifacts']),
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: sequence item 0: expected str instance, int found
+
+======================================================================
+ERROR: test_each_artifact_requires_text_even_when_neighbor_is_populated (__main__.ContentAuditTests.test_each_artifact_requires_text_even_when_neighbor_is_populated) (index=1, value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 56, in test_each_artifact_requires_text_even_when_neighbor_is_populated
+    audit.parts(scenario)
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/scripts/content_audit.py", line 43, in parts
+    'artifacts': ' '.join(artifact['text'] for step in scenario['steps'] for artifact in step['artifacts']),
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: sequence item 1: expected str instance, NoneType found
+
+======================================================================
+ERROR: test_each_artifact_requires_text_even_when_neighbor_is_populated (__main__.ContentAuditTests.test_each_artifact_requires_text_even_when_neighbor_is_populated) (index=1, value=42)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 56, in test_each_artifact_requires_text_even_when_neighbor_is_populated
+    audit.parts(scenario)
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/scripts/content_audit.py", line 43, in parts
+    'artifacts': ' '.join(artifact['text'] for step in scenario['steps'] for artifact in step['artifacts']),
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: sequence item 1: expected str instance, int found
+
+======================================================================
+ERROR: test_missing_artifact_text_fails_report_with_source_context (__main__.ContentAuditTests.test_missing_artifact_text_fails_report_with_source_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 63, in test_missing_artifact_text_fails_report_with_source_context
+    audit.build_report([scenario, PACK[1]], [])
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/scripts/content_audit.py", line 58, in build_report
+    extracted = {scenario['id']: parts(scenario) for scenario in pack}
+                                 ^^^^^^^^^^^^^^^
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/scripts/content_audit.py", line 43, in parts
+    'artifacts': ' '.join(artifact['text'] for step in scenario['steps'] for artifact in step['artifacts']),
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/scripts/content_audit.py", line 43, in <genexpr>
+    'artifacts': ' '.join(artifact['text'] for step in scenario['steps'] for artifact in step['artifacts']),
+                          ~~~~~~~~^^^^^^^^
+KeyError: 'text'
+
+======================================================================
+FAIL: test_each_artifact_requires_text_even_when_neighbor_is_populated (__main__.ContentAuditTests.test_each_artifact_requires_text_even_when_neighbor_is_populated) (index=0, value='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 55, in test_each_artifact_requires_text_even_when_neighbor_is_populated
+    with self.assertRaisesRegex(ValueError, context + ': missing or empty authored text'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_each_artifact_requires_text_even_when_neighbor_is_populated (__main__.ContentAuditTests.test_each_artifact_requires_text_even_when_neighbor_is_populated) (index=0, value='   ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 55, in test_each_artifact_requires_text_even_when_neighbor_is_populated
+    with self.assertRaisesRegex(ValueError, context + ': missing or empty authored text'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_each_artifact_requires_text_even_when_neighbor_is_populated (__main__.ContentAuditTests.test_each_artifact_requires_text_even_when_neighbor_is_populated) (index=0, value='\t\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 55, in test_each_artifact_requires_text_even_when_neighbor_is_populated
+    with self.assertRaisesRegex(ValueError, context + ': missing or empty authored text'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_each_artifact_requires_text_even_when_neighbor_is_populated (__main__.ContentAuditTests.test_each_artifact_requires_text_even_when_neighbor_is_populated) (index=1, value='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 55, in test_each_artifact_requires_text_even_when_neighbor_is_populated
+    with self.assertRaisesRegex(ValueError, context + ': missing or empty authored text'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_each_artifact_requires_text_even_when_neighbor_is_populated (__main__.ContentAuditTests.test_each_artifact_requires_text_even_when_neighbor_is_populated) (index=1, value='   ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 55, in test_each_artifact_requires_text_even_when_neighbor_is_populated
+    with self.assertRaisesRegex(ValueError, context + ': missing or empty authored text'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_each_artifact_requires_text_even_when_neighbor_is_populated (__main__.ContentAuditTests.test_each_artifact_requires_text_even_when_neighbor_is_populated) (index=1, value='\t\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/37330d4f7579/trg_independent_review/tests/pilot/test_content_audit.py", line 55, in test_each_artifact_requires_text_even_when_neighbor_is_populated
+    with self.assertRaisesRegex(ValueError, context + ': missing or empty authored text'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.003s
+
+FAILED (failures=6, errors=5)

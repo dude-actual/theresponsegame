@@ -44,6 +44,29 @@ class ContentAuditTests(unittest.TestCase):
         self.assertIsNone(audit.similarity('', ''))
         self.assertIsNone(audit.similarity('the and', 'operational evidence'))
 
+    def test_each_artifact_requires_text_even_when_neighbor_is_populated(self):
+        for index in (0, 1):
+            for value in ('', '   ', '\t\n', None, 42):
+                with self.subTest(index=index, value=value):
+                    scenario = copy.deepcopy(PACK[0])
+                    artifact = scenario['steps'][0]['artifacts'][index]
+                    artifact['text'] = value
+                    context = f"{scenario['id']}/{scenario['steps'][0]['id']}/{artifact['id']}"
+                    with self.assertRaisesRegex(ValueError, context + ': missing or empty authored text'):
+                        audit.parts(scenario)
+
+    def test_missing_artifact_text_fails_report_with_source_context(self):
+        scenario = copy.deepcopy(PACK[0])
+        artifact = scenario['steps'][0]['artifacts'][0]
+        del artifact['text']
+        with self.assertRaisesRegex(ValueError, 'PILOT-ESC-A/route/ESC-A-01: missing or empty authored text'):
+            audit.build_report([scenario, PACK[1]], [])
+
+    def test_populated_artifact_text_is_preserved_in_order(self):
+        for scenario in PACK:
+            expected = ' '.join(artifact['text'] for step in scenario['steps'] for artifact in step['artifacts'])
+            self.assertEqual(audit.parts(scenario)['artifacts'], expected)
+
     def test_real_shared_and_distinct_text_scores(self):
         self.assertEqual(audit.similarity('Notify the crew', 'Inform the resource'), 1.0)
         self.assertEqual(audit.similarity('alpha bravo', 'charlie delta'), 0.0)

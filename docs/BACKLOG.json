@@ -419,17 +419,19 @@
       "kind": "defect",
       "title": "Screen actual consequence and debrief content",
       "affectedWorkflow": "fictional evaluation",
-      "rootCause": "Audit read nonexistent consequences/debrief properties; empty objects appeared 100% similar.",
+      "rootCause": "Audit read nonexistent consequences/debrief properties; empty objects appeared 100% similar. Follow-up review found the artifact text join bypassed per-artifact validation, allowing blank evidence to be masked by populated neighboring artifacts.",
       "status": "candidate implemented; exact-commit CI required",
       "ownerRole": "Engineering",
       "assignedPerson": null,
       "dueDate": null,
       "dependencies": [],
-      "recommendedCorrection": "Extract branches, defaultConsequence and debriefIntent; fail visibly on missing required authored fields and report empty comparisons as unavailable.",
-      "acceptanceCriteria": "Extract branches, defaultConsequence and debriefIntent; fail visibly on missing required authored fields and report empty comparisons as unavailable.",
+      "recommendedCorrection": "Extract branches, defaultConsequence and debriefIntent; fail visibly on missing required authored fields and report empty comparisons as unavailable. Validate every artifact text before joining, identifying the scenario, step and artifact when text is missing, blank, whitespace-only or not a string.",
+      "acceptanceCriteria": "Extract branches, defaultConsequence and debriefIntent; fail visibly on missing required authored fields and report empty comparisons as unavailable. Validate every artifact text before joining, identifying the scenario, step and artifact when text is missing, blank, whitespace-only or not a string.",
       "evidence": [
         "scripts/content_audit.py",
-        "tests/pilot/test_content_audit.py"
+        "tests/pilot/test_content_audit.py",
+        "qa/pilot/review-before/blank-artifacts.log",
+        "https://github.com/dude-actual/theresponsegame/pull/10#discussion_r4263560579"
       ]
     },
     {

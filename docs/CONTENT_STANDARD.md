@@ -1,23 +1,29 @@
-# Scenario content standard
-The current catalog is authored starter content, not a substitute for organization plans or specialist validation.
+# Canonical content standard — v2
 
-## Required release record
-Stable scenario ID and version; capability and objective; appropriate audience and prerequisites; credible initial condition; explicit assumptions; authoritative plan/source locations and applicable jurisdiction; participant role and decision authority; injects with trigger logic; accepted response forms; realistic consequential branches; bounded configuration schema; incompatible combinations; evidence/rubric; timing basis; coaching and assessment modes; stop and accessibility alternatives; debrief/facilitator notes; reviewer and release evidence; change history and retirement rule.
+## One authored record
+`pilot/pack.js` is the active six-record pack. Each record contains a source ID/version/section/excerpt/digest; requirement and capability; actual role/authority boundary; observable objective; prerequisites/constraints; versioned rubric; two staged tasks with attributable artifacts, work fields and conditional consequences; source/configuration restrictions; debrief intent; cause categories; accessibility alternatives; maturity/reviewer state; and explicit retest relationship.
 
-## Quality gates
-1. Editorial: clear task, no unsupported fact, plausible sources/timestamps, no accidental answer leak in observed mode.
-2. Professional: appropriate role/authority, sector realism, feasible work product, criterion tied to objective, fair alternative responses and no invented legal deadline.
-3. Technical: valid schema, all branches reachable or deliberately constrained, no dead end, deterministic state/replay, immutable evidence and bounded duration.
-4. Safety/privacy: exercise identification, synthetic sensitive data, permitted destinations, stop behavior, accessibility alternatives and no real operational effect.
-5. Pilot: observed participants can understand and act; evaluator agreement and transfer limitations documented. A real release requires actual sign-off, not automated confidence.
+A scenario is materially different when its decisions, evidence interpretation, produced work, authority/dependency boundary or transfer condition changes. A renamed site/sector/hazard is not a new experience. The legacy catalog remains 96 starter configurations from six common patterns.
 
-## Depth before breadth
-The six initial patterns deliberately share acknowledgment and verification mechanics, then differ at the structured decision and handover. They are not six bespoke physical simulations. Specialist expansion should deepen task fidelity: reconcile actual resource records; prepare a reviewed notification using a training contact list; prioritize a documented continuity dependency; correct an inaccurate situation board; assemble a valid handover. A thematic title or different facility name is context, not evidence of additional instructional depth.
+## Active pack
+| ID | Experience | Distinct work / uncertainty |
+|---|---|---|
+| PILOT-ESC-A | The unanswered duty call | Choose an authorized route when the primary is unavailable; produce notification and accountable checkpoint. |
+| PILOT-SIT-A | The newer message contains older information | Separate observation time from receipt time, reconcile conflicting scope and produce a defensible situation update. |
+| PILOT-RES-A | Two crews, one misleading availability board | Reconcile individual restrictions/arrival status and write an Operations handoff without inventing readiness. |
+| PILOT-HO-A | The shift ended; the work did not | Rank unresolved work, distinguish sent from acknowledged handover, assign follow-up within authority. |
+| PILOT-ESC-B | The alternate also cannot respond | Transfer: primary and alternate unavailable; coordination support does not inherit command authority. |
+| PILOT-RES-B | A partial release is not blanket availability | Transfer: distinguish similarly named equipment and scoped staging permission from field assignment authority. |
 
-## Example: unavailable Qualified Individual
-Objective: identify and use the organization-approved alternate path within the exercise's role and timing assumptions, recording facts and unresolved information. Source: the organization's approved, applicable response plan—not a generalized legal deadline. Initial inject: labeled fictional operational report; primary unavailable. Work product: training notification record, recipient-role verification, acknowledgment, and next checkpoint. Guardrails: no real regulator/emergency calls; no claim of legal qualification; exact facility/jurisdiction criteria reviewed. Evidence: attributable actions and response records, not just a correct multiple-choice option. Retest: a changed availability condition or different unresolved fact.
+All source material is authored and fictional, not a quotation from a customer's approved plan. Maturity is **Authored / practitioner review required**. Reviewer and approval event are unassigned, not invented. The source checkbox records acknowledgment only.
 
-## Suggested library expansion priorities
-Capability packs: personnel accountability; activation thresholds; initial incident briefing; request clarification; check-in/status; resource request routing; communications approval; continuity workarounds; dependency verification; succession/alternates; recovery criteria; transition/handover; executive trade-offs; supplier escalation; records and finance documentation.
+## Assessment and configuration
+Only site label and Coached/Observed mode are currently configurable. No authority, plan threshold, external contact or rule changes are accepted by the pilot configuration command. Both modes preserve scenario consequences. Rubric judgments remain evaluator-entered; no automatic high-consequence/free-text grade exists. A real release must calibrate mode effects and content timing with participants.
 
-Hazard packs: flood/storm, heat/winter conditions, fire/smoke, utility or communications outage, equipment failure, hazardous-material/spill, cyber/data disruption, supply interruption, workforce loss, access/security, public health and compound/cascading events. These are proposed categories, not a claim that this release implements a complete specialist scenario for each.
+Every criterion needs a status, rationale and session-specific evidence ID. An unmet/partly met/not-observed criterion can support a finding, but the cause may be Undetermined. Written work length is an input-completeness check, not performance validation.
+
+## Repetition review
+Run `python scripts/content_audit.py`. It normalizes a disclosed small vocabulary and compares token/structure similarity across objectives, prompts, choices, artifacts, consequences and debriefs. Shared generic debrief language can correctly flag every pair; flags do not invalidate intentionally common governance text. The artifact preserves per-dimension scores and leaves decisions pending. Full semantic similarity and human adjudication remain backlog work. Do not call a lexical score professional content validation.
+
+## Approval gate
+Before a real cohort: inspect each source's authority; confirm role limits; verify plausible alternatives and consequences; check accessibility; calibrate criteria with at least two authorized reviewers; pilot unfamiliar transfer conditions; record named approval/version/date. No record in this pack has passed that gate yet.

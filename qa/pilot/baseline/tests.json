@@ -1,0 +1,55 @@
+{
+  "commit": "ca51c7379e4d09a6a8d6af6fdd338e753879ae2e",
+  "dataClass": "fictional",
+  "results": [
+    {
+      "command": "node --check app.js",
+      "exit": 0,
+      "durationSeconds": 0.055,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check engine.js",
+      "exit": 0,
+      "durationSeconds": 0.028,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check catalog.js",
+      "exit": 0,
+      "durationSeconds": 0.025,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check trg-sw.js",
+      "exit": 0,
+      "durationSeconds": 0.02,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node tests/test_engine.cjs",
+      "exit": 0,
+      "durationSeconds": 0.091,
+      "stdout": "{\n  \"passed\": 5776,\n  \"scenario_channel_variant_combinations\": 1440,\n  \"patterns\": 6,\n  \"sectors\": 16\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": "python tests/test_database.py",
+      "exit": 0,
+      "durationSeconds": 0.796,
+      "stdout": "",
+      "stderr": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.009s\n\nOK\n"
+    },
+    {
+      "command": "python tests/test_http.py",
+      "exit": 0,
+      "durationSeconds": 1.368,
+      "stdout": "[local-demo] \"GET /api/health HTTP/1.1\" 200 -\n[local-demo] \"GET /api/health HTTP/1.1\" 403 -\n[local-demo] \"PUT /api/workspaces/atlas/state HTTP/1.1\" 415 -\n[local-demo] \"GET /api/health HTTP/1.1\" 403 -\n[local-demo] \"GET /backend/server.py HTTP/1.1\" 403 -\n[local-demo] \"GET /.env HTTP/1.1\" 403 -\n[local-demo] \"GET /.local/test.sqlite3 HTTP/1.1\" 403 -\n[local-demo] \"GET /qa/ui.sqlite3 HTTP/1.1\" 403 -\n[local-demo] \"PUT /api/workspaces/atlas/state HTTP/1.1\" 200 -\n[local-demo] \"GET /api/workspaces/atlas/state HTTP/1.1\" 200 -\n[local-demo] \"GET /api/workspaces/civic/state HTTP/1.1\" 200 -\n[local-demo] \"GET / HTTP/1.1\" 200 -\n[local-demo] \"GET /api/workspaces/not-an-org/state HTTP/1.1\" 404 -\n",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.516s\n\nOK\n"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+const test=require('node:test'),assert=require('node:assert/strict'),E=require('../../engine.js'),catalog=require('../../assets/catalog.json');
+test('CSV formula prefixes with whitespace and controls are neutralized',()=>{for(const x of ['=1+1',' +SUM(A1)','\t@x','\r-1'])assert.match(E.csv([[x]]),/^"'/);});
+test('Duplicate and prototype CSV headers are rejected',()=>{for(const h of ['external_id,name,email,group,role,name','external_id,name,email,group,role,__proto__'])assert.throws(()=>E.importPeople(h+'\nD,Demo,d@example.invalid,G,R,X'));});
+test('Oversized and malformed CSV payloads are rejected',()=>{assert.throws(()=>E.importPeople('x'.repeat(1000001)));assert.throws(()=>E.importPeople('external_id,name,email,group,role\nD,"unclosed'));});
+test('Real email contacts do not enter this fictional demonstration',()=>{const x=E.importPeople('external_id,name,email,group,role\nD,Demo,user@example.com,G,R');assert.equal(x.accepted.length,0);assert.match(x.exceptions[0].reason,/fictional/);});
+test('Legacy verification cannot bypass evaluator and retest controls',()=>{assert.equal(E.canVerify({owner:'x',due:'2026-01-01',evidence:'x',reviewer:'x'},[]),false);});
+test('Legacy new sessions freeze original scenario content',()=>{const s=JSON.parse(JSON.stringify(Array.isArray(catalog)?catalog[0]:catalog.scenarios[0])),r=E.createRun(s,E.defaults(s));s.title='Edited later';assert.notEqual(r.scenarioSnapshot.title,s.title);});

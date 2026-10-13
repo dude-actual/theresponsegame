@@ -4,7 +4,8 @@ Run: python backend/server.py --port 8080
 All contacts should be fictional. Stores entities relationally in local SQLite.
 """
 from __future__ import annotations
-import argparse, json, mimetypes, sqlite3, threading
+import argparse, json, mimetypes, sqlite3, threading, os
+from datetime import datetime, timezone
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlparse, unquote
@@ -12,6 +13,15 @@ from urllib.parse import urlparse, unquote
 ROOT=Path(__file__).resolve().parents[1]
 WORKSPACES={'atlas','civic'}
 ENTITIES=('people','campaigns','runs','actions','plans','audit')
+
+SERVER_STARTED=datetime.now(timezone.utc).isoformat()
+def release_metadata():
+    path=ROOT/'release.json'
+    if not path.exists():return {'version':'2.0.0-eval','sourceCommit':None,'buildTime':None}
+    text=path.read_text()
+    if text.startswith('---\n'):text=text.split('---\n',2)[2]
+    text=text.replace('{{ site.github.build_revision }}',os.getenv('TRG_SOURCE_SHA',os.getenv('GITHUB_SHA','local-working-tree'))).replace('{{ site.time | date_to_xmlschema }}',SERVER_STARTED)
+    value=json.loads(text);value['environment']='local-fictional-rehearsal';value['buildTimeScope']='Local server start; not a public deployment timestamp';return value
 
 class DemoStore:
     def __init__(self,path:Path):
@@ -44,6 +54,14 @@ class DemoStore:
             if len(ids)!=len(state[table]) or any(not isinstance(i,str) or len(i)>180 for i in ids) or len(ids)!=len(set(ids)):raise ValueError('Invalid or duplicate entity IDs: '+table)
         meta={k:v for k,v in state.items() if k not in ENTITIES}
         with self.lock,self.conn:
+            # Reject removal or alteration of terminal practice records before a replacement write.
+            # This protects legacy local history; it is not an authentication boundary.
+            incoming={r['id']:r for r in state['runs']}
+            for (payload,) in self.conn.execute('SELECT payload FROM runs WHERE workspace_id=?',(w,)):
+                previous=json.loads(payload)
+                if previous.get('status') in {'completed','stopped','expired'}:
+                    if previous['id'] not in incoming or self.encode(incoming[previous['id']])!=payload:
+                        raise ValueError('Terminal practice history cannot be removed or rewritten')
             self.conn.execute('INSERT INTO workspace VALUES (?,?) ON CONFLICT(id) DO UPDATE SET meta=excluded.meta',(w,self.encode(meta)))
             self.conn.execute('DELETE FROM group_members WHERE workspace_id=?',(w,))
             for table in ENTITIES:
@@ -83,7 +101,10 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if not self.allowed():return self.respond(403,{'error':'Loopback host and same-origin access only'})
         path=unquote(urlparse(self.path).path)
-        if path=='/api/health':return self.respond(200,{'mode':'local-demo','version':'1.0.0','authentication':'none: fictional-data development server only'})
+        if path=='/api/health':
+            release=release_metadata()
+            return self.respond(200,{'mode':'local-demo','authentication':'none: fictional-data development server only','release':release,'pilotStorage':'Browser IndexedDB, not this legacy SQLite store'})
+        if path in {'/release.json','/health.json'}:return self.respond(200,release_metadata())
         w=self.state_workspace()
         if w:
             try:return self.respond(200,{'state':self.server.store.load(w)})

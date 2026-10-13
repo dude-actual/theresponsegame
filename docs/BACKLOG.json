@@ -1,0 +1,396 @@
+{
+  "schema": "trg-backlog/2",
+  "canonical": true,
+  "supersedesPlanningOnly": "v1 workbook Build Backlog remains historical input; this is the active register.",
+  "authority": "User master prompt v1; open human owners/dates intentionally unassigned",
+  "items": [
+    {
+      "id": "TRG-001",
+      "priority": "P0",
+      "kind": "defect",
+      "title": "Complete assignment-to-retest chain",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Legacy modules had no connected assignment/evaluator chain.",
+      "status": "implemented; native CI gate",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Create assignment, produce work, evaluate, find gap, correct, retest and verify with one inspectable export.",
+      "acceptanceCriteria": "Create assignment, produce work, evaluate, find gap, correct, retest and verify with one inspectable export.",
+      "evidence": [
+        "tests/pilot/test_browser.py",
+        "pilot/domain.js"
+      ]
+    },
+    {
+      "id": "TRG-002",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Prevent unrelated retest verification",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Legacy canVerify relied on same-pattern rule counts.",
+      "status": "fixed; unit/regression passed",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Require original action/participant, explicit transfer condition, complete reviewed criteria, separate verifier and no unresolved appeal.",
+      "acceptanceCriteria": "Require original action/participant, explicit transfer condition, complete reviewed criteria, separate verifier and no unresolved appeal.",
+      "evidence": [
+        "tests/pilot/test_domain.cjs",
+        "qa/pilot/mutation.json"
+      ]
+    },
+    {
+      "id": "TRG-003",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Preserve corrupt state",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Legacy read recovery could seed and overwrite unreadable storage.",
+      "status": "fixed; native recovery gate",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Block writes, retain raw data and expose recovery export; refresh must not reseed corrupt state.",
+      "acceptanceCriteria": "Block writes, retain raw data and expose recovery export; refresh must not reseed corrupt state.",
+      "evidence": [
+        "pilot/store.js",
+        "tests/pilot/test_browser.py"
+      ]
+    },
+    {
+      "id": "TRG-004",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Freeze source/configuration/rubric context",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Legacy run loaded mutable current catalog content.",
+      "status": "fixed; tests passed",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "New runs freeze source/scenario/config/rubric; review amendments and invalidations never mutate completed sessions.",
+      "acceptanceCriteria": "New runs freeze source/scenario/config/rubric; review amendments and invalidations never mutate completed sessions.",
+      "evidence": [
+        "tests/pilot/test_domain.cjs",
+        "tests/pilot/test_regressions.cjs"
+      ]
+    },
+    {
+      "id": "TRG-005",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Serialize duplicate/stale commands",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "No transactional pilot command aggregate existed.",
+      "status": "implemented; native gate",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Idempotent keys, expected revisions and leases prevent duplicate effects and stale tab overwrite.",
+      "acceptanceCriteria": "Idempotent keys, expected revisions and leases prevent duplicate effects and stale tab overwrite.",
+      "evidence": [
+        "pilot/store.js",
+        "tests/pilot/test_browser.py"
+      ]
+    },
+    {
+      "id": "TRG-006",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Reject legacy terminal-record replacement",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Local save deleted/reinserted projections, allowing completed fields to change.",
+      "status": "fixed; tests passed",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Reject removal/alteration of terminal runs transactionally; allow appending new records.",
+      "acceptanceCriteria": "Reject removal/alteration of terminal runs transactionally; allow appending new records.",
+      "evidence": [
+        "tests/pilot/test_history.py"
+      ]
+    },
+    {
+      "id": "TRG-007",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Constrain roster/CSV input",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Weak header/size/formula/contact constraints.",
+      "status": "fixed; tests passed",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Reject malformed/large/duplicate/prototype columns; neutralize prefixed formulas; allow fictional contact addresses only.",
+      "acceptanceCriteria": "Reject malformed/large/duplicate/prototype columns; neutralize prefixed formulas; allow fictional contact addresses only.",
+      "evidence": [
+        "tests/pilot/test_regressions.cjs"
+      ]
+    },
+    {
+      "id": "TRG-008",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Publish exact build metadata",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Baseline exposed version but no build SHA/time.",
+      "status": "implemented; publication gate",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Pages renders exact commit/time; live manifest/hash check matches the deployed source.",
+      "acceptanceCriteria": "Pages renders exact commit/time; live manifest/hash check matches the deployed source.",
+      "evidence": [
+        "scripts/release_manifest.py",
+        "docs/DEPLOYMENT_TRUTH.md"
+      ]
+    },
+    {
+      "id": "TRG-009",
+      "priority": "P1",
+      "kind": "defect",
+      "title": "Strengthen transfer-link test",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Initial targeted mutation survived a missing transferFrom guard.",
+      "status": "fixed; mutation killed",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "A wrong same-capability transferFrom must fail independently of different-ID and capability guards.",
+      "acceptanceCriteria": "A wrong same-capability transferFrom must fail independently of different-ID and capability guards.",
+      "evidence": [
+        "qa/pilot/mutation-before-strengthening.json",
+        "qa/pilot/mutation.json"
+      ]
+    },
+    {
+      "id": "TRG-010",
+      "priority": "P2",
+      "kind": "defect",
+      "title": "Keep replay usable as evidence grows",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Replay repeatedly cloned full prior state.",
+      "status": "fixed; benchmark passed",
+      "ownerRole": "Engineering",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Internal isolated replay avoids prior-state copying; measured 25-loop replay/export meets declared synthetic budgets.",
+      "acceptanceCriteria": "Internal isolated replay avoids prior-state copying; measured 25-loop replay/export meets declared synthetic budgets.",
+      "evidence": [
+        "tests/pilot/performance.cjs",
+        "qa/pilot/performance.json"
+      ]
+    },
+    {
+      "id": "TRG-011",
+      "priority": "P1",
+      "kind": "acceptance",
+      "title": "Named practitioner review and calibrated rubric",
+      "affectedWorkflow": "real cohort",
+      "rootCause": "Authored synthetic content has no independent approval.",
+      "status": "awaiting human authority",
+      "ownerRole": "Exercise/content reviewer",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [
+        "TRG-001"
+      ],
+      "recommendedCorrection": "Named reviewer validates sources/authority/alternatives/consequences; two reviewers calibrate evidence criteria.",
+      "acceptanceCriteria": "Named reviewer validates sources/authority/alternatives/consequences; two reviewers calibrate evidence criteria.",
+      "evidence": [
+        "docs/CONTENT_STANDARD.md"
+      ]
+    },
+    {
+      "id": "TRG-012",
+      "priority": "P1",
+      "kind": "acceptance",
+      "title": "Independent accessibility and participant usability",
+      "affectedWorkflow": "real cohort",
+      "rootCause": "Automated/agent checks are not human assistive-technology acceptance.",
+      "status": "awaiting human authority",
+      "ownerRole": "Accessibility and user researcher",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [
+        "TRG-001"
+      ],
+      "recommendedCorrection": "Complete keyboard, screen-reader, zoom/timing/recovery and real-device journey; resolve material findings.",
+      "acceptanceCriteria": "Complete keyboard, screen-reader, zoom/timing/recovery and real-device journey; resolve material findings.",
+      "evidence": [
+        "docs/TEST_STRATEGY.md"
+      ]
+    },
+    {
+      "id": "TRG-013",
+      "priority": "P0",
+      "kind": "production-gate",
+      "title": "Trusted identity, membership and tenant authorization",
+      "affectedWorkflow": "production",
+      "rootCause": "No authorized production project or data agreement.",
+      "status": "blocked: approval required",
+      "ownerRole": "Security/backend",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Approve hosting/region/cost/data scope; implement deny-by-default object/file/export access, SSO and tested membership/entitlements.",
+      "acceptanceCriteria": "Approve hosting/region/cost/data scope; implement deny-by-default object/file/export access, SSO and tested membership/entitlements.",
+      "evidence": [
+        "backend/schema.sql",
+        "docs/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "id": "TRG-014",
+      "priority": "P0",
+      "kind": "production-gate",
+      "title": "Cloud evidence, backup and retention controls",
+      "affectedWorkflow": "production",
+      "rootCause": "Local storage is not an organizational system of record.",
+      "status": "blocked: approval required",
+      "ownerRole": "Data/security",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [
+        "TRG-013"
+      ],
+      "recommendedCorrection": "Private storage, append-only server events, export/hold/deletion policies and measured backup/restore are approved and tested.",
+      "acceptanceCriteria": "Private storage, append-only server events, export/hold/deletion policies and measured backup/restore are approved and tested.",
+      "evidence": [
+        "docs/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "id": "TRG-015",
+      "priority": "P0",
+      "kind": "production-gate",
+      "title": "Live communications, safe scheduling and callbacks",
+      "affectedWorkflow": "production",
+      "rootCause": "No approved provider/recipients/consent/sender.",
+      "status": "blocked: approval required",
+      "ownerRole": "Delivery/security",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [
+        "TRG-013"
+      ],
+      "recommendedCorrection": "Implement transactional outbox, dispatch-time eligibility, consent/STOP, incident hold, signed replay-protected callbacks and provider-failure tests before activation.",
+      "acceptanceCriteria": "Implement transactional outbox, dispatch-time eligibility, consent/STOP, incident hold, signed replay-protected callbacks and provider-failure tests before activation.",
+      "evidence": [
+        "docs/INTEGRATION_CONTRACTS.md"
+      ]
+    },
+    {
+      "id": "TRG-016",
+      "priority": "P1",
+      "kind": "acceptance",
+      "title": "Independent security review",
+      "affectedWorkflow": "production",
+      "rootCause": "Source scan and local command tests are limited.",
+      "status": "awaiting human authority",
+      "ownerRole": "Independent security reviewer",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [
+        "TRG-013"
+      ],
+      "recommendedCorrection": "Threat-based review of tenant/object/file/export/API and deployment abuse paths; close critical findings.",
+      "acceptanceCriteria": "Threat-based review of tenant/object/file/export/API and deployment abuse paths; close critical findings.",
+      "evidence": [
+        "docs/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "id": "TRG-017",
+      "priority": "P2",
+      "kind": "feature",
+      "title": "Complete situation and handover transfer packs",
+      "affectedWorkflow": "fictional evaluation",
+      "rootCause": "Only two transfer conditions are authored.",
+      "status": "not started",
+      "ownerRole": "Exercise/content",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [
+        "TRG-011"
+      ],
+      "recommendedCorrection": "Materially different decision/evidence transfer pairs receive source and practitioner review, with linked action/retest tests.",
+      "acceptanceCriteria": "Materially different decision/evidence transfer pairs receive source and practitioner review, with linked action/retest tests.",
+      "evidence": [
+        "pilot/pack.js"
+      ]
+    },
+    {
+      "id": "TRG-018",
+      "priority": "P2",
+      "kind": "feature",
+      "title": "Semantic repetition adjudication",
+      "affectedWorkflow": "content governance",
+      "rootCause": "Current detector is a lexical/structural screen.",
+      "status": "screening implemented; review open",
+      "ownerRole": "Exercise/content",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [
+        "TRG-011"
+      ],
+      "recommendedCorrection": "Review flags by field; add a validated semantic comparison only with reproducible thresholds and human decisions.",
+      "acceptanceCriteria": "Review flags by field; add a validated semantic comparison only with reproducible thresholds and human decisions.",
+      "evidence": [
+        "qa/pilot/content-repetition.json"
+      ]
+    },
+    {
+      "id": "TRG-019",
+      "priority": "P2",
+      "kind": "feature",
+      "title": "Plan ingestion, change impact and content lifecycle",
+      "affectedWorkflow": "production",
+      "rootCause": "Current pilot uses authored frozen excerpts.",
+      "status": "not started",
+      "ownerRole": "Content/data",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [
+        "TRG-014"
+      ],
+      "recommendedCorrection": "Approved source extraction preserves provenance, conflicts/review states and prospective reapproval without changing completed runs.",
+      "acceptanceCriteria": "Approved source extraction preserves provenance, conflicts/review states and prospective reapproval without changing completed runs.",
+      "evidence": [
+        "docs/CONTENT_STANDARD.md"
+      ]
+    },
+    {
+      "id": "TRG-020",
+      "priority": "P2",
+      "kind": "feature",
+      "title": "Facilitated multirole/media/integration expansion",
+      "affectedWorkflow": "production",
+      "rootCause": "Single-role web slice is the accepted implementation scope.",
+      "status": "not started",
+      "ownerRole": "Product",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [
+        "TRG-011",
+        "TRG-013"
+      ],
+      "recommendedCorrection": "Add only after trusted single-role cycle: approved media rights/accessibility and measured inter-role dependencies.",
+      "acceptanceCriteria": "Add only after trusted single-role cycle: approved media rights/accessibility and measured inter-role dependencies.",
+      "evidence": [
+        "docs/PILOT_PLAN.md"
+      ]
+    }
+  ]
+}

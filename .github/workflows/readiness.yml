@@ -1,62 +1,98 @@
 name: Readiness platform verification
 on:
   push:
-    branches: [main, readiness-platform-v1]
+    branches: [main, readiness-platform-v1, pilot/requirement-to-retest-v2]
   pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: readiness-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    env:
+      TRG_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - name: Package reproducible source
-        run: git archive --format=zip --output=readiness-source.zip HEAD
-      - name: Retain source archive
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: readiness-source-${{ github.sha }}
-          path: readiness-source.zip
-          retention-days: 30
-      - name: Verify syntax, scenario engine and database
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Reproducible source and environment
         run: |
-          node --check app.js
-          node --check engine.js
-          node --check catalog.js
-          node --check trg-sw.js
-          node tests/test_engine.cjs
-          python tests/test_database.py
-          python tests/test_http.py
-      - name: Install pinned browser test dependency
+          git archive --format=zip --output=pilot-source.zip HEAD
+          mkdir -p qa/pilot
+          { git rev-parse HEAD; node --version; python --version; npm --version; } | tee qa/pilot/environment.txt
+      - name: Install locked test-only accessibility dependency
+        run: npm ci --ignore-scripts --no-audit
+      - name: Verify commands, histories, invariants and test quality
         run: |
-          python -m pip install playwright==1.57.0
-          python -m playwright install --with-deps chromium
-      - name: Test hosted browser and native storage
+          python scripts/verify.py
+          python scripts/check_source.py
+          npm audit --json > qa/pilot/dependency-audit.json
+      - name: Build exact Pages publication output
+        uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697
+        env:
+          JEKYLL_BUILD_REVISION: ${{ env.TRG_SOURCE_SHA }}
+        with:
+          source: ./
+          destination: ./_site
+          build_revision: ${{ env.TRG_SOURCE_SHA }}
+      - name: Check built manifest and runtime hashes
+        run: |
+          python - <<'PY'
+          import json, pathlib, hashlib, os
+          root=pathlib.Path('_site'); release=json.loads((root/'release.json').read_text())
+          assert release['sourceCommit']==os.environ['TRG_SOURCE_SHA'], release
+          for name,digest in release['sourceHashes'].items():
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest, name
+          assert json.loads((root/'health.json').read_text())['sourceCommit']==release['sourceCommit']
+          pathlib.Path('qa/pilot/built-release.json').write_text(json.dumps(release,indent=2))
+          PY
+      - name: Install pinned browser tools
+        run: |
+          python -m pip install -r requirements-test.txt
+          python -m playwright install --with-deps chromium firefox webkit
+      - name: Native built-site browser journeys and persistence
         shell: bash
         run: |
-          python backend/server.py --port 8765 --db "$RUNNER_TEMP/trg-demo.sqlite3" > "$RUNNER_TEMP/trg-server.log" 2>&1 &
+          python -m http.server 8766 --bind 127.0.0.1 --directory _site > "$RUNNER_TEMP/trg-site.log" 2>&1 &
+          SITE_PID=$!
+          trap 'kill "$SITE_PID" 2>/dev/null || true' EXIT
+          python - <<'PY'
+          import time,urllib.request
+          for i in range(50):
+              try: urllib.request.urlopen('http://127.0.0.1:8766/release.json',timeout=1); break
+              except Exception: time.sleep(.2)
+          else: raise SystemExit('Built-site server did not start')
+          PY
+          for browser in chromium firefox webkit; do
+            TRG_BASE_URL=http://127.0.0.1:8766 TRG_BROWSER="$browser" python tests/pilot/test_browser.py
+          done
+      - name: Legacy native browser and SQLite regression
+        shell: bash
+        run: |
+          python backend/server.py --port 8765 --db "$RUNNER_TEMP/trg-legacy.sqlite3" > "$RUNNER_TEMP/trg-legacy.log" 2>&1 &
           SERVER_PID=$!
           trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           python - <<'PY'
-          import time, urllib.request
+          import time,urllib.request
           for i in range(50):
-              try:
-                  urllib.request.urlopen('http://127.0.0.1:8765/api/health', timeout=1).read()
-                  break
-              except Exception:
-                  time.sleep(.2)
-          else:
-              raise SystemExit('Local server did not become ready')
+              try: urllib.request.urlopen('http://127.0.0.1:8765/api/health',timeout=1); break
+              except Exception: time.sleep(.2)
+          else: raise SystemExit('Legacy server did not start')
           PY
           TRG_BASE_URL=http://127.0.0.1:8765 python tests/test_browser.py
-      - name: Retain test evidence
+      - name: Retain exact-source QA and publication output
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: readiness-qa-${{ github.sha }}
+          name: pilot-evidence-${{ env.TRG_SOURCE_SHA }}
           path: |
-            qa/*.json
-            qa/*.png
-          retention-days: 14
+            pilot-source.zip
+            package-lock.json
+            qa/
+            _site/
+          retention-days: 30

@@ -1,0 +1,177 @@
+{
+  "recordClass": "Simulation practice; human review required",
+  "id": "run-ed2ee4f8-d236-40e1-b990-47826b4a887b",
+  "scenarioId": "TRG-001",
+  "scenarioTitle": "The first ten minutes",
+  "pattern": "escalate",
+  "scenarioVersion": "1.0.0",
+  "config": {
+    "site": "Regional coordination center",
+    "role": "Duty officer",
+    "authority": "Incident Commander",
+    "planRef": "Incident Management Plan / Exercise assumption § 4.2",
+    "variant": "Primary unavailable",
+    "window": 8,
+    "channel": "Web",
+    "mode": "Coached",
+    "version": 1
+  },
+  "previousId": null,
+  "startedAt": "2026-10-13T17:28:49.834Z",
+  "step": 3,
+  "status": "completed",
+  "events": [
+    {
+      "id": "event-99eeecc9-57cb-4b03-a11b-3cf3c901a125",
+      "sequence": 1,
+      "at": "2026-10-13T17:28:49.834Z",
+      "type": "exercise_started",
+      "payload": {
+        "channel": "Web",
+        "delivery": "Local simulation; no external message"
+      }
+    },
+    {
+      "id": "event-8e23c369-42f7-4d66-a744-abaf42a0db94",
+      "sequence": 2,
+      "at": "2026-10-13T17:28:49.968Z",
+      "type": "pause",
+      "payload": {
+        "reason": "Participant control"
+      }
+    },
+    {
+      "id": "event-c20fe338-760b-4c33-97c6-9aea8f62d4e3",
+      "sequence": 3,
+      "at": "2026-10-13T17:28:51.201Z",
+      "type": "pause",
+      "payload": {
+        "reason": "Returned to workspace"
+      }
+    },
+    {
+      "id": "event-77477a48-b71a-4313-b8ad-7c2c682bb56a",
+      "sequence": 4,
+      "at": "2026-10-13T17:28:51.214Z",
+      "type": "pause",
+      "payload": {
+        "reason": "Navigated away from participant view"
+      }
+    },
+    {
+      "id": "event-d3661910-0138-47bc-b1eb-88fd09bf90ad",
+      "sequence": 5,
+      "at": "2026-10-13T17:28:51.370Z",
+      "type": "resume",
+      "payload": {
+        "reason": "Resumed from workspace"
+      }
+    },
+    {
+      "id": "event-08b8aed8-6a84-4137-98e5-cb23e8bd25fc",
+      "sequence": 6,
+      "at": "2026-10-13T17:28:51.419Z",
+      "type": "decision",
+      "payload": {
+        "stage": 0,
+        "id": "clarify",
+        "criterion": "Acknowledged and established an active response path",
+        "met": true,
+        "reason": "You acknowledged the report and requested the missing facts in parallel.",
+        "elapsedSim": 1
+      }
+    },
+    {
+      "id": "event-4eee93aa-dfb8-44ba-a37e-14c8f12d03b3",
+      "sequence": 7,
+      "at": "2026-10-13T17:28:51.468Z",
+      "type": "decision",
+      "payload": {
+        "stage": 1,
+        "id": "current",
+        "criterion": "Used current attributable evidence",
+        "met": true,
+        "reason": "You retained the source, timestamp and unresolved limitations.",
+        "elapsedSim": 3
+      }
+    },
+    {
+      "id": "event-4bccc780-6345-454a-be87-24492f1bbd6b",
+      "sequence": 8,
+      "at": "2026-10-13T17:28:51.536Z",
+      "type": "task_record",
+      "payload": {
+        "recipient": "Designated duty lead",
+        "checkpoint": "Duty update in five minutes",
+        "externalRef": null,
+        "evidenceClass": "In-platform structured task"
+      }
+    },
+    {
+      "id": "event-6d3f24ec-6eb0-4005-96f8-9df882d0ea40",
+      "sequence": 9,
+      "at": "2026-10-13T17:28:51.536Z",
+      "type": "decision",
+      "payload": {
+        "stage": 2,
+        "id": "authority",
+        "criterion": "Used the designated primary or alternate",
+        "met": true,
+        "reason": "The selected action satisfies this starter scenario’s stated criterion.",
+        "elapsedSim": 5
+      }
+    },
+    {
+      "id": "event-1f39908b-69ac-45fe-b4b8-67fa793d2722",
+      "sequence": 10,
+      "at": "2026-10-13T17:28:51.602Z",
+      "type": "brief_submitted",
+      "payload": {
+        "known": "The current duty report is attributable, but the full impact remains unverified.",
+        "unknown": "Resource capability and restoration time have not been confirmed.",
+        "next": "The designated duty lead will verify the gaps and provide the next update in five minutes.",
+        "reviewStatus": "Human review required"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-94d0b204-1f40-4753-8d67-ecc8c359cd44",
+      "stage": 0,
+      "criterion": "Acknowledged and established an active response path",
+      "met": true,
+      "reason": "You acknowledged the report and requested the missing facts in parallel.",
+      "evidenceId": "event-08b8aed8-6a84-4137-98e5-cb23e8bd25fc",
+      "reviewStatus": "Rule-based practice check"
+    },
+    {
+      "id": "obs-eb7774d7-5d7e-4288-bc58-830b47c8e954",
+      "stage": 1,
+      "criterion": "Used current attributable evidence",
+      "met": true,
+      "reason": "You retained the source, timestamp and unresolved limitations.",
+      "evidenceId": "event-4eee93aa-dfb8-44ba-a37e-14c8f12d03b3",
+      "reviewStatus": "Rule-based practice check"
+    },
+    {
+      "id": "obs-7cbac90b-f394-4053-a0ea-d9b16f2de51d",
+      "stage": 2,
+      "criterion": "Used the designated primary or alternate",
+      "met": true,
+      "reason": "The selected action satisfies this starter scenario’s stated criterion.",
+      "evidenceId": "event-6d3f24ec-6eb0-4005-96f8-9df882d0ea40",
+      "reviewStatus": "Rule-based practice check"
+    }
+  ],
+  "activeMs": 14,
+  "elapsedSim": 5,
+  "draft": {
+    "known": "The current duty report is attributable, but the full impact remains unverified.",
+    "unknown": "Resource capability and restoration time have not been confirmed.",
+    "next": "The designated duty lead will verify the gaps and provide the next update in five minutes."
+  },
+  "schemaVersion": 1,
+  "paused": false,
+  "completedAt": "2026-10-13T17:28:51.602Z",
+  "reviewStatus": "Human review required"
+}

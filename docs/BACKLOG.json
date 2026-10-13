@@ -401,7 +401,7 @@
       "title": "Preserve explicit review citations through amendments",
       "affectedWorkflow": "fictional evaluation",
       "rootCause": "Amendment form rehydrated status and rationale but silently selected the first evidence record. Multiple references were reduced to one.",
-      "status": "candidate implemented; exact-commit CI required",
+      "status": "deployed and verified at 5ffd6e2 (2026-10-13)",
       "ownerRole": "Engineering",
       "assignedPerson": null,
       "dueDate": null,
@@ -410,7 +410,8 @@
       "acceptanceCriteria": "Require explicit evidence selection on new reviews; restore every criterion citation and preserve the historical review on rationale-only amendments.",
       "evidence": [
         "pilot/ui.js",
-        "tests/pilot/test_browser.py"
+        "tests/pilot/test_browser.py",
+        "https://github.com/dude-actual/theresponsegame/actions/runs/38470167850"
       ]
     },
     {
@@ -420,7 +421,7 @@
       "title": "Screen actual consequence and debrief content",
       "affectedWorkflow": "fictional evaluation",
       "rootCause": "Audit read nonexistent consequences/debrief properties; empty objects appeared 100% similar. Follow-up review found the artifact text join bypassed per-artifact validation, allowing blank evidence to be masked by populated neighboring artifacts.",
-      "status": "candidate implemented; exact-commit CI required",
+      "status": "deployed and verified at 5ffd6e2 (2026-10-13)",
       "ownerRole": "Engineering",
       "assignedPerson": null,
       "dueDate": null,
@@ -431,7 +432,8 @@
         "scripts/content_audit.py",
         "tests/pilot/test_content_audit.py",
         "qa/pilot/review-before/blank-artifacts.log",
-        "https://github.com/dude-actual/theresponsegame/pull/10#discussion_r4263560579"
+        "https://github.com/dude-actual/theresponsegame/pull/10#discussion_r4263560579",
+        "https://github.com/dude-actual/theresponsegame/actions/runs/38470167850"
       ]
     },
     {
@@ -441,7 +443,7 @@
       "title": "Block verification while original review is disputed",
       "affectedWorkflow": "fictional evaluation",
       "rootCause": "Verification considered unresolved transfer-review appeals but ignored original-session appeals.",
-      "status": "candidate implemented; exact-commit CI required",
+      "status": "deployed and verified at 5ffd6e2 (2026-10-13)",
       "ownerRole": "Engineering",
       "assignedPerson": null,
       "dueDate": null,
@@ -451,7 +453,8 @@
       "evidence": [
         "pilot/domain.js",
         "tests/pilot/test_domain.cjs",
-        "tests/pilot/fixtures/legacy-original-appeal.json"
+        "tests/pilot/fixtures/legacy-original-appeal.json",
+        "https://github.com/dude-actual/theresponsegame/actions/runs/38470167850"
       ]
     },
     {
@@ -461,7 +464,7 @@
       "title": "Read stored projections and event ledger atomically",
       "affectedWorkflow": "fictional evaluation",
       "rootCause": "Separate readonly transactions could compare state before a concurrent write with events after it, falsely reporting corruption.",
-      "status": "candidate implemented; exact-commit CI required",
+      "status": "deployed and verified at 5ffd6e2 (2026-10-13)",
       "ownerRole": "Engineering",
       "assignedPerson": null,
       "dueDate": null,
@@ -470,7 +473,8 @@
       "acceptanceCriteria": "Read both stores in one readonly transaction. A deterministic concurrent write cannot create a false corruption error; genuine ledger mismatch still blocks writes.",
       "evidence": [
         "pilot/store.js",
-        "tests/pilot/test_store.cjs"
+        "tests/pilot/test_store.cjs",
+        "https://github.com/dude-actual/theresponsegame/actions/runs/38470167850"
       ]
     },
     {
@@ -480,7 +484,7 @@
       "title": "Retain participant context and clear next steps",
       "affectedWorkflow": "fictional evaluation",
       "rootCause": "Later tasks hid earlier artifacts/work, all-met review led to an empty findings prompt, and persona changes lost the current action.",
-      "status": "candidate implemented; exact-commit CI required",
+      "status": "deployed and verified at 5ffd6e2 (2026-10-13)",
       "ownerRole": "Engineering",
       "assignedPerson": null,
       "dueDate": null,
@@ -489,7 +493,8 @@
       "acceptanceCriteria": "Expose prior artifacts and work read-only, use readable option labels, confirm recorded all-met reviews, name the next responsible persona, preserve action context, and distinguish recorded verification from current blockers.",
       "evidence": [
         "pilot/ui.js",
-        "tests/pilot/test_browser.py"
+        "tests/pilot/test_browser.py",
+        "https://github.com/dude-actual/theresponsegame/actions/runs/38470167850"
       ]
     },
     {
@@ -499,7 +504,7 @@
       "title": "Distinguish legacy workspace from controlled pilot",
       "affectedWorkflow": "fictional evaluation",
       "rootCause": "Overview/reports/library displayed legacy-only data without explaining that pilot evidence lived in a separate store. Observed/Coached appeared functionally distinct.",
-      "status": "candidate implemented; exact-commit CI required",
+      "status": "deployed and verified at 5ffd6e2 (2026-10-13)",
       "ownerRole": "Engineering",
       "assignedPerson": null,
       "dueDate": null,
@@ -509,7 +514,8 @@
       "evidence": [
         "app.js",
         "pilot/ui.js",
-        "tests/pilot/test_browser.py"
+        "tests/pilot/test_browser.py",
+        "https://github.com/dude-actual/theresponsegame/actions/runs/38470167850"
       ]
     },
     {
@@ -538,7 +544,7 @@
       "title": "Preserve pilot route when keyboard users skip navigation",
       "affectedWorkflow": "keyboard access to pilot content",
       "rootCause": "The global skip link used #main, which the hash router treated as an unknown page and rendered the legacy overview.",
-      "status": "candidate implemented; native browser regression required",
+      "status": "deployed and verified at 5ffd6e2 (2026-10-13)",
       "ownerRole": "Engineering/accessibility",
       "assignedPerson": null,
       "dueDate": null,
@@ -547,7 +553,86 @@
       "acceptanceCriteria": "Keyboard Enter on Skip to content in an active pilot session and evidence trace retains route and draft/evidence state and focuses main.",
       "evidence": [
         "app.js",
+        "tests/pilot/test_browser.py",
+        "https://github.com/dude-actual/theresponsegame/actions/runs/38470167850"
+      ]
+    },
+    {
+      "id": "TRG-029",
+      "priority": "P1",
+      "kind": "feature",
+      "title": "Compact operational entry, role queues and system status",
+      "affectedWorkflow": "operational browser practice",
+      "rootCause": "Repeated exhibit framing and mixed legacy navigation obscured the task. Role entry did not prioritize outstanding work.",
+      "status": "candidate implemented; exact-head native review required",
+      "ownerRole": "Engineering/product",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Use compact operational entry and role queues; preserve public/no-auth/browser-storage truth; keep build/recovery status accessible; no state or schema migration.",
+      "acceptanceCriteria": "Use compact operational entry and role queues; preserve public/no-auth/browser-storage truth; keep build/recovery status accessible; no state or schema migration.",
+      "evidence": [
+        "pilot/ui.js",
+        "app.js",
+        "pilot/pilot.css",
         "tests/pilot/test_browser.py"
+      ]
+    },
+    {
+      "id": "TRG-030",
+      "priority": "P1",
+      "kind": "feature",
+      "title": "Participant presentation boundaries and retained review rights",
+      "affectedWorkflow": "operational browser practice",
+      "rootCause": "Participant views exposed administrative routes and evaluator criteria, including through direct hashes.",
+      "status": "candidate implemented; exact-head native review required",
+      "ownerRole": "Engineering/product",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Show own assignments, work, prior context, review rationale/citations and questions; hide evaluator criteria and other participant records in UI. Explicitly not authentication or access control. Preserve history/export provenance.",
+      "acceptanceCriteria": "Show own assignments, work, prior context, review rationale/citations and questions; hide evaluator criteria and other participant records in UI. Explicitly not authentication or access control. Preserve history/export provenance.",
+      "evidence": [
+        "pilot/ui.js",
+        "tests/pilot/test_ui_views.cjs",
+        "tests/pilot/test_browser.py"
+      ]
+    },
+    {
+      "id": "TRG-031",
+      "priority": "P2",
+      "kind": "feature",
+      "title": "Separate clean and sample workspace lifecycle",
+      "affectedWorkflow": "operational browser practice",
+      "rootCause": "Current browser workspace has one fictional roster and authored source pack with initially empty activity. No separate clean/sample store selector exists.",
+      "status": "deferred; data design and acceptance required",
+      "ownerRole": "Engineering/product",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Design explicit isolated namespaces and export/import/recovery semantics before migration or reset controls; preserve existing records and identities. No silent reseeding or label-only claim of isolation.",
+      "acceptanceCriteria": "Design explicit isolated namespaces and export/import/recovery semantics before migration or reset controls; preserve existing records and identities. No silent reseeding or label-only claim of isolation.",
+      "evidence": [
+        "pilot/domain.js",
+        "pilot/store.js"
+      ]
+    },
+    {
+      "id": "TRG-032",
+      "priority": "P2",
+      "kind": "feature",
+      "title": "Owner feedback capture with honest privacy boundary",
+      "affectedWorkflow": "operational browser practice",
+      "rootCause": "No internal-only authenticated owner context or private feedback storage exists in the public static application.",
+      "status": "deferred; privacy and workflow design required",
+      "ownerRole": "Engineering/product",
+      "assignedPerson": null,
+      "dueDate": null,
+      "dependencies": [],
+      "recommendedCorrection": "Design owner-directed local feedback capture or approved private intake; no public solicitation, sensitive screenshots or false privacy claims.",
+      "acceptanceCriteria": "Design owner-directed local feedback capture or approved private intake; no public solicitation, sensitive screenshots or false privacy claims.",
+      "evidence": [
+        "docs/THREAT_MODEL.md"
       ]
     }
   ]

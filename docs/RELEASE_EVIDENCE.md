@@ -45,3 +45,11 @@ Base: `0126360bc53c1afe613caa17e4801dc438baa78e`. This is a focused reliability/
 New verification events record the reducer's `original-appeal-v1` policy. Old accepted histories replay without being rewritten; new commands cannot opt into the old policy. Original or retest appeals after verification expose reassessment while the historical verification count remains a count of records.
 
 A pre-correction runtime cannot interpret the new policy-tagged verification events. Export the complete trace/recovery record before reverting code, preserve browser storage, and restore the corrected runtime if the older runtime reports recovery required. Do not clear storage to make a downgrade appear successful. Original-review amendment reassessment remains open in TRG-027.
+
+
+## Operational shell candidate (2026-10-13)
+Base: merged main `5ffd6e2fb442878d45eb3713963abd84c8b983b1`. This is a UI-only presentation slice. The domain, source pack, persistence, schema, evidence IDs and exported classifications are unchanged.
+
+`tests/pilot/test_ui_views.cjs` adds minimal-DOM presentation checks for own-work routing, participant review rights, honest status and appeal/reassessment queues. It is not native browser evidence. Extended hosted-browser journeys cover collapsible role controls, role entry/return, direct-route guards, async-route keyboard focus and printed sample provenance. Desktop/mobile participant and evaluator screenshots are retained with exact-head CI artifacts.
+
+Clean/sample isolation, requirement authoring and owner feedback tools remain deferred in the canonical backlog; a Sample workspace label does not claim separate stores. Role filtering is local presentation, not authentication or privacy. Public accessibility remains intentional; there is no invitation for public testing or contributions. Native CI and independent visual review remain release gates for this candidate.

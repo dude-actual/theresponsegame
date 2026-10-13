@@ -13,12 +13,12 @@ def check(condition,label):
  checks.append(label)
 def load(page):
  if BASE_URL:
-  page.goto(BASE_URL);page.wait_for_selector('.hero');return
+  page.goto(BASE_URL);page.wait_for_selector('.pilot-entry');return
  page.set_content('<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="app"></div><div id="toast" role="status" aria-live="polite"></div><dialog id="drawer" aria-labelledby="drawer-title"></dialog></body></html>')
  page.evaluate("""() => {window._testStorage={};Object.defineProperty(window,'localStorage',{value:{getItem:k=>window._testStorage[k]??null,setItem:(k,v)=>{window._testStorage[k]=String(v)},removeItem:k=>delete window._testStorage[k]}})}""")
  page.add_style_tag(content=(ROOT/'styles.css').read_text())
  for f in ['catalog.js','engine.js','app.js']:page.add_script_tag(content=(ROOT/f).read_text())
- page.wait_for_selector('.hero')
+ page.wait_for_selector('.pilot-entry')
 def nav(page,name):page.evaluate('(n)=>{location.hash="#/"+n}',name);page.wait_for_timeout(60)
 def finish(page,posture='authority',bad=False):
  page.locator('[data-action="decision"][data-choice="'+('defer' if bad else 'clarify')+'"]').click()
@@ -39,8 +39,8 @@ with sync_playwright() as p:
  page=b.new_page(viewport={'width':1440,'height':1050},reduced_motion='reduce',accept_downloads=True);errors=[]
  page.on('pageerror',lambda e:errors.append(str(e)))
  load(page);page.screenshot(path=str(OUT/'01_landing.png'),full_page=True)
- check(page.locator('.hero h1').inner_text().startswith('Train the moment.'),'Public landing renders')
- page.locator('[data-action="nav"][data-page="overview"]').first.click();page.wait_for_selector('.summary-grid')
+ check(page.locator('.pilot-entry h1').inner_text()=='Open your workspace','Operational public entry renders')
+ page.locator('.pilot-entry summary').click();page.locator('[data-action="nav"][data-page="overview"]').first.click();page.wait_for_selector('.summary-grid')
  page.screenshot(path=str(OUT/'02_workspace.png'),full_page=True)
  check(page.locator('.metric-value').nth(1).inner_text()=='0','No fabricated completion metrics')
  nav(page,'library');page.locator('#library-search').fill('QI');check(page.evaluate('filtered().length')==12,'Role-alias search finds both pipeline and marine QI contexts')

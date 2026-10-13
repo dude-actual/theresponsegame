@@ -6,7 +6,7 @@ This file indexes reproducible evidence; it is not an independent acceptance cer
 Baseline commit: `ca51c7379e4d09a6a8d6af6fdd338e753879ae2e`. `qa/pilot/baseline/tests.json` captures exact commands/environment/durations and reproduces the 5,776 legacy engine assertions, five SQLite tests and eight HTTP tests. The 1,440 combinations are rule-coverage combinations, not authored experiences. Local native browser navigation failed with `ERR_BLOCKED_BY_ADMINISTRATOR`; rendered injection regression passed 40 checks. Those scopes are separate.
 
 ## Candidate evidence
-Run `python scripts/verify.py` and `python scripts/check_source.py`. The command report and per-command logs retain pass/fail results and timings. Current Node suites include 36 pilot state tests and six regression tests; legacy SQLite/HTTP suites remain separate from four terminal-history/restore tests. Do not add unit-test counts and assertion totals into a single misleading measure.
+Run `python scripts/verify.py` and `python scripts/check_source.py`. The command report and per-command logs retain pass/fail results and timings. Node state, regression and store suites, legacy SQLite/HTTP suites, and terminal-history/restore tests remain separate. Use dated, exact-commit command reports for their test counts. Do not add unit-test counts and assertion totals into a single misleading measure.
 
 `qa/pilot/mutation.json` records eight targeted mutations. The initial same-capability transfer-link survivor is retained in `mutation-before-strengthening.json`; a dedicated test corrected the gap. Performance and content-repetition reports are also generated from actual source. Lexical repetition flags still require human adjudication.
 

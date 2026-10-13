@@ -1,0 +1,847 @@
+{
+  "backlog": [
+    {
+      "ID": "BL-001",
+      "Priority": "P0",
+      "Workstream": "Production tenancy",
+      "Deliverable": "Provision approved project/region",
+      "Current state": "Planned",
+      "Dependency": "Organization and cost authorization",
+      "Acceptance": "Project exists; database owner/region documented; no public secrets",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-002",
+      "Priority": "P0",
+      "Workstream": "Identity",
+      "Deliverable": "SSO and active membership enforcement",
+      "Current state": "Planned",
+      "Dependency": "Production tenancy",
+      "Acceptance": "Wrong issuer/tenant and revoked users denied; role mapping reviewed",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-003",
+      "Priority": "P0",
+      "Workstream": "Authorization",
+      "Deliverable": "RLS and cross-tenant/object isolation",
+      "Current state": "Scaffold",
+      "Dependency": "Identity",
+      "Acceptance": "All permitted/denied record, search, artifact and export cases tested",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-004",
+      "Priority": "P0",
+      "Workstream": "Engine",
+      "Deliverable": "Server command/state transaction layer",
+      "Current state": "Planned",
+      "Dependency": "Production tenancy",
+      "Acceptance": "Expected-version conflict and idempotent retry tests pass; outbox atomic",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-005",
+      "Priority": "P0",
+      "Workstream": "Content",
+      "Deliverable": "Practitioner review of first core pack",
+      "Current state": "Review required",
+      "Dependency": "Named reviewer and controlling plans",
+      "Acceptance": "Realism, role authority, criteria and safe configuration approved",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-006",
+      "Priority": "P0",
+      "Workstream": "Safety",
+      "Deliverable": "Live-incident hold and campaign stop",
+      "Current state": "Preview only",
+      "Dependency": "Queue and first adapter",
+      "Acceptance": "No new sends after stop; already accepted sends recorded accurately",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-007",
+      "Priority": "P0",
+      "Workstream": "Evidence",
+      "Deliverable": "Authenticated evaluator and action verification",
+      "Current state": "Local demo",
+      "Dependency": "Identity and evidence storage",
+      "Acceptance": "Reviewer authorized; rationale/evidence required; retest linked without erasing history",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-008",
+      "Priority": "P0",
+      "Workstream": "Privacy",
+      "Deliverable": "Private artifact storage and retention",
+      "Current state": "Planned",
+      "Dependency": "Security/privacy approval",
+      "Acceptance": "Signed links scoped; access denied outside tenant; deletion/hold tested",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-009",
+      "Priority": "P0",
+      "Workstream": "Testing",
+      "Deliverable": "Hosted browser native-persistence checks",
+      "Current state": "Not validated here",
+      "Dependency": "Hosted CI browser",
+      "Acceptance": "Actual-origin reload, database save, workspace switching, exports pass",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-010",
+      "Priority": "P1",
+      "Workstream": "Delivery",
+      "Deliverable": "First provider-backed email or SMS path",
+      "Current state": "Preview only",
+      "Dependency": "Provider setup, consent and limits",
+      "Acceptance": "Approved sandbox cohort; signed callbacks; STOP/HELP and failure paths pass",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-011",
+      "Priority": "P1",
+      "Workstream": "Directory",
+      "Deliverable": "SCIM or approved roster API",
+      "Current state": "Planned",
+      "Dependency": "Identity and source-owner approval",
+      "Acceptance": "Create/update/deactivate/groups reconcile; source exceptions quarantined",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-012",
+      "Priority": "P1",
+      "Workstream": "Delivery",
+      "Deliverable": "Time-zone and shift-aware scheduling",
+      "Current state": "Draft intent only",
+      "Dependency": "Queue and eligibility engine",
+      "Acceptance": "Quiet windows/DST/shift coverage/fatigue caps tested at dispatch time",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-013",
+      "Priority": "P1",
+      "Workstream": "Evidence",
+      "Deliverable": "Provider delivery and task verification",
+      "Current state": "Contract",
+      "Dependency": "Adapter and task integration",
+      "Acceptance": "Delivery separated from acknowledgment; signed external evidence matched",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-014",
+      "Priority": "P1",
+      "Workstream": "Content",
+      "Deliverable": "Plan extraction and requirement review",
+      "Current state": "Manual excerpt demo",
+      "Dependency": "Private storage and source governance",
+      "Acceptance": "Quotes/version/location retained; conflicts block approval; human review required",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-015",
+      "Priority": "P1",
+      "Workstream": "Learning",
+      "Deliverable": "Pilot baseline, retention and transfer",
+      "Current state": "Planned",
+      "Dependency": "Approved core pack and participants",
+      "Acceptance": "Rubric, comparator, delayed test and transfer evidence documented",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-016",
+      "Priority": "P1",
+      "Workstream": "Accessibility",
+      "Deliverable": "Human assistive-technology evaluation",
+      "Current state": "Not validated here",
+      "Dependency": "Stable participant workflow",
+      "Acceptance": "Keyboard, screen readers, zoom, timing alternatives and captions reviewed",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-017",
+      "Priority": "P1",
+      "Workstream": "Operations",
+      "Deliverable": "Backup/restore and incident runbooks",
+      "Current state": "Planned",
+      "Dependency": "Production database and support model",
+      "Acceptance": "Measured restore meets approved objectives; incident escalation exercised",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-018",
+      "Priority": "P1",
+      "Workstream": "Commercial",
+      "Deliverable": "Licensing and server entitlements",
+      "Current state": "Designed",
+      "Dependency": "Commercial decisions and backend",
+      "Acceptance": "Entitlements enforced server-side; activation and exit paths tested",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-019",
+      "Priority": "P2",
+      "Workstream": "Delivery",
+      "Deliverable": "Voice response and transcript adapter",
+      "Current state": "Browser narration only",
+      "Dependency": "First-channel controls proven",
+      "Acceptance": "Consent and recording permissions distinct; ambiguous intent reviewed",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-020",
+      "Priority": "P2",
+      "Workstream": "Integrations",
+      "Deliverable": "Teams/Slack or other approved cards",
+      "Current state": "Contract",
+      "Dependency": "App permissions and adapter",
+      "Acceptance": "Installation tenant verified; signed actions; revoked access denied",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-021",
+      "Priority": "P2",
+      "Workstream": "Tasks",
+      "Deliverable": "Verified external training-tool actions",
+      "Current state": "Worksheet preview",
+      "Dependency": "Approved training endpoint",
+      "Acceptance": "Nonce/subject/task/session bind; callback replay and cross-tenant denied",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-022",
+      "Priority": "P2",
+      "Workstream": "Content",
+      "Deliverable": "Deeper specialist sector packs",
+      "Current state": "Starter catalog",
+      "Dependency": "Practitioner and source review",
+      "Acceptance": "Distinct work products, compatible roles and validated constraints",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-023",
+      "Priority": "P2",
+      "Workstream": "Media",
+      "Deliverable": "Attributable maps, video and images",
+      "Current state": "Designed",
+      "Dependency": "Media rights and content objective",
+      "Acceptance": "Licensed/redacted; timestamp/source/legend; accessible alternative",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-024",
+      "Priority": "P2",
+      "Workstream": "Teams",
+      "Deliverable": "Multi-role dependent micro-simulations",
+      "Current state": "Designed",
+      "Dependency": "Server state and assessed single-role flow",
+      "Acceptance": "Concurrency and inter-role handoffs measured without fabricated readiness",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-025",
+      "Priority": "P2",
+      "Workstream": "Analytics",
+      "Deliverable": "Program coverage and executive exceptions",
+      "Current state": "Local demo",
+      "Dependency": "Comparable evidence and denominators",
+      "Acceptance": "Coverage, delivery, performance, retest and uncertainty reported separately",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-026",
+      "Priority": "P2",
+      "Workstream": "Content",
+      "Deliverable": "Plan-change impact and reapproval",
+      "Current state": "Designed",
+      "Dependency": "Versioned requirements and configurations",
+      "Acceptance": "Affected scenarios/actions identified; history preserved; future release gated",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-027",
+      "Priority": "P2",
+      "Workstream": "Security",
+      "Deliverable": "Independent security assessment",
+      "Current state": "Planned",
+      "Dependency": "Production candidate",
+      "Acceptance": "Tenant isolation, SSRF, abuse, upload, export and dependency findings resolved",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    },
+    {
+      "ID": "BL-028",
+      "Priority": "P2",
+      "Workstream": "Commercial",
+      "Deliverable": "Validated sales case studies",
+      "Current state": "Planned",
+      "Dependency": "Measured customer pilot and permission",
+      "Acceptance": "Claims trace to approved evidence; demo metrics labeled; no invented ROI",
+      "Owner": "",
+      "Due date": "",
+      "Status": "Not started"
+    }
+  ],
+  "configuration": [
+    [
+      "Site and role labels",
+      "A \u00b7 Context",
+      "Implemented",
+      "1\u2013180 characters",
+      "Does not change authority or role logic"
+    ],
+    [
+      "Authority display and plan reference",
+      "A \u00b7 Context",
+      "Implemented",
+      "1\u2013180 characters",
+      "Typed reference is not source approval"
+    ],
+    [
+      "Practice window",
+      "B \u00b7 Bounded",
+      "Implemented",
+      "Integer 3\u201320 minutes",
+      "Exercise assumption, not regulatory deadline"
+    ],
+    [
+      "Condition variant",
+      "B \u00b7 Bounded",
+      "Implemented",
+      "Baseline / Primary unavailable / Conflicting reports",
+      "Engine-supported states only"
+    ],
+    [
+      "Channel presentation",
+      "B \u00b7 Bounded",
+      "Implemented preview",
+      "Web / SMS / Voice / Email / External task",
+      "Preview never activates live transport"
+    ],
+    [
+      "Coached versus observed",
+      "B \u00b7 Bounded",
+      "Implemented",
+      "Approved mode",
+      "Observed mode withholds interim rule feedback"
+    ],
+    [
+      "Contacts and escalation chains",
+      "B \u00b7 Bounded",
+      "Designed",
+      "Approved roster/plan paths",
+      "No arbitrary emergency/regulatory destinations"
+    ],
+    [
+      "Cadence, timing, eligible audience",
+      "B \u00b7 Bounded",
+      "Draft intent only",
+      "Approved policy and caps",
+      "Eligibility rechecked at actual dispatch"
+    ],
+    [
+      "Thresholds and task evidence",
+      "B \u00b7 Bounded",
+      "Designed",
+      "Schema-supported and reviewer-approved",
+      "Unsupported changes require product review"
+    ],
+    [
+      "New workflow or scoring model",
+      "C \u00b7 Product change",
+      "Separate scope",
+      "Product/content acceptance",
+      "Not standard customer setup"
+    ],
+    [
+      "New integration or operational media",
+      "C \u00b7 Product change",
+      "Separate scope",
+      "Security, rights and compatibility",
+      "No customer-specific code fork by default"
+    ]
+  ],
+  "delivery": [
+    [
+      "Web",
+      "Interactive practice",
+      "Implemented",
+      "Typed and structured work; review remains required",
+      "No production authentication"
+    ],
+    [
+      "SMS",
+      "Two-way reply and follow-on",
+      "Local preview",
+      "ACK / DETAILS / LATER / HELP / STOP",
+      "No real phone number or provider"
+    ],
+    [
+      "Voice",
+      "Spoken brief and response",
+      "Narration preview",
+      "Browser speech and visible transcript",
+      "No call, microphone, recording or speech grading"
+    ],
+    [
+      "Email",
+      "Brief and secure task link",
+      "Local preview",
+      "Display simulated email briefing",
+      "No email sent; opens not completion"
+    ],
+    [
+      "External task",
+      "Training worksheet or external app",
+      "Local worksheet",
+      "Self-reported reference with provenance",
+      "No verified external callback"
+    ],
+    [
+      "Facilitator launch",
+      "Selected cohort exercise",
+      "Draft method",
+      "Approved audience and stop control",
+      "No dispatch scheduler"
+    ],
+    [
+      "Self-enrollment",
+      "Link or QR",
+      "Designed",
+      "Authorized audience, expiration and assignment",
+      "No public sensitive session link"
+    ],
+    [
+      "Scheduled cohort",
+      "Defined rollout window",
+      "Draft intent",
+      "Time zone, eligibility and policy gate",
+      "No background task running"
+    ],
+    [
+      "Randomized window",
+      "Controlled unannounced timing",
+      "Draft intent",
+      "Approved group/window and frequency caps",
+      "Not unrestricted surprise calls"
+    ],
+    [
+      "New role or plan change",
+      "Event-based practice",
+      "Designed",
+      "Reviewed source event and impacted roles",
+      "No automatic unreviewed publication"
+    ],
+    [
+      "Retest",
+      "Close capability-related actions",
+      "Local demo",
+      "Linked different-condition run and review",
+      "No professional validation inferred"
+    ],
+    [
+      "Collaboration cards",
+      "Teams/Slack or approved platform",
+      "Designed",
+      "Signed action and verified organization app",
+      "No live connector in product"
+    ]
+  ],
+  "taxonomy": [
+    [
+      "Hazard family",
+      "Natural hazard",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard family",
+      "Technology/infrastructure",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard family",
+      "Cyber/information",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard family",
+      "Security/human-caused",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard family",
+      "Public health",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard family",
+      "Workforce/supply chain",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard family",
+      "Reputational",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard family",
+      "Compound/cascading",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Flood",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Severe storm/hurricane",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Wildfire/smoke",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Heat",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Winter weather",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Earthquake",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Power outage",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Water interruption",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Telecommunications loss",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Equipment failure",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Spill/hazardous material",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Ransomware/service disruption",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Data integrity/false report",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Access/security concern",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Public health disruption",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Supplier failure",
+      "Proposed taxonomy"
+    ],
+    [
+      "Hazard subtype",
+      "Staff shortage",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "Hospital",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "Office",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "School/campus",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "Terminal",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "Pipeline/control room",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "Plant",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "Utility",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "Warehouse",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "Public venue",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "Transportation node",
+      "Proposed taxonomy"
+    ],
+    [
+      "Facility type",
+      "Distributed/remote team",
+      "Proposed taxonomy"
+    ],
+    [
+      "Phase",
+      "Preparedness",
+      "Proposed taxonomy"
+    ],
+    [
+      "Phase",
+      "Mitigation",
+      "Proposed taxonomy"
+    ],
+    [
+      "Phase",
+      "Protection",
+      "Proposed taxonomy"
+    ],
+    [
+      "Phase",
+      "Response",
+      "Proposed taxonomy"
+    ],
+    [
+      "Phase",
+      "Continuity",
+      "Proposed taxonomy"
+    ],
+    [
+      "Phase",
+      "Recovery",
+      "Proposed taxonomy"
+    ],
+    [
+      "Phase",
+      "Transition",
+      "Proposed taxonomy"
+    ],
+    [
+      "Plan family",
+      "Emergency response",
+      "Proposed taxonomy"
+    ],
+    [
+      "Plan family",
+      "Crisis management",
+      "Proposed taxonomy"
+    ],
+    [
+      "Plan family",
+      "Business continuity",
+      "Proposed taxonomy"
+    ],
+    [
+      "Plan family",
+      "Cyber incident response",
+      "Proposed taxonomy"
+    ],
+    [
+      "Plan family",
+      "Spill response",
+      "Proposed taxonomy"
+    ],
+    [
+      "Plan family",
+      "Facility emergency",
+      "Proposed taxonomy"
+    ],
+    [
+      "Plan family",
+      "Communications",
+      "Proposed taxonomy"
+    ],
+    [
+      "Plan family",
+      "Evacuation/accountability",
+      "Proposed taxonomy"
+    ],
+    [
+      "Plan family",
+      "IT disaster recovery",
+      "Proposed taxonomy"
+    ],
+    [
+      "Plan family",
+      "Recovery/transition",
+      "Proposed taxonomy"
+    ],
+    [
+      "Audience dimension",
+      "Organization",
+      "Proposed taxonomy"
+    ],
+    [
+      "Audience dimension",
+      "Business unit",
+      "Proposed taxonomy"
+    ],
+    [
+      "Audience dimension",
+      "Department",
+      "Proposed taxonomy"
+    ],
+    [
+      "Audience dimension",
+      "Site",
+      "Proposed taxonomy"
+    ],
+    [
+      "Audience dimension",
+      "Shift",
+      "Proposed taxonomy"
+    ],
+    [
+      "Audience dimension",
+      "Operational role",
+      "Proposed taxonomy"
+    ],
+    [
+      "Audience dimension",
+      "Group",
+      "Proposed taxonomy"
+    ],
+    [
+      "Audience dimension",
+      "Individual",
+      "Proposed taxonomy"
+    ],
+    [
+      "Audience dimension",
+      "Contractor/partner",
+      "Proposed taxonomy"
+    ],
+    [
+      "Maturity",
+      "Starter",
+      "Proposed taxonomy"
+    ],
+    [
+      "Maturity",
+      "Professional review",
+      "Proposed taxonomy"
+    ],
+    [
+      "Maturity",
+      "Tenant approved",
+      "Proposed taxonomy"
+    ],
+    [
+      "Maturity",
+      "Pilot tested",
+      "Proposed taxonomy"
+    ],
+    [
+      "Maturity",
+      "Released",
+      "Proposed taxonomy"
+    ],
+    [
+      "Maturity",
+      "Retired",
+      "Proposed taxonomy"
+    ]
+  ]
+}
